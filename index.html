@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>XKiss</title>
 
   <style>
@@ -12,166 +13,78 @@
 
     body {
       margin: 0;
+      background: #09090d;
+      color: #fff;
       font-family: Arial, sans-serif;
-      background: #0b0b0f;
-      color: #ffffff;
     }
 
     header {
-      background: #15151c;
+      height: 70px;
+      background: #14141b;
       border-bottom: 1px solid #292932;
-      padding: 18px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 15px;
+      padding: 0 25px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
     .logo {
       font-size: 30px;
-      font-weight: bold;
+      font-weight: 800;
+      letter-spacing: 1px;
     }
 
-    .search {
-      flex: 1;
-      max-width: 500px;
-    }
-
-    .search input {
-      width: 100%;
-      padding: 13px 16px;
-      border-radius: 25px;
-      border: 1px solid #33333d;
-      background: #0d0d12;
-      color: white;
-      outline: none;
-    }
-
-    .menu {
+    nav {
       display: flex;
       gap: 10px;
     }
 
-    .menu button {
-      padding: 10px 15px;
-      border: 1px solid #383842;
-      border-radius: 20px;
+    nav button,
+    .login-button {
       background: #22222b;
-      color: white;
+      color: #fff;
+      border: 1px solid #363640;
+      padding: 10px 16px;
+      border-radius: 20px;
       cursor: pointer;
     }
 
+    .login-button {
+      background: #fff;
+      color: #111;
+      font-weight: bold;
+    }
+
     .hero {
+      min-height: 420px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       text-align: center;
-      padding: 65px 20px;
-      background: linear-gradient(180deg, #191923, #0b0b0f);
+      padding: 40px 20px;
+      background:
+        radial-gradient(circle at center, #292936 0%, #111118 40%, #09090d 75%);
+    }
+
+    .hero-content {
+      max-width: 750px;
     }
 
     .hero h1 {
-      font-size: 46px;
+      font-size: 58px;
       margin: 0 0 15px;
     }
 
     .hero p {
       color: #b8b8c2;
-      font-size: 18px;
-      margin-bottom: 25px;
+      font-size: 19px;
+      line-height: 1.6;
     }
 
-    .hero button {
-      padding: 14px 28px;
-      border: none;
-      border-radius: 25px;
-      background: #ffffff;
-      color: #111111;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .section {
-      padding: 30px 20px;
-      max-width: 1200px;
-      margin: auto;
-    }
-
-    .section h2 {
-      margin-bottom: 20px;
-    }
-
-    .categories {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 15px;
-    }
-
-    .category {
-      background: #181820;
-      border: 1px solid #292932;
-      border-radius: 14px;
-      padding: 25px 15px;
-      text-align: center;
-      cursor: pointer;
-    }
-
-    .category:hover {
-      background: #22222b;
-    }
-
-    footer {
-      text-align: center;
-      padding: 30px 20px;
-      color: #777783;
-      border-top: 1px solid #22222a;
-      margin-top: 40px;
-    }
-
-    @media (max-width: 700px) {
-      header {
-        flex-direction: column;
-      }
-
-      .search {
-        max-width: none;
-        width: 100%;
-      }
-
-      .menu {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .hero h1 {
-        font-size: 36px;
-      }
-    }
-  </style>
-</head>
-
-<body>
-
-  <header>
-    <div class="logo">XKiss</div>
-
-    <div class="search">
-      <input type="search" placeholder="بحث...">
-    </div>
-
-    <div class="menu">
-      <button>تسجيل الدخول</button>
-      <button>إنشاء حساب</button>
-    </div>
-  </header>
-
-  <section class="hero">
-    <h1>مرحباً بك في XKiss</h1>
-    <p>منصة محتوى للبالغين فقط — 18+</p>
-    <button>استكشف المنصة</button>
-  </section>
-
-  <section class="section">
-    <h2>الأقسام</h2>
-
-    <div class="categories">
-      <div class="category">الأحدث</div>
-      <div class="category">الأكثر مشاهدة</div>
-      <div class="category">المميز
+    .age {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 8px 
