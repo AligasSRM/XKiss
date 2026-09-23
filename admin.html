@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XKiss — Super Admin</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #09090d;
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  height: 70px;
+  background: #14141b;
+  border-bottom: 1px solid #292932;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 25px;
+}
+
+.logo {
+  font-size: 27px;
+  font-weight: bold;
+}
+
+.admin-label {
+  color: #aaa;
+  font-size: 14px;
+}
+
+.container {
+  max-width: 1250px;
+  margin: auto;
+  padding: 30px 20px;
+}
+
+h1 {
+  margin-top: 0;
+}
+
+.warning {
+  background: #17171f;
+  border: 1px solid #363640;
+  border-radius: 12px;
+  padding: 16px;
+  color: #bbb;
+  margin-bottom: 25px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(190px, 1fr)
+  );
+  gap: 15px;
+}
+
+.card {
+  background: #15151c;
+  border: 1px solid #292932;
+  border-radius: 14px;
+  padding: 22px;
+}
+
+.card h3 {
+  margin-top: 0;
+}
+
+.card p {
+  color: #9999a5;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+button {
+  width: 100%;
+  padding: 11px;
+  border-radius: 8px;
+  border: 1px solid #3a3a45;
+  background: #22222b;
+  color: white;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+button:hover {
+  background: #2b2b35;
+}
+
+.logout {
+  background: #fff;
+  color: #111;
+  font-weight: bold;
+}
+
+.status {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 5px 9px;
+  border-radius: 15px;
+  background: #20202a;
+  color: #bbb;
+  font-size: 12px;
+}
+
+footer {
+  text-align: center;
+  padding: 35px;
+  color: #666;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+  <div class="logo">
+    XKiss
+  </div>
+
+  <div class="admin-label">
+    SUPER ADMIN
+  </div>
+
+</header>
+
+<main class="container">
+
+  <h1>Super Admin Dashboard</h1>
+
+  <div class="warning">
+    This is the administration interface.
+    Real authentication and permissions will be
+    connected to the secure backend later.
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <h3>Users</h3>
+      <p>
+        Manage registered users and account status.
+      </p>
+      <button>Manage Users</button>
+    </div>
+
+    <div class="card">
+      <h3>Security</h3>
+      <p>
+        Security settings, sessions and access control.
+      </p>
+      <button>Security Center</button>
+    </div>
+
+    <div class="card">
+      <h3>Content</h3>
+      <p>
+        Manage platform content and moderation.
+      </p>
+      <button>Content Manager</button>
+    </div>
+
+    <div class="card">
+      <h3>Reports</h3>
+      <p>
+        Review reports and moderation requests.
+      </p>
+      <button>View Reports</button>
+    </div>
+
+    <div class="card">
+      <h3>Storage</h3>
+      <p>
+        Monitor large-scale video storage.
+      </p>
+      <span class="status">
+        Storage system: Planned
+      </span>
+    </div>
+
+    <div class="card">
+      <h3>Analytics</h3>
+      <p>
+        Platform traffic and usage statistics.
+      </p>
+      <button>View Analytics</button>
+    </div>
+
+    <div class="card">
+      <h3>Settings</h3>
+      <p>
+        Configure the platform and system options.
+      </p>
+      <button>Platform Settings</button>
+    </div>
+
+    <div class="card">
+      <h3>Admin Access</h3>
+      <p>
+        Super Admin permissions and administrator accounts.
+      </p>
+      <button>Access Control</button>
+    </div>
+
+  </div>
+
+  <br>
+
+  <button class="logout">
+    Admin Logout
+  </button>
+
+</main>
+
+<footer>
+  XKiss — Super Admin System
+</footer>
+
+</body>
+</html>
