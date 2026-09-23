@@ -1,90 +1,296 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XKiss</title>
 
-  <title>XKiss</title>
+<style>
+* {
+  box-sizing: border-box;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+body {
+  margin: 0;
+  background: #09090d;
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+}
 
-    body {
-      margin: 0;
-      background: #09090d;
-      color: #fff;
-      font-family: Arial, sans-serif;
-    }
+header {
+  min-height: 70px;
+  background: #14141b;
+  border-bottom: 1px solid #292932;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 25px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
 
-    header {
-      height: 70px;
-      background: #14141b;
-      border-bottom: 1px solid #292932;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 25px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+.logo {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
 
-    .logo {
-      font-size: 30px;
-      font-weight: 800;
-      letter-spacing: 1px;
-    }
+nav {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
 
-    nav {
-      display: flex;
-      gap: 10px;
-    }
+nav button {
+  background: #22222b;
+  color: #ffffff;
+  border: 1px solid #363640;
+  padding: 10px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+}
 
-    nav button,
-    .login-button {
-      background: #22222b;
-      color: #fff;
-      border: 1px solid #363640;
-      padding: 10px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-    }
+.login-button {
+  background: #ffffff;
+  color: #111111;
+  font-weight: bold;
+}
 
-    .login-button {
-      background: #fff;
-      color: #111;
-      font-weight: bold;
-    }
+.hero {
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 50px 20px;
+  background:
+    radial-gradient(
+      circle at center,
+      #292936 0%,
+      #111118 45%,
+      #09090d 80%
+    );
+}
 
-    .hero {
-      min-height: 420px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 40px 20px;
-      background:
-        radial-gradient(circle at center, #292936 0%, #111118 40%, #09090d 75%);
-    }
+.hero-content {
+  max-width: 750px;
+}
 
-    .hero-content {
-      max-width: 750px;
-    }
+.hero h1 {
+  font-size: 58px;
+  margin: 0 0 15px;
+}
 
-    .hero h1 {
-      font-size: 58px;
-      margin: 0 0 15px;
-    }
+.hero p {
+  color: #b8b8c2;
+  font-size: 19px;
+  line-height: 1.6;
+}
 
-    .hero p {
-      color: #b8b8c2;
-      font-size: 19px;
-      line-height: 1.6;
-    }
+.age {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 8px 18px;
+  border: 1px solid #444450;
+  border-radius: 20px;
+  color: #dddddd;
+}
 
-    .age {
-      display: inline-block;
-      margin-top: 15px;
-      padding: 8px 
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 40px 20px;
+}
+
+.section-title {
+  font-size: 26px;
+  margin-bottom: 20px;
+}
+
+.categories {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(160px, 1fr)
+  );
+  gap: 15px;
+}
+
+.category {
+  background: #15151c;
+  border: 1px solid #292932;
+  border-radius: 14px;
+  padding: 25px 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.category:hover {
+  transform: translateY(-3px);
+  background: #1d1d26;
+}
+
+.admin-preview {
+  margin-top: 50px;
+  padding: 25px;
+  border-radius: 16px;
+  background: #111118;
+  border: 1px dashed #383842;
+}
+
+.admin-preview h2 {
+  margin-top: 0;
+}
+
+.admin-preview p {
+  color: #aaaaB5;
+  line-height: 1.6;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(160px, 1fr)
+  );
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.admin-card {
+  background: #191922;
+  border: 1px solid #292932;
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.admin-card strong {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 7px;
+}
+
+.admin-card span {
+  color: #9999a5;
+  font-size: 14px;
+}
+
+footer {
+  margin-top: 50px;
+  padding: 30px 20px;
+  text-align: center;
+  border-top: 1px solid #22222a;
+  color: #777783;
+}
+
+@media (max-width: 700px) {
+
+  header {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  nav {
+    width: 100%;
+  }
+
+  nav button {
+    padding: 9px 12px;
+  }
+
+  .hero h1 {
+    font-size: 40px;
+  }
+
+  .hero p {
+    font-size: 16px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+  <div class="logo">
+    XKiss
+  </div>
+
+  <nav>
+    <button>Home</button>
+    <button>Categories</button>
+    <button>Search</button>
+    <button class="login-button">
+      Login
+    </button>
+  </nav>
+
+</header>
+
+<section class="hero">
+
+  <div class="hero-content">
+
+    <h1>Welcome to XKiss</h1>
+
+    <p>
+      A private adult-content platform
+      designed with scalability,
+      privacy and security in mind.
+    </p>
+
+    <div class="age">
+      18+ Adults Only
+    </div>
+
+  </div>
+
+</section>
+
+<main class="container">
+
+  <h2 class="section-title">
+    Platform
+  </h2>
+
+  <div class="categories">
+
+    <div class="category">
+      Latest
+    </div>
+
+    <div class="category">
+      Popular
+    </div>
+
+    <div class="category">
+      Categories
+    </div>
+
+    <div class="category">
+      Creators
+    </div>
+
+    <div class="category">
+      Videos
+    </div>
+
+    <div class="category">
+      Favorites
+    </div>
+
+  </div>
+
+  <section class="admin-preview">
+
+    <h2>
+      Super Admin System
+    </h2>
+
+    <p>
+      The administrator will have full control
+      through a
