@@ -346,6 +346,8 @@ a{color:inherit;text-decoration:none}
     transform:translateY(-3px);
 }
 
+/* VIDEO SQUARE / SCREENSHOT */
+
 .video-thumb{
     height:225px;
     position:relative;
@@ -356,6 +358,12 @@ a{color:inherit;text-decoration:none}
     background:
         radial-gradient(circle at 50% 45%,rgba(191,90,242,.17),transparent 35%),
         linear-gradient(135deg,#222630,#090a0e);
+    cursor:pointer;
+}
+
+.video-thumb:focus-visible{
+    outline:2px solid var(--pink);
+    outline-offset:-2px;
 }
 
 .thumb-number{
@@ -443,6 +451,22 @@ a{color:inherit;text-decoration:none}
     font-size:24px;
     background:linear-gradient(135deg,var(--pink),var(--purple));
     box-shadow:0 14px 40px rgba(255,45,117,.25);
+    z-index:3;
+}
+
+.screenshot-hint{
+    position:absolute;
+    left:50%;
+    bottom:12px;
+    transform:translateX(-50%);
+    padding:5px 9px;
+    border-radius:6px;
+    background:rgba(0,0,0,.5);
+    color:#d9dbe3;
+    font-size:9px;
+    letter-spacing:1px;
+    pointer-events:none;
+    white-space:nowrap;
 }
 
 .video-info{padding:17px}
@@ -658,8 +682,6 @@ a{color:inherit;text-decoration:none}
     border:1px solid rgba(255,255,255,.09);
     border-radius:18px;
 }
-
-/* PLAYER HEADER */
 
 .player-header{
     min-height:58px;
@@ -884,9 +906,7 @@ a{color:inherit;text-decoration:none}
     gap:20px;
 }
 
-.watch-copy{
-    min-width:0;
-}
+.watch-copy{min-width:0}
 
 .watch-kicker{
     color:#ff77a5;
@@ -946,9 +966,7 @@ a{color:inherit;text-decoration:none}
     line-height:1.6;
 }
 
-.watch-about strong{
-    color:#e8e9ee;
-}
+.watch-about strong{color:#e8e9ee}
 
 .watch-tags{
     display:flex;
@@ -1042,7 +1060,7 @@ a{color:inherit;text-decoration:none}
     display:none;
 }
 
-/* MOBILE FALLBACK */
+/* MOBILE FULLSCREEN */
 
 .player-box.mobile-fullscreen{
     position:fixed!important;
@@ -1088,6 +1106,100 @@ a{color:inherit;text-decoration:none}
 .player-box.mobile-fullscreen .player-note,
 .player-box.mobile-fullscreen .watch-details{
     display:none!important;
+}
+
+/* SCREENSHOT LIGHTBOX */
+
+.screenshot-modal{
+    position:fixed;
+    inset:0;
+    z-index:11000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+    background:rgba(2,3,5,.94);
+    backdrop-filter:blur(16px);
+}
+
+.screenshot-modal.show{display:flex}
+
+.screenshot-box{
+    position:relative;
+    width:min(1100px,100%);
+    max-height:calc(100vh - 36px);
+    overflow:auto;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:18px;
+    background:#08090c;
+    box-shadow:0 30px 100px rgba(0,0,0,.6);
+}
+
+.screenshot-image{
+    display:block;
+    width:100%;
+    max-height:calc(100vh - 130px);
+    object-fit:contain;
+    background:#0a0b0f;
+}
+
+.screenshot-placeholder{
+    min-height:360px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:40px;
+    color:#9699a6;
+    background:linear-gradient(135deg,#171a23,#090a0e);
+}
+
+.screenshot-placeholder strong{
+    display:block;
+    color:#f5f5f7;
+    margin-bottom:8px;
+    font-size:20px;
+}
+
+.screenshot-close{
+    position:absolute;
+    top:12px;
+    right:12px;
+    z-index:5;
+    width:40px;
+    height:40px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:10px;
+    color:#fff;
+    background:rgba(0,0,0,.65);
+    font-size:23px;
+}
+
+.screenshot-caption{
+    padding:13px 16px;
+    color:#aeb1bd;
+    font-size:12px;
+    border-top:1px solid rgba(255,255,255,.07);
+}
+
+.screenshot-actions{
+    padding:0 16px 16px;
+    display:flex;
+    gap:8px;
+}
+
+.screenshot-actions button{
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:9px;
+    padding:10px 14px;
+    color:#fff;
+    background:rgba(255,255,255,.06);
+    font-weight:700;
+}
+
+.screenshot-actions .primary{
+    border:0;
+    background:linear-gradient(135deg,var(--pink),var(--purple));
 }
 
 /* RESPONSIVE */
@@ -1215,6 +1327,27 @@ a{color:inherit;text-decoration:none}
     .related-row{
         grid-template-columns:1fr;
     }
+
+    .screenshot-modal{
+        padding:8px;
+    }
+
+    .screenshot-box{
+        max-height:calc(100vh - 16px);
+        border-radius:12px;
+    }
+
+    .screenshot-image{
+        max-height:calc(100vh - 105px);
+    }
+
+    .screenshot-placeholder{
+        min-height:260px;
+    }
+
+    .screenshot-actions{
+        flex-wrap:wrap;
+    }
 }
 
 @media(max-height:500px) and (orientation:landscape){
@@ -1296,7 +1429,6 @@ a{color:inherit;text-decoration:none}
 
 </section>
 
-
 <section class="section">
 
     <div class="section-header">
@@ -1315,7 +1447,6 @@ a{color:inherit;text-decoration:none}
     </div>
 
 </section>
-
 
 <section class="section">
 
@@ -1357,7 +1488,6 @@ a{color:inherit;text-decoration:none}
 
 </section>
 
-
 <!-- VIDEOS -->
 
 <section class="section" id="videos">
@@ -1376,7 +1506,6 @@ a{color:inherit;text-decoration:none}
 
     </div>
 
-
     <div class="chips video-filters">
 
         <button class="chip active">All</button>
@@ -1386,35 +1515,53 @@ a{color:inherit;text-decoration:none}
 
     </div>
 
-
     <div class="videos-grid">
 
         <!-- ALI EXCEL -->
 
         <article class="video-card">
 
-            <div class="video-thumb">
+            <div
+                class="video-thumb"
+                tabindex="0"
+                role="button"
+                aria-label="Open screenshot for Ali Excel"
+                onclick="openScreenshot('Ali Excel')"
+                onkeydown="handleThumbKey(event,'Ali Excel')">
 
                 <div class="thumb-number">NEW</div>
 
                 <div class="thumb-content">
+
                     <span class="thumb-brand-x">X</span>
-                    <span class="thumb-brand-kiss">Kiss</span>
-                    <span class="thumb-label">ALI EXCEL</span>
+
+                    <span class="thumb-brand-kiss">
+                        Kiss
+                    </span>
+
+                    <span class="thumb-label">
+                        ALI EXCEL
+                    </span>
+
                 </div>
 
+                <!-- PLAY BUTTON ONLY PLAYS VIDEO -->
                 <button
                     class="play-circle"
                     aria-label="Play Ali Excel"
-                    onclick="watchVideo('Ali Excel')">
+                    onclick="event.stopPropagation();watchVideo('Ali Excel')">
                     ▶
                 </button>
 
                 <div class="thumb-quality">720p</div>
+
                 <div class="thumb-duration">00:14</div>
 
-            </div>
+                <div class="screenshot-hint">
+                    CLICK SQUARE FOR SCREENSHOT
+                </div>
 
+            </div>
 
             <div class="video-info">
 
@@ -1422,12 +1569,12 @@ a{color:inherit;text-decoration:none}
                     Ali Excel
                 </div>
 
-
                 <div class="video-creator-row">
 
                     <div class="creator-avatar">A</div>
 
                     <div>
+
                         <div class="video-creator-name">
                             Ali Sr.M
                         </div>
@@ -1435,6 +1582,7 @@ a{color:inherit;text-decoration:none}
                         <div class="video-creator">
                             Creator
                         </div>
+
                     </div>
 
                     <button
@@ -1445,7 +1593,6 @@ a{color:inherit;text-decoration:none}
 
                 </div>
 
-
                 <div class="video-meta">
 
                     <span>▶ 0 views</span>
@@ -1454,7 +1601,6 @@ a{color:inherit;text-decoration:none}
 
                 </div>
 
-
                 <div class="video-tags">
 
                     <span>AI</span>
@@ -1462,7 +1608,6 @@ a{color:inherit;text-decoration:none}
                     <span>Tutorial</span>
 
                 </div>
-
 
                 <button
                     class="watch-btn"
@@ -1473,7 +1618,6 @@ a{color:inherit;text-decoration:none}
             </div>
 
         </article>
-
 
         <!-- FUTURE VIDEOS -->
 
@@ -1496,7 +1640,6 @@ a{color:inherit;text-decoration:none}
     </div>
 
 </section>
-
 
 <!-- CATEGORIES -->
 
@@ -1522,7 +1665,6 @@ a{color:inherit;text-decoration:none}
 
 </section>
 
-
 <!-- LIVE -->
 
 <section class="section" id="live">
@@ -1530,15 +1672,16 @@ a{color:inherit;text-decoration:none}
     <div class="section-header">
 
         <div>
+
             <h2 class="section-title">Live Now</h2>
 
             <div class="section-subtitle">
                 Live streaming infrastructure will be connected here.
             </div>
+
         </div>
 
     </div>
-
 
     <div class="info-grid">
 
@@ -1553,7 +1696,6 @@ a{color:inherit;text-decoration:none}
 
         </div>
 
-
         <div class="info-card">
 
             <h3>Creator Dashboard</h3>
@@ -1564,7 +1706,6 @@ a{color:inherit;text-decoration:none}
             </p>
 
         </div>
-
 
         <div class="info-card">
 
@@ -1581,7 +1722,6 @@ a{color:inherit;text-decoration:none}
 
 </section>
 
-
 <!-- CREATORS -->
 
 <section class="section" id="creators">
@@ -1589,15 +1729,16 @@ a{color:inherit;text-decoration:none}
     <div class="section-header">
 
         <div>
+
             <h2 class="section-title">Top Creators</h2>
 
             <div class="section-subtitle">
                 Creator profiles and monetization will connect here.
             </div>
+
         </div>
 
     </div>
-
 
     <div class="info-grid">
 
@@ -1612,7 +1753,6 @@ a{color:inherit;text-decoration:none}
 
         </div>
 
-
         <div class="info-card">
 
             <h3>Creator Dashboard</h3>
@@ -1623,7 +1763,6 @@ a{color:inherit;text-decoration:none}
             </p>
 
         </div>
-
 
         <div class="info-card">
 
@@ -1639,7 +1778,6 @@ a{color:inherit;text-decoration:none}
     </div>
 
 </section>
-
 
 <!-- SEARCH -->
 
@@ -1662,7 +1800,6 @@ a{color:inherit;text-decoration:none}
     </div>
 
 </section>
-
 
 <!-- ACCOUNT -->
 
@@ -1697,11 +1834,9 @@ a{color:inherit;text-decoration:none}
 
 </main>
 
-
 <footer class="footer">
     XKiss — Premium Video Platform · 18+
 </footer>
-
 
 <!-- VIDEO MODAL -->
 
@@ -1723,7 +1858,6 @@ a{color:inherit;text-decoration:none}
 
         </div>
 
-
         <div class="video-area paused waiting" id="videoArea">
 
             <video
@@ -1732,11 +1866,9 @@ a{color:inherit;text-decoration:none}
                 preload="metadata">
             </video>
 
-
             <div class="loading" id="loading">
                 Loading video...
             </div>
-
 
             <div class="big-play">
 
@@ -1748,18 +1880,21 @@ a{color:inherit;text-decoration:none}
 
             </div>
 
-
             <div class="error-message" id="videoError">
 
                 <div>
-                    <strong>Video could not be loaded.</strong>
+
+                    <strong>
+                        Video could not be loaded.
+                    </strong>
+
                     Please check the video source.
+
                 </div>
 
             </div>
 
         </div>
-
 
         <!-- CONTROLS -->
 
@@ -1776,7 +1911,6 @@ a{color:inherit;text-decoration:none}
 
             </div>
 
-
             <div class="controls-row">
 
                 <button
@@ -1786,11 +1920,11 @@ a{color:inherit;text-decoration:none}
                     ▶
                 </button>
 
-
-                <div class="time" id="timeDisplay">
+                <div
+                    class="time"
+                    id="timeDisplay">
                     0:00 / 0:00
                 </div>
-
 
                 <div class="volume-wrap">
 
@@ -1812,7 +1946,6 @@ a{color:inherit;text-decoration:none}
 
                 </div>
 
-
                 <div class="quality">
 
                     <button
@@ -1820,7 +1953,6 @@ a{color:inherit;text-decoration:none}
                         onclick="toggleQualityMenu()">
                         HD
                     </button>
-
 
                     <div
                         class="quality-menu"
@@ -1851,6 +1983,7 @@ a{color:inherit;text-decoration:none}
 
                 </div>
 
+                <!-- FULLSCREEN ONLY HERE -->
 
                 <button
                     class="control-btn"
@@ -1863,13 +1996,11 @@ a{color:inherit;text-decoration:none}
 
         </div>
 
-
         <div class="player-note">
             XKiss Player • Quality switching • Volume • Fullscreen
         </div>
 
-
-        <!-- WATCH PAGE DETAILS -->
+        <!-- WATCH DETAILS -->
 
         <section class="watch-details" id="watchDetails">
 
@@ -1892,7 +2023,6 @@ a{color:inherit;text-decoration:none}
                     </div>
 
                 </div>
-
 
                 <div class="watch-actions">
 
@@ -1924,7 +2054,6 @@ a{color:inherit;text-decoration:none}
 
             </div>
 
-
             <div class="watch-about">
 
                 <strong>About</strong><br>
@@ -1935,7 +2064,6 @@ a{color:inherit;text-decoration:none}
 
             </div>
 
-
             <div class="watch-tags">
 
                 <span>AI</span>
@@ -1944,7 +2072,6 @@ a{color:inherit;text-decoration:none}
                 <span>Education</span>
 
             </div>
-
 
             <div class="related-row">
 
@@ -1958,7 +2085,6 @@ a{color:inherit;text-decoration:none}
 
                 </div>
 
-
                 <div class="related-card">
 
                     <strong>Creator: Ali Sr.M</strong>
@@ -1968,7 +2094,6 @@ a{color:inherit;text-decoration:none}
                     </span>
 
                 </div>
-
 
                 <div class="related-card">
 
@@ -1988,6 +2113,73 @@ a{color:inherit;text-decoration:none}
 
 </div>
 
+<!-- SCREENSHOT MODAL -->
+
+<div
+    class="screenshot-modal"
+    id="screenshotModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="screenshotTitle">
+
+    <div class="screenshot-box">
+
+        <button
+            class="screenshot-close"
+            aria-label="Close screenshot"
+            onclick="closeScreenshot()">
+            ×
+        </button>
+
+        <img
+            id="screenshotImage"
+            class="screenshot-image"
+            src="XKiss-screenshot.jpg"
+            alt="XKiss screenshot"
+            onerror="showScreenshotPlaceholder()">
+
+        <div
+            id="screenshotPlaceholder"
+            class="screenshot-placeholder"
+            style="display:none">
+
+            <div>
+
+                <strong>Screenshot not found</strong>
+
+                <span>
+                    Place <b>XKiss-screenshot.jpg</b>
+                    next to index.html in your GitHub Pages folder.
+                </span>
+
+            </div>
+
+        </div>
+
+        <div
+            class="screenshot-caption"
+            id="screenshotTitle">
+            Ali Excel — Screenshot
+        </div>
+
+        <div class="screenshot-actions">
+
+            <button
+                class="primary"
+                onclick="closeScreenshot();watchVideo(currentScreenshotTitle)">
+                ▶ Play Video
+            </button>
+
+            <button
+                onclick="closeScreenshot()">
+                Close
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 
 <script>
 
@@ -2005,6 +2197,12 @@ const VIDEO_SOURCES = {
         "https://aligassrm.github.io/XKiss/20260923_234200-3.mp4"
 
 };
+
+
+/* SCREENSHOT */
+
+const SCREENSHOT_URL =
+    "XKiss-screenshot.jpg";
 
 
 /* ELEMENTS */
@@ -2060,9 +2258,25 @@ const videoError =
 const fullscreenButton =
     document.getElementById("fullscreenButton");
 
+const screenshotModal =
+    document.getElementById("screenshotModal");
+
+const screenshotImage =
+    document.getElementById("screenshotImage");
+
+const screenshotPlaceholder =
+    document.getElementById("screenshotPlaceholder");
+
+const screenshotTitle =
+    document.getElementById("screenshotTitle");
+
 
 let currentQuality = "720";
+
 let pendingPlay = false;
+
+let currentScreenshotTitle =
+    "Ali Excel";
 
 
 /* NAVIGATION */
@@ -2083,6 +2297,79 @@ function scrollToSection(id){
 }
 
 
+/* OPEN SCREENSHOT */
+
+function openScreenshot(title){
+
+    currentScreenshotTitle =
+        title || "Ali Excel";
+
+    screenshotTitle.textContent =
+        currentScreenshotTitle +
+        " — Screenshot";
+
+    screenshotImage.src =
+        SCREENSHOT_URL;
+
+    screenshotImage.style.display =
+        "block";
+
+    screenshotPlaceholder.style.display =
+        "none";
+
+    screenshotModal.classList.add("show");
+
+    document.body.classList.add("locked");
+
+}
+
+
+/* SCREENSHOT FALLBACK */
+
+function showScreenshotPlaceholder(){
+
+    screenshotImage.style.display =
+        "none";
+
+    screenshotPlaceholder.style.display =
+        "flex";
+
+}
+
+
+/* CLOSE SCREENSHOT */
+
+function closeScreenshot(){
+
+    screenshotModal.classList.remove("show");
+
+    if(!modal.classList.contains("show")){
+
+        document.body.classList.remove("locked");
+
+    }
+
+}
+
+
+/* KEYBOARD FOR SQUARE */
+
+function handleThumbKey(event,title){
+
+    if(
+        event.key === "Enter" ||
+        event.key === " "
+    ){
+
+        event.preventDefault();
+
+        openScreenshot(title);
+
+    }
+
+}
+
+
 /* OPEN VIDEO */
 
 function watchVideo(title){
@@ -2091,7 +2378,10 @@ function watchVideo(title){
         title + " — Video Player";
 
     if(watchHeading){
-        watchHeading.textContent = title;
+
+        watchHeading.textContent =
+            title;
+
     }
 
     modal.classList.add("show");
@@ -2100,21 +2390,28 @@ function watchVideo(title){
 
     resetPlayerUI();
 
-    loadVideoSource("720",false);
-
     /*
-        Fullscreen is NOT opened automatically.
-        The user must press the fullscreen button.
+        IMPORTANT:
+        NO FULLSCREEN HERE.
+        Video opens normally.
+        Fullscreen is ONLY through
+        the explicit ⛶ button.
     */
+
+    loadVideoSource("720",false);
 
 }
 
 
 /* LOAD VIDEO */
 
-function loadVideoSource(quality,shouldPlay){
+function loadVideoSource(
+    quality,
+    shouldPlay
+){
 
-    currentQuality = quality;
+    currentQuality =
+        quality;
 
     const source =
         VIDEO_SOURCES[quality];
@@ -2139,9 +2436,12 @@ function loadVideoSource(quality,shouldPlay){
     video.pause();
 
     video.removeAttribute("src");
+
     video.load();
 
-    video.src = source;
+    video.src =
+        source;
+
     video.load();
 
     video.addEventListener(
@@ -2164,9 +2464,12 @@ function loadVideoSource(quality,shouldPlay){
 
             loading.classList.add("hidden");
 
-            videoArea.classList.remove("waiting");
+            videoArea.classList.remove(
+                "waiting"
+            );
 
             updateTime();
+
             updateProgress();
 
             if(shouldPlay){
@@ -2189,37 +2492,52 @@ function resetPlayerUI(){
     video.pause();
 
     video.removeAttribute("src");
+
     video.load();
 
     video.currentTime = 0;
 
     video.volume = 1;
+
     video.muted = false;
 
     volumeControl.value = 1;
 
-    playButton.textContent = "▶";
+    playButton.textContent =
+        "▶";
 
-    muteButton.textContent = "🔊";
+    muteButton.textContent =
+        "🔊";
 
-    fullscreenButton.textContent = "⛶";
+    fullscreenButton.textContent =
+        "⛶";
 
-    progressBar.style.width = "0%";
+    progressBar.style.width =
+        "0%";
 
     timeDisplay.textContent =
         "0:00 / 0:00";
 
-    loading.classList.remove("hidden");
+    loading.classList.remove(
+        "hidden"
+    );
 
-    videoError.classList.remove("show");
+    videoError.classList.remove(
+        "show"
+    );
 
-    videoArea.classList.remove("playing");
+    videoArea.classList.remove(
+        "playing"
+    );
 
-    videoArea.classList.add("paused");
+    videoArea.classList.add(
+        "paused",
+        "waiting"
+    );
 
-    videoArea.classList.add("waiting");
-
-    qualityMenu.classList.remove("show");
+    qualityMenu.classList.remove(
+        "show"
+    );
 
     pendingPlay = false;
 
@@ -2293,16 +2611,21 @@ video.addEventListener(
     "play",
     function(){
 
-        playButton.textContent = "❚❚";
+        playButton.textContent =
+            "❚❚";
 
         videoArea.classList.remove(
             "paused",
             "waiting"
         );
 
-        videoArea.classList.add("playing");
+        videoArea.classList.add(
+            "playing"
+        );
 
-        loading.classList.add("hidden");
+        loading.classList.add(
+            "hidden"
+        );
 
         pendingPlay = false;
 
@@ -2314,11 +2637,16 @@ video.addEventListener(
     "pause",
     function(){
 
-        playButton.textContent = "▶";
+        playButton.textContent =
+            "▶";
 
-        videoArea.classList.remove("playing");
+        videoArea.classList.remove(
+            "playing"
+        );
 
-        videoArea.classList.add("paused");
+        videoArea.classList.add(
+            "paused"
+        );
 
     }
 );
@@ -2328,9 +2656,13 @@ video.addEventListener(
     "waiting",
     function(){
 
-        loading.classList.remove("hidden");
+        loading.classList.remove(
+            "hidden"
+        );
 
-        videoArea.classList.add("waiting");
+        videoArea.classList.add(
+            "waiting"
+        );
 
     }
 );
@@ -2340,14 +2672,18 @@ video.addEventListener(
     "playing",
     function(){
 
-        loading.classList.add("hidden");
+        loading.classList.add(
+            "hidden"
+        );
 
         videoArea.classList.remove(
             "waiting",
             "paused"
         );
 
-        videoArea.classList.add("playing");
+        videoArea.classList.add(
+            "playing"
+        );
 
     }
 );
@@ -2357,13 +2693,18 @@ video.addEventListener(
     "loadeddata",
     function(){
 
-        loading.classList.add("hidden");
+        loading.classList.add(
+            "hidden"
+        );
 
-        videoArea.classList.remove("waiting");
+        videoArea.classList.remove(
+            "waiting"
+        );
 
         hideVideoError();
 
         updateTime();
+
         updateProgress();
 
     }
@@ -2374,9 +2715,13 @@ video.addEventListener(
     "canplay",
     function(){
 
-        loading.classList.add("hidden");
+        loading.classList.add(
+            "hidden"
+        );
 
-        videoArea.classList.remove("waiting");
+        videoArea.classList.remove(
+            "waiting"
+        );
 
         if(pendingPlay){
 
@@ -2412,11 +2757,16 @@ video.addEventListener(
     "ended",
     function(){
 
-        playButton.textContent = "▶";
+        playButton.textContent =
+            "▶";
 
-        videoArea.classList.remove("playing");
+        videoArea.classList.remove(
+            "playing"
+        );
 
-        videoArea.classList.add("paused");
+        videoArea.classList.add(
+            "paused"
+        );
 
     }
 );
@@ -2426,7 +2776,9 @@ video.addEventListener(
     "error",
     function(){
 
-        loading.classList.add("hidden");
+        loading.classList.add(
+            "hidden"
+        );
 
         showVideoError();
 
@@ -2478,7 +2830,8 @@ function updateProgress(){
         video.duration <= 0
     ){
 
-        progressBar.style.width = "0%";
+        progressBar.style.width =
+            "0%";
 
         return;
 
@@ -2539,13 +2892,15 @@ volumeControl.addEventListener(
 
             video.muted = true;
 
-            muteButton.textContent = "🔇";
+            muteButton.textContent =
+                "🔇";
 
         }else{
 
             video.muted = false;
 
-            muteButton.textContent = "🔊";
+            muteButton.textContent =
+                "🔊";
 
         }
 
@@ -2570,7 +2925,9 @@ function toggleMute(){
 
 function toggleQualityMenu(){
 
-    qualityMenu.classList.toggle("show");
+    qualityMenu.classList.toggle(
+        "show"
+    );
 
 }
 
@@ -2591,10 +2948,13 @@ function changeQuality(quality){
         ? video.currentTime
         : 0;
 
-    currentQuality = quality;
+    currentQuality =
+        quality;
 
     document
-        .querySelectorAll(".quality-option")
+        .querySelectorAll(
+            ".quality-option"
+        )
         .forEach(function(option){
 
             option.classList.toggle(
@@ -2604,11 +2964,15 @@ function changeQuality(quality){
 
         });
 
-    qualityMenu.classList.remove("show");
+    qualityMenu.classList.remove(
+        "show"
+    );
 
     video.pause();
 
-    loading.classList.remove("hidden");
+    loading.classList.remove(
+        "hidden"
+    );
 
     video.removeAttribute("src");
 
@@ -2640,9 +3004,13 @@ function changeQuality(quality){
 
             }catch(error){}
 
-            loading.classList.add("hidden");
+            loading.classList.add(
+                "hidden"
+            );
 
-            videoArea.classList.remove("waiting");
+            videoArea.classList.remove(
+                "waiting"
+            );
 
             updateTime();
 
@@ -2662,6 +3030,10 @@ function changeQuality(quality){
 
 
 /* FULLSCREEN */
+/*
+   This function is NEVER called by watchVideo().
+   It is called ONLY by the ⛶ button.
+*/
 
 function restoreNormalScreen(){
 
@@ -2673,21 +3045,30 @@ function restoreNormalScreen(){
         "locked"
     );
 
-    document.body.style.overflow = "";
-    document.documentElement.style.overflow = "";
+    document.body.style.overflow =
+        "";
 
-    fullscreenButton.textContent = "⛶";
+    document.documentElement.style.overflow =
+        "";
+
+    fullscreenButton.textContent =
+        "⛶";
 
     void document.body.offsetHeight;
 
-    window.requestAnimationFrame(function(){
+    window.requestAnimationFrame(
+        function(){
 
-        document.body.style.overflow = "";
-        document.documentElement.style.overflow = "";
+            document.body.style.overflow =
+                "";
 
-        void document.documentElement.offsetHeight;
+            document.documentElement.style.overflow =
+                "";
 
-    });
+            void document.documentElement.offsetHeight;
+
+        }
+    );
 
 }
 
@@ -2713,7 +3094,8 @@ async function enterFullscreen(){
                 navigationUI:"hide"
             });
 
-            fullscreenButton.textContent = "✕";
+            fullscreenButton.textContent =
+                "✕";
 
             return;
 
@@ -2732,7 +3114,8 @@ async function enterFullscreen(){
         "mobile-fullscreen"
     );
 
-    fullscreenButton.textContent = "✕";
+    fullscreenButton.textContent =
+        "✕";
 
 }
 
@@ -2787,7 +3170,8 @@ document.addEventListener(
 
         if(document.fullscreenElement){
 
-            fullscreenButton.textContent = "✕";
+            fullscreenButton.textContent =
+                "✕";
 
             document.body.classList.add(
                 "locked"
@@ -2797,17 +3181,15 @@ document.addEventListener(
 
             restoreNormalScreen();
 
-            setTimeout(function(){
+            setTimeout(
+                restoreNormalScreen,
+                100
+            );
 
-                restoreNormalScreen();
-
-            },100);
-
-            setTimeout(function(){
-
-                restoreNormalScreen();
-
-            },350);
+            setTimeout(
+                restoreNormalScreen,
+                350
+            );
 
         }
 
@@ -2821,11 +3203,22 @@ window.addEventListener(
 
         if(!document.fullscreenElement){
 
-            setTimeout(function(){
+            setTimeout(
+                function(){
 
-                restoreNormalScreen();
+                    if(
+                        !playerBox.classList.contains(
+                            "mobile-fullscreen"
+                        )
+                    ){
 
-            },100);
+                        restoreNormalScreen();
+
+                    }
+
+                },
+                100
+            );
 
         }
 
@@ -2833,7 +3226,7 @@ window.addEventListener(
 );
 
 
-/* CLOSE */
+/* CLOSE VIDEO */
 
 function closeVideoViewer(){
 
@@ -2853,16 +3246,26 @@ function closeVideoViewer(){
 
     video.load();
 
-    modal.classList.remove("show");
+    modal.classList.remove(
+        "show"
+    );
 
-    qualityMenu.classList.remove("show");
+    qualityMenu.classList.remove(
+        "show"
+    );
 
-    document.body.classList.remove("locked");
+    document.body.classList.remove(
+        "locked"
+    );
 
-    document.body.style.overflow = "";
-    document.documentElement.style.overflow = "";
+    document.body.style.overflow =
+        "";
 
-    fullscreenButton.textContent = "⛶";
+    document.documentElement.style.overflow =
+        "";
+
+    fullscreenButton.textContent =
+        "⛶";
 
 }
 
@@ -2883,43 +3286,73 @@ modal.addEventListener(
 );
 
 
+screenshotModal.addEventListener(
+    "click",
+    function(event){
+
+        if(event.target === screenshotModal){
+
+            closeScreenshot();
+
+        }
+
+    }
+);
+
+
 /* ESCAPE + SPACE */
 
 document.addEventListener(
     "keydown",
     function(event){
 
-        if(
-            event.key === "Escape" &&
-            modal.classList.contains("show")
-        ){
+        if(event.key === "Escape"){
 
-            if(document.fullscreenElement){
+            if(
+                screenshotModal.classList.contains(
+                    "show"
+                )
+            ){
 
-                document
-                    .exitFullscreen()
-                    .catch(function(){});
+                closeScreenshot();
 
                 return;
 
             }
 
             if(
-                playerBox.classList.contains(
-                    "mobile-fullscreen"
+                modal.classList.contains(
+                    "show"
                 )
             ){
 
-                restoreNormalScreen();
+                if(document.fullscreenElement){
 
-                return;
+                    document
+                        .exitFullscreen()
+                        .catch(function(){});
+
+                    return;
+
+                }
+
+                if(
+                    playerBox.classList.contains(
+                        "mobile-fullscreen"
+                    )
+                ){
+
+                    restoreNormalScreen();
+
+                    return;
+
+                }
+
+                closeVideoViewer();
 
             }
 
-            closeVideoViewer();
-
         }
-
 
         if(
             event.code === "Space" &&
@@ -2941,14 +3374,18 @@ document.addEventListener(
 
 function showVideoError(){
 
-    videoError.classList.add("show");
+    videoError.classList.add(
+        "show"
+    );
 
 }
 
 
 function hideVideoError(){
 
-    videoError.classList.remove("show");
+    videoError.classList.remove(
+        "show"
+    );
 
 }
 
@@ -2962,21 +3399,25 @@ function showMessage(message){
 }
 
 
-/* CLOSE QUALITY */
+/* CLOSE QUALITY MENU */
 
 document.addEventListener(
     "click",
     function(event){
 
         const quality =
-            document.querySelector(".quality");
+            document.querySelector(
+                ".quality"
+            );
 
         if(
             quality &&
             !quality.contains(event.target)
         ){
 
-            qualityMenu.classList.remove("show");
+            qualityMenu.classList.remove(
+                "show"
+            );
 
         }
 
@@ -2998,11 +3439,15 @@ document
                     .querySelectorAll(".chip")
                     .forEach(function(item){
 
-                        item.classList.remove("active");
+                        item.classList.remove(
+                            "active"
+                        );
 
                     });
 
-                chip.classList.add("active");
+                chip.classList.add(
+                    "active"
+                );
 
             }
         );
