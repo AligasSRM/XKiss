@@ -157,7 +157,7 @@
       background: #1d1d27;
     }
 
-    /* QUICK ACCESS */
+    /* GENERAL SECTIONS */
     .section {
       padding: 55px 0;
     }
@@ -175,6 +175,7 @@
       color: #8f8f9d;
     }
 
+    /* QUICK ACCESS */
     .quick-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -206,7 +207,7 @@
       font-size: 14px;
     }
 
-    /* PLATFORM SECTIONS */
+    /* GENERAL CONTENT CARDS */
     .content-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -250,6 +251,133 @@
       border: 1px solid #30303a;
       color: #9d9daa;
       font-size: 12px;
+    }
+
+    /* =========================
+       VIDEOS SYSTEM
+       ========================= */
+
+    .video-section {
+      padding: 55px 0;
+    }
+
+    .video-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+
+    .video-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .video-tab {
+      border: 1px solid #30303a;
+      background: #111118;
+      color: #ffffff;
+      padding: 9px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .video-tab.active,
+    .video-tab:hover {
+      background: #ffffff;
+      color: #09090d;
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .video-card {
+      overflow: hidden;
+      border: 1px solid #272731;
+      border-radius: 14px;
+      background: #101017;
+      transition: 0.2s;
+    }
+
+    .video-card:hover {
+      transform: translateY(-4px);
+      border-color: #50505d;
+    }
+
+    .video-thumb {
+      position: relative;
+      height: 190px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        linear-gradient(135deg, #252532, #101017);
+      color: #777784;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .video-duration {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      padding: 4px 7px;
+      border-radius: 5px;
+      background: rgba(0, 0, 0, 0.85);
+      color: #ffffff;
+      font-size: 12px;
+    }
+
+    .video-info {
+      padding: 16px;
+    }
+
+    .video-info h3 {
+      font-size: 17px;
+      margin-bottom: 7px;
+    }
+
+    .video-creator {
+      color: #aaaab5;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .video-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: #777784;
+      font-size: 12px;
+    }
+
+    .video-watch {
+      width: 100%;
+      margin-top: 14px;
+      padding: 10px;
+      border: 1px solid #30303a;
+      border-radius: 8px;
+      background: #17171f;
+      color: #ffffff;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .video-watch:hover {
+      background: #ffffff;
+      color: #09090d;
+    }
+
+    .video-message {
+      margin-top: 15px;
+      color: #888895;
+      font-size: 13px;
     }
 
     /* SEARCH */
@@ -315,6 +443,7 @@
 
     /* MOBILE */
     @media (max-width: 800px) {
+
       .header-inner {
         padding: 14px 0;
         align-items: flex-start;
@@ -339,12 +468,17 @@
 
       .quick-grid,
       .content-grid,
-      .admin-grid {
+      .admin-grid,
+      .video-grid {
         grid-template-columns: 1fr;
       }
 
       .search-box {
         flex-direction: column;
+      }
+
+      .video-thumb {
+        height: 210px;
       }
     }
   </style>
@@ -367,4 +501,202 @@
         <button onclick="goTo('categories')">Categories</button>
         <button onclick="goTo('search')">Search</button>
         <button onclick="goTo('account')">Login</button>
-     
+      </nav>
+
+    </div>
+  </header>
+
+
+  <!-- HOME -->
+  <main id="home">
+
+    <section class="hero">
+      <div class="container">
+
+        <div class="badge">18+ ADULTS ONLY</div>
+
+        <h1>Welcome to XKiss</h1>
+
+        <p>
+          A private adult-content video platform designed with
+          scalability, privacy and security in mind.
+        </p>
+
+        <div class="hero-actions">
+
+          <button class="primary-btn" onclick="goTo('videos')">
+            Explore Videos
+          </button>
+
+          <button class="secondary-btn" onclick="goTo('creators')">
+            Discover Creators
+          </button>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- QUICK ACCESS -->
+    <section class="section">
+      <div class="container">
+
+        <div class="section-header">
+          <h2>Quick Access</h2>
+          <p>Move through the main XKiss platform areas.</p>
+        </div>
+
+        <div class="quick-grid">
+
+          <div class="quick-card" onclick="goTo('videos')">
+            <h3>Videos</h3>
+            <p>Browse the video platform and discover content.</p>
+          </div>
+
+          <div class="quick-card" onclick="goTo('live')">
+            <h3>Live</h3>
+            <p>Live streaming area for verified creators.</p>
+          </div>
+
+          <div class="quick-card" onclick="goTo('creators')">
+            <h3>Creators</h3>
+            <p>Discover creators and their profiles.</p>
+          </div>
+
+          <div class="quick-card" onclick="goTo('categories')">
+            <h3>Categories</h3>
+            <p>Organize and explore content by category.</p>
+          </div>
+
+          <div class="quick-card" onclick="goTo('search')">
+            <h3>Search</h3>
+            <p>Search the platform for videos and creators.</p>
+          </div>
+
+          <div class="quick-card" onclick="goTo('account')">
+            <h3>My Account</h3>
+            <p>User account, favorites and personal settings.</p>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- VIDEOS -->
+    <section class="video-section" id="videos">
+
+      <div class="container">
+
+        <div class="section-header">
+          <h2>Videos</h2>
+          <p>Discover the latest and popular videos on XKiss.</p>
+        </div>
+
+
+        <div class="video-toolbar">
+
+          <div class="video-tabs">
+            <button
+              class="video-tab active"
+              onclick="showVideoMessage('Latest Videos selected')">
+              Latest
+            </button>
+
+            <button
+              class="video-tab"
+              onclick="showVideoMessage('Popular Videos selected')">
+              Popular
+            </button>
+
+            <button
+              class="video-tab"
+              onclick="showVideoMessage('New Creators selected')">
+              New Creators
+            </button>
+          </div>
+
+        </div>
+
+
+        <div class="video-grid">
+
+          <!-- VIDEO 1 -->
+          <article class="video-card">
+
+            <div class="video-thumb">
+              VIDEO THUMBNAIL
+              <span class="video-duration">08:24</span>
+            </div>
+
+            <div class="video-info">
+
+              <h3>Featured Video One</h3>
+
+              <div class="video-creator">
+                Creator One
+              </div>
+
+              <div class="video-meta">
+                <span>12.4K views</span>
+                <span>Today</span>
+              </div>
+
+              <button
+                class="video-watch"
+                onclick="watchVideo('Featured Video One')">
+                Watch
+              </button>
+
+            </div>
+
+          </article>
+
+
+          <!-- VIDEO 2 -->
+          <article class="video-card">
+
+            <div class="video-thumb">
+              VIDEO THUMBNAIL
+              <span class="video-duration">12:41</span>
+            </div>
+
+            <div class="video-info">
+
+              <h3>Featured Video Two</h3>
+
+              <div class="video-creator">
+                Creator Two
+              </div>
+
+              <div class="video-meta">
+                <span>8.7K views</span>
+                <span>Today</span>
+              </div>
+
+              <button
+                class="video-watch"
+                onclick="watchVideo('Featured Video Two')">
+                Watch
+              </button>
+
+            </div>
+
+          </article>
+
+
+          <!-- VIDEO 3 -->
+          <article class="video-card">
+
+            <div class="video-thumb">
+              VIDEO THUMBNAIL
+              <span class="video-duration">06:18</span>
+            </div>
+
+            <div class="video-info">
+
+              <h3>Featured Video Three</h3>
+
+              <div class="video-creator
