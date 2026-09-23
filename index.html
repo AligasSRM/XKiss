@@ -2664,11 +2664,42 @@ function changeQuality(quality){
 
 /* FULLSCREEN */
 
+function restoreNormalScreen(){
+
+    playerBox.classList.remove(
+        "mobile-fullscreen"
+    );
+
+    document.body.classList.remove(
+        "locked"
+    );
+
+    document.body.style.overflow = "";
+    document.documentElement.style.overflow = "";
+
+    fullscreenButton.textContent = "⛶";
+
+    void document.body.offsetHeight;
+
+    window.requestAnimationFrame(function(){
+
+        document.body.style.overflow = "";
+        document.documentElement.style.overflow = "";
+
+        void document.documentElement.offsetHeight;
+
+    });
+
+}
+
+
 async function enterFullscreen(){
 
     if(
         document.fullscreenElement ||
-        playerBox.classList.contains("mobile-fullscreen")
+        playerBox.classList.contains(
+            "mobile-fullscreen"
+        )
     ){
 
         return;
@@ -2679,13 +2710,22 @@ async function enterFullscreen(){
 
         try{
 
-            await playerBox.requestFullscreen();
+            await playerBox.requestFullscreen({
+                navigationUI:"hide"
+            });
 
             fullscreenButton.textContent = "✕";
 
             return;
 
-        }catch(error){}
+        }catch(error){
+
+            console.log(
+                "Native fullscreen unavailable:",
+                error
+            );
+
+        }
 
     }
 
@@ -2722,17 +2762,22 @@ async function toggleFullscreen(){
 
             await document.exitFullscreen();
 
-        }catch(error){}
+        }catch(error){
+
+            console.log(
+                "Exit fullscreen error:",
+                error
+            );
+
+            restoreNormalScreen();
+
+        }
 
         return;
 
     }
 
-    playerBox.classList.remove(
-        "mobile-fullscreen"
-    );
-
-    fullscreenButton.textContent = "⛶";
+    restoreNormalScreen();
 
 }
 
@@ -2745,13 +2790,43 @@ document.addEventListener(
 
             fullscreenButton.textContent = "✕";
 
-        }else{
-
-            playerBox.classList.remove(
-                "mobile-fullscreen"
+            document.body.classList.add(
+                "locked"
             );
 
-            fullscreenButton.textContent = "⛶";
+        }else{
+
+            restoreNormalScreen();
+
+            setTimeout(function(){
+
+                restoreNormalScreen();
+
+            },100);
+
+            setTimeout(function(){
+
+                restoreNormalScreen();
+
+            },350);
+
+        }
+
+    }
+);
+
+
+window.addEventListener(
+    "resize",
+    function(){
+
+        if(!document.fullscreenElement){
+
+            setTimeout(function(){
+
+                restoreNormalScreen();
+
+            },100);
 
         }
 
@@ -2771,9 +2846,7 @@ function closeVideoViewer(){
 
     }
 
-    playerBox.classList.remove(
-        "mobile-fullscreen"
-    );
+    restoreNormalScreen();
 
     video.pause();
 
@@ -2786,6 +2859,9 @@ function closeVideoViewer(){
     qualityMenu.classList.remove("show");
 
     document.body.classList.remove("locked");
+
+    document.body.style.overflow = "";
+    document.documentElement.style.overflow = "";
 
     fullscreenButton.textContent = "⛶";
 
@@ -2821,7 +2897,9 @@ document.addEventListener(
 
             if(document.fullscreenElement){
 
-                document.exitFullscreen();
+                document
+                    .exitFullscreen()
+                    .catch(function(){});
 
                 return;
 
@@ -2833,11 +2911,7 @@ document.addEventListener(
                 )
             ){
 
-                playerBox.classList.remove(
-                    "mobile-fullscreen"
-                );
-
-                fullscreenButton.textContent = "⛶";
+                restoreNormalScreen();
 
                 return;
 
