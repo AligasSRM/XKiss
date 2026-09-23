@@ -3,228 +3,348 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <meta name="description" content="XKiss — 18+ adult video platform">
   <title>XKiss</title>
 
   <style>
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
-      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
       background: #09090d;
       color: #ffffff;
-      font-family: Arial, sans-serif;
+      line-height: 1.5;
     }
 
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .container {
+      width: min(1180px, 92%);
+      margin: 0 auto;
+    }
+
+    /* HEADER */
     header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(9, 9, 13, 0.96);
+      border-bottom: 1px solid #24242d;
+      backdrop-filter: blur(12px);
+    }
+
+    .header-inner {
       min-height: 70px;
-      background: #14141b;
-      border-bottom: 1px solid #292932;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 15px 25px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      gap: 20px;
     }
 
     .logo {
       font-size: 30px;
-      font-weight: 800;
-      letter-spacing: 1px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      white-space: nowrap;
     }
 
-    nav {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    nav button {
-      background: #22222b;
-      color: #ffffff;
-      border: 1px solid #363640;
-      padding: 10px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    nav button:hover {
-      background: #30303a;
-    }
-
-    .login-button {
-      background: #ffffff;
-      color: #111111;
-      font-weight: bold;
-    }
-
-    .login-button:hover {
-      background: #dddddd;
-    }
-
-    .hero {
-      min-height: 420px;
+    .nav {
       display: flex;
       align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 50px 20px;
-
-      background:
-        radial-gradient(
-          circle at center,
-          #292936 0%,
-          #111118 45%,
-          #09090d 80%
-        );
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
-    .hero-content {
-      max-width: 750px;
-    }
-
-    .hero h1 {
-      font-size: 58px;
-      margin: 0 0 15px;
-    }
-
-    .hero p {
-      color: #b8b8c2;
-      font-size: 19px;
-      line-height: 1.6;
-      margin: 0;
-    }
-
-    .age {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 8px 18px;
-      border: 1px solid #444450;
-      border-radius: 20px;
-      color: #dddddd;
-      font-size: 14px;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: auto;
-      padding: 40px 20px;
-    }
-
-    .section-title {
-      font-size: 26px;
-      margin-bottom: 20px;
-    }
-
-    .categories {
-      display: grid;
-      grid-template-columns: repeat(
-        auto-fit,
-        minmax(160px, 1fr)
-      );
-      gap: 15px;
-    }
-
-    .category {
-      background: #15151c;
-      border: 1px solid #292932;
-      border-radius: 14px;
-      padding: 25px 15px;
-      text-align: center;
+    .nav button {
+      border: 1px solid #30303a;
+      background: #111118;
+      color: #ffffff;
+      padding: 9px 13px;
+      border-radius: 9px;
       cursor: pointer;
       transition: 0.2s;
     }
 
-    .category:hover {
+    .nav button:hover {
+      background: #1c1c26;
+      border-color: #555565;
+    }
+
+    /* HERO */
+    .hero {
+      padding: 90px 0 70px;
+      text-align: center;
+      border-bottom: 1px solid #202029;
+      background:
+        radial-gradient(circle at 50% 20%, #20202c 0, #09090d 55%);
+    }
+
+    .badge {
+      display: inline-block;
+      margin-bottom: 22px;
+      padding: 7px 13px;
+      border: 1px solid #454552;
+      border-radius: 999px;
+      color: #d8d8df;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .hero h1 {
+      font-size: clamp(42px, 8vw, 78px);
+      line-height: 1;
+      margin-bottom: 20px;
+      letter-spacing: -3px;
+    }
+
+    .hero p {
+      max-width: 720px;
+      margin: 0 auto 30px;
+      color: #a8a8b5;
+      font-size: 18px;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      border-radius: 10px;
+      padding: 13px 20px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: 0.2s;
+    }
+
+    .primary-btn {
+      border: 1px solid #ffffff;
+      background: #ffffff;
+      color: #09090d;
+    }
+
+    .primary-btn:hover {
+      opacity: 0.88;
+    }
+
+    .secondary-btn {
+      border: 1px solid #3b3b48;
+      background: #14141c;
+      color: #ffffff;
+    }
+
+    .secondary-btn:hover {
+      background: #1d1d27;
+    }
+
+    /* QUICK ACCESS */
+    .section {
+      padding: 55px 0;
+    }
+
+    .section-header {
+      margin-bottom: 25px;
+    }
+
+    .section-header h2 {
+      font-size: 28px;
+      margin-bottom: 6px;
+    }
+
+    .section-header p {
+      color: #8f8f9d;
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .quick-card {
+      border: 1px solid #272731;
+      background: #101017;
+      border-radius: 14px;
+      padding: 24px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .quick-card:hover {
       transform: translateY(-3px);
-      background: #1d1d26;
+      border-color: #50505d;
+      background: #15151d;
     }
 
-    .admin-preview {
-      margin-top: 50px;
-      padding: 25px;
-      border-radius: 16px;
+    .quick-card h3 {
+      margin-bottom: 8px;
+      font-size: 19px;
+    }
+
+    .quick-card p {
+      color: #92929f;
+      font-size: 14px;
+    }
+
+    /* PLATFORM SECTIONS */
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .content-card {
+      min-height: 180px;
+      border: 1px solid #272731;
+      border-radius: 14px;
+      background: #101017;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .content-card .number {
+      color: #70707d;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .content-card h3 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .content-card p {
+      color: #92929f;
+      font-size: 14px;
+    }
+
+    .status {
+      margin-top: 20px;
+      display: inline-block;
+      width: fit-content;
+      padding: 5px 9px;
+      border-radius: 7px;
+      border: 1px solid #30303a;
+      color: #9d9daa;
+      font-size: 12px;
+    }
+
+    /* SEARCH */
+    .search-box {
+      display: flex;
+      gap: 10px;
+      max-width: 700px;
+    }
+
+    .search-box input {
+      flex: 1;
+      min-width: 0;
+      padding: 14px 15px;
+      border-radius: 10px;
+      border: 1px solid #30303a;
       background: #111118;
-      border: 1px dashed #383842;
+      color: #ffffff;
+      outline: none;
     }
 
-    .admin-preview h2 {
-      margin-top: 0;
+    .search-box input:focus {
+      border-color: #666675;
     }
 
-    .admin-preview p {
-      color: #aaaaB5;
-      line-height: 1.6;
-      margin-bottom: 0;
+    .search-message {
+      margin-top: 12px;
+      color: #888895;
+      font-size: 14px;
+    }
+
+    /* ADMIN PREVIEW */
+    .admin-preview {
+      border: 1px solid #292933;
+      background: #0e0e14;
+      border-radius: 16px;
+      padding: 28px;
     }
 
     .admin-grid {
       display: grid;
-      grid-template-columns: repeat(
-        auto-fit,
-        minmax(160px, 1fr)
-      );
+      grid-template-columns: repeat(3, 1fr);
       gap: 12px;
       margin-top: 20px;
     }
 
-    .admin-card {
-      background: #191922;
-      border: 1px solid #292932;
-      border-radius: 12px;
-      padding: 18px;
+    .admin-item {
+      border: 1px solid #25252f;
+      background: #13131a;
+      padding: 17px;
+      border-radius: 10px;
+      color: #b5b5c0;
     }
 
-    .admin-card strong {
-      display: block;
-      font-size: 18px;
-      margin-bottom: 7px;
-    }
-
-    .admin-card span {
-      color: #9999a5;
-      font-size: 14px;
-    }
-
+    /* FOOTER */
     footer {
-      margin-top: 50px;
-      padding: 30px 20px;
+      border-top: 1px solid #22222b;
+      padding: 30px 0;
+      margin-top: 30px;
+      color: #777784;
       text-align: center;
-      border-top: 1px solid #22222a;
-      color: #777783;
+      font-size: 13px;
     }
 
-    @media (max-width: 700px) {
-
-      header {
+    /* MOBILE */
+    @media (max-width: 800px) {
+      .header-inner {
+        padding: 14px 0;
+        align-items: flex-start;
         flex-direction: column;
-        gap: 15px;
       }
 
-      nav {
+      .nav {
         width: 100%;
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 3px;
       }
 
-      nav button {
-        padding: 9px 12px;
+      .nav button {
+        flex: 0 0 auto;
       }
 
       .hero {
-        min-height: 350px;
+        padding: 65px 0 55px;
       }
 
-      .hero h1 {
-        font-size: 40px;
+      .quick-grid,
+      .content-grid,
+      .admin-grid {
+        grid-template-columns: 1fr;
       }
 
-      .hero p {
-        font-size: 16px;
+      .search-box {
+        flex-direction: column;
       }
     }
   </style>
@@ -232,177 +352,19 @@
 
 <body>
 
+  <!-- HEADER -->
   <header>
+    <div class="container header-inner">
 
-    <div class="logo">
-      XKiss
-    </div>
+      <!-- XKiss logo — kept unchanged -->
+      <div class="logo">XKiss</div>
 
-    <nav>
-      <button>Home</button>
-      <button>Categories</button>
-      <button>Search</button>
-
-      <button class="login-button">
-        Login
-      </button>
-    </nav>
-
-  </header>
-
-
-  <section class="hero">
-
-    <div class="hero-content">
-
-      <h1>
-        Welcome to XKiss
-      </h1>
-
-      <p>
-        A private adult-content platform
-        designed with scalability,
-        privacy and security in mind.
-      </p>
-
-      <div class="age">
-        18+ Adults Only
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <main class="container">
-
-    <h2 class="section-title">
-      Platform
-    </h2>
-
-    <div class="categories">
-
-      <div class="category">
-        Latest
-      </div>
-
-      <div class="category">
-        Popular
-      </div>
-
-      <div class="category">
-        Categories
-      </div>
-
-      <div class="category">
-        Creators
-      </div>
-
-      <div class="category">
-        Videos
-      </div>
-
-      <div class="category">
-        Favorites
-      </div>
-
-    </div>
-
-
-    <section class="admin-preview">
-
-      <h2>
-        Super Admin System
-      </h2>
-
-      <p>
-        The administrator will have full control
-        through a secure management system for
-        platform configuration, user management,
-        creator management, content moderation,
-        verification, analytics and security.
-      </p>
-
-
-      <div class="admin-grid">
-
-        <div class="admin-card">
-          <strong>
-            Users
-          </strong>
-
-          <span>
-            User account management
-          </span>
-        </div>
-
-
-        <div class="admin-card">
-          <strong>
-            Creators
-          </strong>
-
-          <span>
-            Creator account management
-          </span>
-        </div>
-
-
-        <div class="admin-card">
-          <strong>
-            Content
-          </strong>
-
-          <span>
-            Content management and moderation
-          </span>
-        </div>
-
-
-        <div class="admin-card">
-          <strong>
-            Verification
-          </strong>
-
-          <span>
-            Account and creator verification
-          </span>
-        </div>
-
-
-        <div class="admin-card">
-          <strong>
-            Analytics
-          </strong>
-
-          <span>
-            Platform statistics and reports
-          </span>
-        </div>
-
-
-        <div class="admin-card">
-          <strong>
-            Security
-          </strong>
-
-          <span>
-            Security and access controls
-          </span>
-        </div>
-
-      </div>
-
-    </section>
-
-  </main>
-
-
-  <footer>
-
-    © 2026 XKiss — All Rights Reserved
-
-  </footer>
-
-</body>
-</html>
+      <nav class="nav">
+        <button onclick="goTo('home')">Home</button>
+        <button onclick="goTo('videos')">Videos</button>
+        <button onclick="goTo('live')">Live</button>
+        <button onclick="goTo('creators')">Creators</button>
+        <button onclick="goTo('categories')">Categories</button>
+        <button onclick="goTo('search')">Search</button>
+        <button onclick="goTo('account')">Login</button>
+     
