@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-
 <title>XKiss — Premium Adult Video Platform</title>
 
 <style>
@@ -11,7 +10,6 @@
     --bg:#08090c;
     --surface:#101218;
     --surface2:#151821;
-    --surface3:#1b1e27;
     --border:rgba(255,255,255,.08);
     --text:#f5f5f7;
     --muted:#9699a6;
@@ -20,15 +18,9 @@
     --shadow:0 20px 70px rgba(0,0,0,.45);
 }
 
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
+*{box-sizing:border-box;margin:0;padding:0}
 
-html{
-    scroll-behavior:smooth;
-}
+html{scroll-behavior:smooth}
 
 body{
     font-family:Arial,Helvetica,sans-serif;
@@ -40,27 +32,13 @@ body{
     line-height:1.5;
 }
 
-body.locked{
-    overflow:hidden;
-}
+body.locked{overflow:hidden}
 
-button,
-input{
-    font-family:inherit;
-}
+button,input{font-family:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
 
-button{
-    cursor:pointer;
-}
-
-a{
-    color:inherit;
-    text-decoration:none;
-}
-
-/* =====================================================
-   HEADER
-===================================================== */
+/* HEADER */
 
 .header{
     position:sticky;
@@ -102,12 +80,9 @@ a{
     -webkit-background-clip:text;
     background-clip:text;
     color:transparent;
-    filter:drop-shadow(0 0 14px rgba(120,100,255,.15));
 }
 
-.logo-kiss{
-    color:#f7f5ff;
-}
+.logo-kiss{color:#f7f5ff}
 
 .nav-links{
     flex:1;
@@ -118,13 +93,7 @@ a{
     font-size:14px;
 }
 
-.nav-links a{
-    transition:.2s;
-}
-
-.nav-links a:hover{
-    color:#fff;
-}
+.nav-links a:hover{color:#fff}
 
 .login{
     border:0;
@@ -133,12 +102,9 @@ a{
     border-radius:10px;
     font-weight:700;
     background:linear-gradient(135deg,var(--pink),var(--purple));
-    box-shadow:0 10px 30px rgba(255,45,117,.17);
 }
 
-/* =====================================================
-   MAIN
-===================================================== */
+/* MAIN */
 
 .container{
     max-width:1320px;
@@ -146,9 +112,7 @@ a{
     padding:38px 24px 80px;
 }
 
-/* =====================================================
-   HERO
-===================================================== */
+/* HERO */
 
 .hero{
     position:relative;
@@ -175,8 +139,6 @@ a{
 
 .badge{
     display:inline-flex;
-    align-items:center;
-    gap:7px;
     margin-bottom:20px;
     padding:7px 13px;
     border-radius:30px;
@@ -220,17 +182,11 @@ a{
     border-radius:11px;
     padding:13px 21px;
     font-weight:700;
-    transition:.2s;
-}
-
-.btn:hover{
-    transform:translateY(-2px);
 }
 
 .primary{
     color:#fff;
     background:linear-gradient(135deg,var(--pink),var(--purple));
-    box-shadow:0 12px 32px rgba(255,45,117,.18);
 }
 
 .secondary{
@@ -239,13 +195,9 @@ a{
     border:1px solid var(--border);
 }
 
-/* =====================================================
-   SECTIONS
-===================================================== */
+/* SECTIONS */
 
-.section{
-    margin-top:54px;
-}
+.section{margin-top:54px}
 
 .section-header{
     display:flex;
@@ -276,9 +228,7 @@ a{
     font-size:13px;
 }
 
-/* =====================================================
-   QUICK ACCESS
-===================================================== */
+/* QUICK */
 
 .quick-grid{
     display:grid;
@@ -301,22 +251,13 @@ a{
         rgba(255,255,255,.015)
     );
     color:#dddfe6;
-    transition:.2s;
 }
 
 .quick-card:hover{
-    transform:translateY(-3px);
     border-color:rgba(191,90,242,.35);
-    background:linear-gradient(
-        145deg,
-        rgba(191,90,242,.09),
-        rgba(255,255,255,.025)
-    );
 }
 
-/* =====================================================
-   FEATURED
-===================================================== */
+/* FEATURED */
 
 .featured{
     display:grid;
@@ -325,9 +266,7 @@ a{
     overflow:hidden;
     border-radius:22px;
     border:1px solid var(--border);
-    background:
-        radial-gradient(circle at 75% 35%,rgba(255,45,117,.14),transparent 32%),
-        linear-gradient(135deg,#171a23,#0e1015);
+    background:linear-gradient(135deg,#171a23,#0e1015);
     box-shadow:var(--shadow);
 }
 
@@ -362,11 +301,7 @@ a{
     min-height:330px;
     background:
         radial-gradient(circle at center,rgba(191,90,242,.28),transparent 28%),
-        linear-gradient(
-            135deg,
-            #222631,
-            #090a0e
-        );
+        linear-gradient(135deg,#222631,#090a0e);
     display:flex;
     align-items:center;
     justify-content:center;
@@ -380,13 +315,13 @@ a{
     background:linear-gradient(135deg,var(--pink),var(--purple));
     color:#fff;
     font-size:31px;
-    padding-left:5px;
-    box-shadow:0 18px 50px rgba(255,45,117,.28);
 }
 
-/* =====================================================
-   VIDEO CARDS
-===================================================== */
+/* VIDEOS */
+
+.video-filters{
+    margin-bottom:18px;
+}
 
 .videos-grid{
     display:grid;
@@ -404,13 +339,10 @@ a{
         rgba(255,255,255,.015)
     );
     box-shadow:0 12px 38px rgba(0,0,0,.18);
-    transition:.25s;
 }
 
 .video-card:hover{
-    transform:translateY(-4px);
-    border-color:rgba(255,255,255,.14);
-    box-shadow:0 22px 55px rgba(0,0,0,.32);
+    transform:translateY(-3px);
 }
 
 .video-thumb{
@@ -421,11 +353,7 @@ a{
     align-items:center;
     justify-content:center;
     background:
-        radial-gradient(
-            circle at 50% 45%,
-            rgba(191,90,242,.17),
-            transparent 35%
-        ),
+        radial-gradient(circle at 50% 45%,rgba(191,90,242,.17),transparent 35%),
         linear-gradient(135deg,#222630,#090a0e);
 }
 
@@ -438,7 +366,6 @@ a{
     background:rgba(0,0,0,.48);
     color:#d7d8df;
     font-size:11px;
-    backdrop-filter:blur(8px);
 }
 
 .thumb-quality{
@@ -452,7 +379,57 @@ a{
     font-size:11px;
 }
 
+.thumb-duration{
+    position:absolute;
+    right:14px;
+    bottom:43px;
+    padding:5px 8px;
+    border-radius:6px;
+    background:rgba(0,0,0,.55);
+    color:#fff;
+    font-size:11px;
+}
+
+.thumb-content{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+}
+
+.thumb-brand-x{
+    font-size:62px;
+    line-height:.9;
+    font-weight:900;
+    background:linear-gradient(
+        90deg,
+        #ff2d55,
+        #ff9500,
+        #ffd60a,
+        #30d158,
+        #0a84ff,
+        #5e5ce6,
+        #bf5af2
+    );
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+}
+
+.thumb-brand-kiss{
+    color:#f7f5ff;
+    font-size:25px;
+}
+
+.thumb-label{
+    margin-top:10px;
+    color:#aeb1bd;
+    font-size:10px;
+    letter-spacing:3px;
+}
+
 .play-circle{
+    position:absolute;
     width:64px;
     height:64px;
     border:0;
@@ -465,35 +442,81 @@ a{
     font-size:24px;
     background:linear-gradient(135deg,var(--pink),var(--purple));
     box-shadow:0 14px 40px rgba(255,45,117,.25);
-    transition:.2s;
 }
 
-.play-circle:hover{
-    transform:scale(1.08);
-}
-
-.video-info{
-    padding:17px;
-}
+.video-info{padding:17px}
 
 .video-title{
     font-weight:800;
-    font-size:16px;
-    margin-bottom:5px;
+    font-size:17px;
+    margin-bottom:12px;
+}
+
+.video-creator-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:14px;
+}
+
+.creator-avatar{
+    width:34px;
+    height:34px;
+    flex:0 0 34px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    color:#fff;
+    font-weight:900;
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+}
+
+.video-creator-name{
+    color:#e9eaf0;
+    font-size:13px;
+    font-weight:700;
 }
 
 .video-creator{
     color:#8f93a0;
-    font-size:13px;
-    margin-bottom:14px;
+    font-size:11px;
+}
+
+.mini-follow{
+    margin-left:auto;
+    padding:7px 11px;
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:8px;
+    color:#fff;
+    background:rgba(255,255,255,.05);
+    font-size:11px;
+    font-weight:700;
 }
 
 .video-meta{
     display:flex;
-    justify-content:space-between;
+    justify-content:flex-start;
+    gap:12px;
+    flex-wrap:wrap;
     color:#777b88;
     font-size:12px;
     margin-bottom:14px;
+}
+
+.video-tags{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+}
+
+.video-tags span{
+    padding:5px 8px;
+    border-radius:6px;
+    color:#9ea2af;
+    background:rgba(255,255,255,.045);
+    font-size:10px;
 }
 
 .watch-btn{
@@ -504,16 +527,49 @@ a{
     color:#fff;
     background:rgba(255,255,255,.055);
     font-weight:700;
-    transition:.2s;
 }
 
 .watch-btn:hover{
     background:linear-gradient(135deg,var(--pink),var(--purple));
 }
 
-/* =====================================================
-   CHIPS
-===================================================== */
+.coming-card{
+    min-height:410px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.coming-inner{
+    padding:30px;
+    text-align:center;
+    color:#777b88;
+}
+
+.coming-icon{
+    width:56px;
+    height:56px;
+    margin:0 auto 15px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:50%;
+    color:#c8cad2;
+    font-size:28px;
+    background:rgba(255,255,255,.04);
+}
+
+.coming-inner h3{
+    color:#dfe1e7;
+    margin-bottom:6px;
+}
+
+.coming-inner p{
+    font-size:13px;
+}
+
+/* CHIPS */
 
 .chips{
     display:flex;
@@ -528,7 +584,6 @@ a{
     padding:9px 14px;
     border-radius:30px;
     font-size:13px;
-    transition:.2s;
 }
 
 .chip:hover,
@@ -538,9 +593,7 @@ a{
     background:rgba(191,90,242,.1);
 }
 
-/* =====================================================
-   INFO CARDS
-===================================================== */
+/* INFO */
 
 .info-grid{
     display:grid;
@@ -559,18 +612,14 @@ a{
     );
 }
 
-.info-card h3{
-    margin-bottom:8px;
-}
+.info-card h3{margin-bottom:8px}
 
 .info-card p{
     color:var(--muted);
     font-size:14px;
 }
 
-/* =====================================================
-   FOOTER
-===================================================== */
+/* FOOTER */
 
 .footer{
     margin-top:70px;
@@ -581,9 +630,7 @@ a{
     font-size:12px;
 }
 
-/* =====================================================
-   VIDEO MODAL
-===================================================== */
+/* MODAL */
 
 .modal{
     position:fixed;
@@ -597,9 +644,7 @@ a{
     backdrop-filter:blur(14px);
 }
 
-.modal.show{
-    display:flex;
-}
+.modal.show{display:flex}
 
 .player-box{
     position:relative;
@@ -611,20 +656,16 @@ a{
     background:#07080b;
     border:1px solid rgba(255,255,255,.09);
     border-radius:18px;
-    box-shadow:0 30px 100px rgba(0,0,0,.75);
 }
 
-/* Player header */
-
 .player-header{
-    flex:0 0 auto;
     min-height:58px;
     padding:12px 15px;
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:15px;
-    background:rgba(15,16,21,.97);
+    background:#0f1015;
     border-bottom:1px solid rgba(255,255,255,.07);
 }
 
@@ -636,7 +677,6 @@ a{
 }
 
 .close-btn{
-    flex:0 0 auto;
     width:38px;
     height:38px;
     border:1px solid rgba(255,255,255,.08);
@@ -646,13 +686,7 @@ a{
     font-size:21px;
 }
 
-.close-btn:hover{
-    background:linear-gradient(135deg,var(--pink),var(--purple));
-}
-
-/* =====================================================
-   VIDEO AREA
-===================================================== */
+/* VIDEO PLAYER */
 
 .video-area{
     position:relative;
@@ -670,8 +704,6 @@ a{
     background:#000;
 }
 
-/* Loading */
-
 .loading{
     position:absolute;
     inset:0;
@@ -684,13 +716,7 @@ a{
     pointer-events:none;
 }
 
-.loading.hidden{
-    display:none;
-}
-
-/* =====================================================
-   CENTER PLAY
-===================================================== */
+.loading.hidden{display:none}
 
 .big-play{
     position:absolute;
@@ -700,8 +726,6 @@ a{
     align-items:center;
     justify-content:center;
     pointer-events:none;
-    opacity:1;
-    transition:.2s;
 }
 
 .big-play-button{
@@ -712,14 +736,7 @@ a{
     background:linear-gradient(135deg,var(--pink),var(--purple));
     color:#fff;
     font-size:31px;
-    padding-left:5px;
     pointer-events:auto;
-    box-shadow:0 16px 48px rgba(255,45,117,.3);
-    transition:.2s;
-}
-
-.big-play-button:hover{
-    transform:scale(1.08);
 }
 
 .video-area.playing .big-play{
@@ -732,14 +749,6 @@ a{
     opacity:1;
 }
 
-.video-area.waiting .big-play-button{
-    background:#242731;
-}
-
-/* =====================================================
-   ERROR
-===================================================== */
-
 .error-message{
     position:absolute;
     inset:0;
@@ -747,15 +756,12 @@ a{
     display:none;
     align-items:center;
     justify-content:center;
-    padding:30px;
     text-align:center;
     color:#ccc;
     background:#000;
 }
 
-.error-message.show{
-    display:flex;
-}
+.error-message.show{display:flex}
 
 .error-message strong{
     display:block;
@@ -763,12 +769,9 @@ a{
     margin-bottom:8px;
 }
 
-/* =====================================================
-   CONTROLS
-===================================================== */
+/* CONTROLS */
 
 .custom-controls{
-    flex:0 0 auto;
     padding:11px 14px 14px;
     background:linear-gradient(180deg,#11131a,#08090c);
 }
@@ -806,10 +809,6 @@ a{
     background:rgba(255,255,255,.07);
 }
 
-.control-btn:hover{
-    background:linear-gradient(135deg,var(--pink),var(--purple));
-}
-
 .time{
     min-width:95px;
     color:#aeb1bc;
@@ -822,9 +821,7 @@ a{
     gap:6px;
 }
 
-.volume{
-    width:80px;
-}
+.volume{width:80px}
 
 .quality{
     position:relative;
@@ -842,12 +839,9 @@ a{
     border:1px solid rgba(255,255,255,.1);
     border-radius:10px;
     background:#11131a;
-    box-shadow:0 12px 40px rgba(0,0,0,.55);
 }
 
-.quality-menu.show{
-    display:block;
-}
+.quality-menu.show{display:block}
 
 .quality-option{
     width:100%;
@@ -859,28 +853,20 @@ a{
     background:transparent;
 }
 
-.quality-option:hover,
-.quality-option.active{
+.quality-option.active,
+.quality-option:hover{
     color:#fff;
     background:linear-gradient(135deg,var(--pink),var(--purple));
 }
 
-/* =====================================================
-   PLAYER NOTE
-===================================================== */
-
 .player-note{
-    flex:0 0 auto;
     padding:10px 15px;
     color:#6d707b;
     font-size:11px;
-    border-top:1px solid rgba(255,255,255,.05);
     background:#08090c;
 }
 
-/* =====================================================
-   TRUE FULLSCREEN
-===================================================== */
+/* FULLSCREEN */
 
 .player-box:fullscreen,
 .player-box:-webkit-full-screen{
@@ -890,7 +876,6 @@ a{
     max-height:none;
     border:0;
     border-radius:0;
-    background:#000;
 }
 
 .player-box:fullscreen .player-header,
@@ -900,7 +885,7 @@ a{
 
 .player-box:fullscreen .video-area,
 .player-box:-webkit-full-screen .video-area{
-    flex:1 1 auto;
+    flex:1;
     width:100%;
     height:100%;
     min-height:0;
@@ -922,11 +907,7 @@ a{
     bottom:0;
     z-index:40;
     padding:38px 16px 14px;
-    background:linear-gradient(
-        180deg,
-        transparent,
-        rgba(0,0,0,.94)
-    );
+    background:linear-gradient(180deg,transparent,rgba(0,0,0,.94));
 }
 
 .player-box:fullscreen .player-note,
@@ -934,9 +915,7 @@ a{
     display:none;
 }
 
-/* =====================================================
-   MOBILE FALLBACK FULLSCREEN
-===================================================== */
+/* MOBILE FALLBACK */
 
 .player-box.mobile-fullscreen{
     position:fixed!important;
@@ -956,7 +935,7 @@ a{
 }
 
 .player-box.mobile-fullscreen .video-area{
-    flex:1 1 auto!important;
+    flex:1!important;
     width:100%!important;
     height:100%!important;
     min-height:0!important;
@@ -976,26 +955,18 @@ a{
     bottom:0!important;
     z-index:40!important;
     padding:38px 16px 14px!important;
-    background:linear-gradient(
-        180deg,
-        transparent,
-        rgba(0,0,0,.94)
-    )!important;
+    background:linear-gradient(180deg,transparent,rgba(0,0,0,.94))!important;
 }
 
 .player-box.mobile-fullscreen .player-note{
     display:none!important;
 }
 
-/* =====================================================
-   RESPONSIVE
-===================================================== */
+/* RESPONSIVE */
 
 @media(max-width:1000px){
 
-    .nav-links{
-        gap:15px;
-    }
+    .nav-links{gap:15px}
 
     .quick-grid{
         grid-template-columns:repeat(3,1fr);
@@ -1027,9 +998,7 @@ a{
         gap:13px;
     }
 
-    .logo{
-        font-size:29px;
-    }
+    .logo{font-size:29px}
 
     .nav-links{
         order:3;
@@ -1041,9 +1010,7 @@ a{
         white-space:nowrap;
     }
 
-    .login{
-        margin-left:auto;
-    }
+    .login{margin-left:auto}
 
     .container{
         padding:20px 14px 55px;
@@ -1064,9 +1031,7 @@ a{
         padding:30px 24px;
     }
 
-    .featured h2{
-        font-size:30px;
-    }
+    .featured h2{font-size:30px}
 
     .quick-grid{
         grid-template-columns:repeat(2,1fr);
@@ -1076,9 +1041,7 @@ a{
         grid-template-columns:1fr;
     }
 
-    .modal{
-        padding:0;
-    }
+    .modal{padding:0}
 
     .player-box{
         width:100%;
@@ -1087,33 +1050,19 @@ a{
         border-radius:0;
     }
 
-    .player-header{
-        padding:10px 12px;
-    }
-
     .big-play-button{
         width:72px;
         height:72px;
-        font-size:28px;
     }
 
-    .time{
-        min-width:auto;
-    }
+    .volume{width:60px}
 
-    .volume{
-        width:60px;
-    }
-
-    .quality{
-        margin-left:0;
-    }
+    .quality{margin-left:0}
 }
 
 @media(max-height:500px) and (orientation:landscape){
 
     .player-box:fullscreen .custom-controls,
-    .player-box:-webkit-full-screen .custom-controls,
     .player-box.mobile-fullscreen .custom-controls{
         padding:25px 10px 8px!important;
     }
@@ -1126,7 +1075,6 @@ a{
     .big-play-button{
         width:60px;
         height:60px;
-        font-size:24px;
     }
 }
 </style>
@@ -1134,12 +1082,7 @@ a{
 
 <body>
 
-<!-- =====================================================
-     HEADER
-===================================================== -->
-
 <header class="header">
-
 <nav class="nav">
 
     <div class="logo">
@@ -1155,32 +1098,23 @@ a{
         <a href="#search">Search</a>
     </div>
 
-    <button class="login" onclick="showMessage('Login system will be connected later.')">
+    <button class="login"
+        onclick="showMessage('Login system will be connected later.')">
         Login
     </button>
 
 </nav>
-
 </header>
 
-
 <main class="container">
-
-<!-- =====================================================
-     HERO
-===================================================== -->
 
 <section class="hero" id="home">
 
     <div class="hero-content">
 
-        <div class="badge">
-            18+ ADULTS ONLY
-        </div>
+        <div class="badge">18+ ADULTS ONLY</div>
 
-        <h1>
-            Welcome to <span>XKiss</span>
-        </h1>
+        <h1>Welcome to <span>XKiss</span></h1>
 
         <p>
             A premium video platform built around creators,
@@ -1189,14 +1123,12 @@ a{
 
         <div class="hero-buttons">
 
-            <button
-                class="btn primary"
+            <button class="btn primary"
                 onclick="scrollToSection('videos')">
                 Explore Videos
             </button>
 
-            <button
-                class="btn secondary"
+            <button class="btn secondary"
                 onclick="scrollToSection('creators')">
                 Discover Creators
             </button>
@@ -1208,16 +1140,10 @@ a{
 </section>
 
 
-<!-- =====================================================
-     QUICK ACCESS
-===================================================== -->
-
 <section class="section">
 
     <div class="section-header">
-        <div>
-            <h2 class="section-title">Quick Access</h2>
-        </div>
+        <h2 class="section-title">Quick Access</h2>
     </div>
 
     <div class="quick-grid">
@@ -1234,10 +1160,6 @@ a{
 </section>
 
 
-<!-- =====================================================
-     FEATURED
-===================================================== -->
-
 <section class="section">
 
     <div class="featured">
@@ -1248,9 +1170,7 @@ a{
                 FEATURED EXPERIENCE
             </div>
 
-            <h2>
-                Watch. Discover. Connect.
-            </h2>
+            <h2>Watch. Discover. Connect.</h2>
 
             <p>
                 Explore the latest videos and discover creators
@@ -1259,8 +1179,7 @@ a{
             </p>
 
             <div>
-                <button
-                    class="btn primary"
+                <button class="btn primary"
                     onclick="watchVideo('Featured XKiss Experience')">
                     ▶ Watch Featured
                 </button>
@@ -1270,8 +1189,7 @@ a{
 
         <div class="featured-visual">
 
-            <button
-                class="featured-play"
+            <button class="featured-play"
                 onclick="watchVideo('Featured XKiss Experience')">
                 ▶
             </button>
@@ -1283,68 +1201,115 @@ a{
 </section>
 
 
-<!-- =====================================================
-     VIDEOS
-===================================================== -->
+<!-- VIDEOS -->
 
 <section class="section" id="videos">
 
     <div class="section-header">
 
         <div>
-            <h2 class="section-title">Featured Videos</h2>
+            <h2 class="section-title">Videos</h2>
             <div class="section-subtitle">
-                Discover content from the XKiss video library.
+                Discover videos and watch them in the XKiss player.
             </div>
         </div>
+
+        <div class="section-subtitle">1 video</div>
+
+    </div>
+
+
+    <div class="chips video-filters">
+
+        <button class="chip active">All</button>
+        <button class="chip">New</button>
+        <button class="chip">Trending</button>
+        <button class="chip">Popular</button>
 
     </div>
 
 
     <div class="videos-grid">
 
-
-        <!-- VIDEO 1 -->
+        <!-- ALI EXCEL -->
 
         <article class="video-card">
 
             <div class="video-thumb">
 
-                <div class="thumb-number">
-                    FEATURED
+                <div class="thumb-number">NEW</div>
+
+                <div class="thumb-content">
+                    <span class="thumb-brand-x">X</span>
+                    <span class="thumb-brand-kiss">Kiss</span>
+                    <span class="thumb-label">ALI EXCEL</span>
                 </div>
 
                 <button
                     class="play-circle"
-                    onclick="watchVideo('Featured Video One')">
+                    aria-label="Play Ali Excel"
+                    onclick="watchVideo('Ali Excel')">
                     ▶
                 </button>
 
-                <div class="thumb-quality">
-                    720p
-                </div>
+                <div class="thumb-quality">720p</div>
+                <div class="thumb-duration">00:14</div>
 
             </div>
+
 
             <div class="video-info">
 
                 <div class="video-title">
-                    Featured Video One
+                    Ali Excel
                 </div>
 
-                <div class="video-creator">
-                    XKiss Creator
+
+                <div class="video-creator-row">
+
+                    <div class="creator-avatar">A</div>
+
+                    <div>
+                        <div class="video-creator-name">
+                            Ali Sr.M
+                        </div>
+
+                        <div class="video-creator">
+                            Creator
+                        </div>
+                    </div>
+
+                    <button
+                        class="mini-follow"
+                        onclick="showMessage('Follow system will be connected later.')">
+                        Follow
+                    </button>
+
                 </div>
+
 
                 <div class="video-meta">
-                    <span>720p available</span>
-                    <span>Video</span>
+
+                    <span>▶ 0 views</span>
+                    <span>Sep 23, 2026</span>
+                    <span>14 sec</span>
+
                 </div>
+
+
+                <div class="video-tags">
+
+                    <span>AI</span>
+                    <span>Excel</span>
+                    <span>Tutorial</span>
+
+                </div>
+
 
                 <button
                     class="watch-btn"
-                    onclick="watchVideo('Featured Video One')">
-                    Watch Now
+                    onclick="watchVideo('Ali Excel')">
+                    ▶ Watch Now
                 </button>
 
             </div>
@@ -1352,118 +1317,36 @@ a{
         </article>
 
 
-        <!-- VIDEO 2 -->
+        <!-- FUTURE VIDEOS -->
 
-        <article class="video-card">
+        <article class="video-card coming-card">
 
-            <div class="video-thumb">
+            <div class="coming-inner">
 
-                <div class="thumb-number">
-                    NEW
-                </div>
+                <div class="coming-icon">+</div>
 
-                <button
-                    class="play-circle"
-                    onclick="watchVideo('Featured Video Two')">
-                    ▶
-                </button>
+                <h3>More videos</h3>
 
-                <div class="thumb-quality">
-                    720p
-                </div>
-
-            </div>
-
-            <div class="video-info">
-
-                <div class="video-title">
-                    Featured Video Two
-                </div>
-
-                <div class="video-creator">
-                    XKiss Creator
-                </div>
-
-                <div class="video-meta">
-                    <span>360p · 480p · 720p</span>
-                    <span>Video</span>
-                </div>
-
-                <button
-                    class="watch-btn"
-                    onclick="watchVideo('Featured Video Two')">
-                    Watch Now
-                </button>
+                <p>
+                    Your next uploads will appear here.
+                </p>
 
             </div>
 
         </article>
-
-
-        <!-- VIDEO 3 -->
-
-        <article class="video-card">
-
-            <div class="video-thumb">
-
-                <div class="thumb-number">
-                    POPULAR
-                </div>
-
-                <button
-                    class="play-circle"
-                    onclick="watchVideo('Featured Video Three')">
-                    ▶
-                </button>
-
-                <div class="thumb-quality">
-                    720p
-                </div>
-
-            </div>
-
-            <div class="video-info">
-
-                <div class="video-title">
-                    Featured Video Three
-                </div>
-
-                <div class="video-creator">
-                    XKiss Creator
-                </div>
-
-                <div class="video-meta">
-                    <span>360p · 480p · 720p</span>
-                    <span>Video</span>
-                </div>
-
-                <button
-                    class="watch-btn"
-                    onclick="watchVideo('Featured Video Three')">
-                    Watch Now
-                </button>
-
-            </div>
-
-        </article>
-
 
     </div>
 
 </section>
 
 
-<!-- =====================================================
-     CATEGORIES
-===================================================== -->
+<!-- CATEGORIES -->
 
 <section class="section" id="categories">
 
     <div class="section-header">
 
-        <div>
-            <h2 class="section-title">Categories</h2>
-        </div>
+        <h2 class="section-title">Categories</h2>
 
     </div>
 
@@ -1482,9 +1365,7 @@ a{
 </section>
 
 
-<!-- =====================================================
-     LIVE
-===================================================== -->
+<!-- LIVE -->
 
 <section class="section" id="live">
 
@@ -1492,6 +1373,7 @@ a{
 
         <div>
             <h2 class="section-title">Live Now</h2>
+
             <div class="section-subtitle">
                 Live streaming infrastructure will be connected here.
             </div>
@@ -1499,30 +1381,42 @@ a{
 
     </div>
 
+
     <div class="info-grid">
 
         <div class="info-card">
+
             <h3>Live Streaming</h3>
+
             <p>
                 Creator live streaming and real-time viewer
                 interaction will be connected in the next stage.
             </p>
+
         </div>
 
+
         <div class="info-card">
+
             <h3>Creator Dashboard</h3>
+
             <p>
                 Creators will be able to manage live sessions,
                 videos and audience activity.
             </p>
+
         </div>
 
+
         <div class="info-card">
+
             <h3>Viewer Experience</h3>
+
             <p>
                 Watch live creators through an optimized
                 mobile and desktop streaming interface.
             </p>
+
         </div>
 
     </div>
@@ -1530,9 +1424,7 @@ a{
 </section>
 
 
-<!-- =====================================================
-     CREATORS
-===================================================== -->
+<!-- CREATORS -->
 
 <section class="section" id="creators">
 
@@ -1540,6 +1432,7 @@ a{
 
         <div>
             <h2 class="section-title">Top Creators</h2>
+
             <div class="section-subtitle">
                 Creator profiles and monetization will connect here.
             </div>
@@ -1547,30 +1440,42 @@ a{
 
     </div>
 
+
     <div class="info-grid">
 
         <div class="info-card">
+
             <h3>Creator Profiles</h3>
+
             <p>
-                Public creator pages with videos, followers,
-                categories and profile information.
+                Creator profiles, followers and published videos
+                will be connected here.
             </p>
+
         </div>
 
+
         <div class="info-card">
+
             <h3>Creator Dashboard</h3>
+
             <p>
-                Upload content, view statistics and manage
-                creator activity.
+                Uploads, analytics, earnings and content management
+                will be available to verified creators.
             </p>
+
         </div>
 
+
         <div class="info-card">
-            <h3>Monetization</h3>
+
+            <h3>Creator Monetization</h3>
+
             <p>
-                Revenue, views, wallet and payout systems
-                will be integrated as the platform develops.
+                Views, subscriptions and creator revenue systems
+                will be connected in later stages.
             </p>
+
         </div>
 
     </div>
@@ -1578,52 +1483,36 @@ a{
 </section>
 
 
-<!-- =====================================================
-     SEARCH
-===================================================== -->
+<!-- SEARCH -->
 
 <section class="section" id="search">
 
     <div class="section-header">
 
-        <div>
-            <h2 class="section-title">Search</h2>
-        </div>
+        <h2 class="section-title">Search</h2>
 
     </div>
 
     <div class="info-card">
 
-        <input
-            type="search"
-            placeholder="Search videos, creators or categories..."
-            style="
-                width:100%;
-                padding:15px 16px;
-                border-radius:11px;
-                border:1px solid rgba(255,255,255,.09);
-                background:#0b0d12;
-                color:#fff;
-                outline:none;
-            "
-        >
+        <h3>Search XKiss</h3>
+
+        <p>
+            Video, creator and category search will be connected here.
+        </p>
 
     </div>
 
 </section>
 
 
-<!-- =====================================================
-     ACCOUNT
-===================================================== -->
+<!-- ACCOUNT -->
 
 <section class="section" id="account">
 
     <div class="section-header">
 
-        <div>
-            <h2 class="section-title">My Account</h2>
-        </div>
+        <h2 class="section-title">My Account</h2>
 
     </div>
 
@@ -1631,53 +1520,32 @@ a{
 
         <div class="info-card">
             <h3>Profile</h3>
-            <p>
-                Personal account and profile management.
-            </p>
+            <p>User profile and account settings.</p>
         </div>
 
         <div class="info-card">
-            <h3>Watch History</h3>
-            <p>
-                Continue watching and personal viewing history.
-            </p>
+            <h3>Favorites</h3>
+            <p>Saved videos and creators.</p>
         </div>
 
         <div class="info-card">
-            <h3>Saved Content</h3>
-            <p>
-                Saved videos and creator subscriptions.
-            </p>
+            <h3>History</h3>
+            <p>Recently watched videos.</p>
         </div>
 
     </div>
 
 </section>
 
-
 </main>
 
 
-<!-- =====================================================
-     FOOTER
-===================================================== -->
-
 <footer class="footer">
-
-    <div>
-        © 2026 XKiss — Premium Adult Video Platform
-    </div>
-
-    <div style="margin-top:6px;">
-        18+ • Privacy • Safety • Terms
-    </div>
-
+    XKiss — Premium Video Platform · 18+
 </footer>
 
 
-<!-- =====================================================
-     VIDEO PLAYER
-===================================================== -->
+<!-- VIDEO MODAL -->
 
 <div class="modal" id="videoModal">
 
@@ -1686,7 +1554,7 @@ a{
         <div class="player-header">
 
             <div class="player-title" id="playerTitle">
-                XKiss Video Player
+                XKiss Video
             </div>
 
             <button
@@ -1703,22 +1571,16 @@ a{
             <video
                 id="realVideo"
                 playsinline
-                preload="metadata"
-                controlslist="nodownload noplaybackrate"
-                disablepictureinpicture>
+                preload="metadata">
             </video>
 
 
-            <div
-                class="loading"
-                id="loading">
+            <div class="loading" id="loading">
                 Loading video...
             </div>
 
 
-            <div
-                class="big-play"
-                id="bigPlay">
+            <div class="big-play">
 
                 <button
                     class="big-play-button"
@@ -1729,13 +1591,11 @@ a{
             </div>
 
 
-            <div
-                class="error-message"
-                id="videoError">
+            <div class="error-message" id="videoError">
 
                 <div>
-                    <strong>Video could not be loaded</strong>
-                    Please check the selected video quality.
+                    <strong>Video could not be loaded.</strong>
+                    Please check the video source.
                 </div>
 
             </div>
@@ -1743,7 +1603,7 @@ a{
         </div>
 
 
-        <!-- CUSTOM CONTROLS -->
+        <!-- CONTROLS -->
 
         <div class="custom-controls">
 
@@ -1761,7 +1621,6 @@ a{
 
             <div class="controls-row">
 
-
                 <button
                     class="control-btn"
                     id="playButton"
@@ -1770,9 +1629,7 @@ a{
                 </button>
 
 
-                <div
-                    class="time"
-                    id="timeDisplay">
+                <div class="time" id="timeDisplay">
                     0:00 / 0:00
                 </div>
 
@@ -1792,7 +1649,7 @@ a{
                         type="range"
                         min="0"
                         max="1"
-                        step="0.01"
+                        step="0.05"
                         value="1">
 
                 </div>
@@ -1844,7 +1701,6 @@ a{
                     ⛶
                 </button>
 
-
             </div>
 
         </div>
@@ -1861,9 +1717,7 @@ a{
 
 <script>
 
-/* =====================================================
-   VIDEO SOURCES
-===================================================== */
+/* VIDEO SOURCES */
 
 const VIDEO_SOURCES = {
 
@@ -1879,9 +1733,7 @@ const VIDEO_SOURCES = {
 };
 
 
-/* =====================================================
-   ELEMENTS
-===================================================== */
+/* ELEMENTS */
 
 const video =
     document.getElementById("realVideo");
@@ -1936,9 +1788,7 @@ let currentQuality = "720";
 let pendingPlay = false;
 
 
-/* =====================================================
-   GENERAL SCROLL
-===================================================== */
+/* NAVIGATION */
 
 function scrollToSection(id){
 
@@ -1946,19 +1796,15 @@ function scrollToSection(id){
         document.getElementById(id);
 
     if(element){
-
         element.scrollIntoView({
             behavior:"smooth"
         });
-
     }
 
 }
 
 
-/* =====================================================
-   OPEN VIDEO
-===================================================== */
+/* OPEN VIDEO */
 
 function watchVideo(title){
 
@@ -1973,29 +1819,16 @@ function watchVideo(title){
 
     loadVideoSource("720",false);
 
-    /*
-       Try to open the player directly in fullscreen.
-       Browsers may allow this because the function is
-       called directly from the user's Watch button.
-    */
-
     setTimeout(function(){
-
         enterFullscreen();
-
     },80);
 
 }
 
 
-/* =====================================================
-   LOAD VIDEO
-===================================================== */
+/* LOAD VIDEO */
 
-function loadVideoSource(
-    quality,
-    shouldPlay
-){
+function loadVideoSource(quality,shouldPlay){
 
     currentQuality = quality;
 
@@ -2003,108 +1836,77 @@ function loadVideoSource(
         VIDEO_SOURCES[quality];
 
     if(!source){
-
         showVideoError();
-
         return;
-
     }
 
     hideVideoError();
 
     loading.classList.remove("hidden");
 
-    videoArea.classList.remove("playing");
-
-    videoArea.classList.add("paused");
-
-    videoArea.classList.add("waiting");
-
-
     const savedTime =
         Number.isFinite(video.currentTime)
         ? video.currentTime
         : 0;
 
-
     video.pause();
 
     video.removeAttribute("src");
-
     video.load();
 
     video.src = source;
-
     video.load();
-
-
-    const restorePosition = function(){
-
-        try{
-
-            if(
-                savedTime > 0 &&
-                Number.isFinite(video.duration) &&
-                savedTime < video.duration
-            ){
-
-                video.currentTime =
-                    savedTime;
-
-            }
-
-        }catch(error){}
-
-
-        loading.classList.add("hidden");
-
-        videoArea.classList.remove("waiting");
-
-        updateTime();
-
-        updateProgress();
-
-
-        if(shouldPlay){
-
-            playVideo();
-
-        }
-
-    };
-
 
     video.addEventListener(
         "loadedmetadata",
-        restorePosition,
+        function(){
+
+            try{
+
+                if(
+                    savedTime > 0 &&
+                    savedTime < video.duration
+                ){
+                    video.currentTime = savedTime;
+                }
+
+            }catch(error){}
+
+            loading.classList.add("hidden");
+
+            videoArea.classList.remove("waiting");
+
+            updateTime();
+            updateProgress();
+
+            if(shouldPlay){
+                playVideo();
+            }
+
+        },
         {once:true}
     );
 
 }
 
 
-/* =====================================================
-   RESET
-===================================================== */
+/* RESET */
 
 function resetPlayerUI(){
 
     video.pause();
 
     video.removeAttribute("src");
-
     video.load();
 
     video.currentTime = 0;
 
     video.volume = 1;
-
     video.muted = false;
 
     volumeControl.value = 1;
 
     playButton.textContent = "▶";
-
     muteButton.textContent = "🔊";
 
     fullscreenButton.textContent = "⛶";
@@ -2121,7 +1923,6 @@ function resetPlayerUI(){
     videoArea.classList.remove("playing");
 
     videoArea.classList.add("paused");
-
     videoArea.classList.add("waiting");
 
     qualityMenu.classList.remove("show");
@@ -2131,9 +1932,7 @@ function resetPlayerUI(){
 }
 
 
-/* =====================================================
-   PLAY
-===================================================== */
+/* PLAY */
 
 function playVideo(){
 
@@ -2141,25 +1940,16 @@ function playVideo(){
 
         pendingPlay = true;
 
-        loading.classList.remove("hidden");
-
-        videoArea.classList.add("waiting");
-
         return;
-
     }
-
 
     const promise =
         video.play();
 
-
     if(promise !== undefined){
 
         promise.catch(function(){
-
             pendingPlay = true;
-
         });
 
     }
@@ -2167,35 +1957,26 @@ function playVideo(){
 }
 
 
-/* =====================================================
-   PLAY / PAUSE
-===================================================== */
+/* PLAY / PAUSE */
 
 function togglePlay(){
 
     if(video.paused){
-
         playVideo();
-
     }else{
-
         video.pause();
-
     }
 
 }
 
 
-/* =====================================================
-   CENTER PLAY
-===================================================== */
+/* CENTER PLAY */
 
 bigPlayButton.addEventListener(
     "click",
     function(event){
 
         event.preventDefault();
-
         event.stopPropagation();
 
         togglePlay();
@@ -2204,9 +1985,7 @@ bigPlayButton.addEventListener(
 );
 
 
-/* =====================================================
-   VIDEO EVENTS
-===================================================== */
+/* VIDEO EVENTS */
 
 video.addEventListener(
     "play",
@@ -2214,8 +1993,11 @@ video.addEventListener(
 
         playButton.textContent = "❚❚";
 
-        videoArea.classList.remove("paused");
-        videoArea.classList.remove("waiting");
+        videoArea.classList.remove(
+            "paused",
+            "waiting"
+        );
+
         videoArea.classList.add("playing");
 
         loading.classList.add("hidden");
@@ -2258,8 +2040,11 @@ video.addEventListener(
 
         loading.classList.add("hidden");
 
-        videoArea.classList.remove("waiting");
-        videoArea.classList.remove("paused");
+        videoArea.classList.remove(
+            "waiting",
+            "paused"
+        );
+
         videoArea.classList.add("playing");
 
     }
@@ -2277,7 +2062,6 @@ video.addEventListener(
         hideVideoError();
 
         updateTime();
-
         updateProgress();
 
     }
@@ -2291,9 +2075,6 @@ video.addEventListener(
         loading.classList.add("hidden");
 
         videoArea.classList.remove("waiting");
-
-        hideVideoError();
-
 
         if(pendingPlay){
 
@@ -2312,7 +2093,6 @@ video.addEventListener(
     function(){
 
         updateProgress();
-
         updateTime();
 
     }
@@ -2321,11 +2101,7 @@ video.addEventListener(
 
 video.addEventListener(
     "durationchange",
-    function(){
-
-        updateTime();
-
-    }
+    updateTime
 );
 
 
@@ -2339,8 +2115,6 @@ video.addEventListener(
 
         videoArea.classList.add("paused");
 
-        updateProgress();
-
     }
 );
 
@@ -2351,26 +2125,18 @@ video.addEventListener(
 
         loading.classList.add("hidden");
 
-        videoArea.classList.remove("waiting");
-        videoArea.classList.remove("playing");
-        videoArea.classList.add("paused");
-
         showVideoError();
 
     }
 );
 
 
-/* =====================================================
-   TIME
-===================================================== */
+/* TIME */
 
 function formatTime(seconds){
 
     if(!Number.isFinite(seconds)){
-
         return "0:00";
-
     }
 
     const minutes =
@@ -2398,9 +2164,7 @@ function updateTime(){
 }
 
 
-/* =====================================================
-   PROGRESS
-===================================================== */
+/* PROGRESS */
 
 function updateProgress(){
 
@@ -2408,21 +2172,16 @@ function updateProgress(){
         !Number.isFinite(video.duration) ||
         video.duration <= 0
     ){
-
         progressBar.style.width = "0%";
-
         return;
-
     }
 
-    const percentage =
+    progressBar.style.width =
         (
             video.currentTime /
-            video.duration
-        ) * 100;
-
-    progressBar.style.width =
-        percentage + "%";
+            video.duration *
+            100
+        ) + "%";
 
 }
 
@@ -2435,9 +2194,7 @@ progressWrap.addEventListener(
             !Number.isFinite(video.duration) ||
             video.duration <= 0
         ){
-
             return;
-
         }
 
         const rect =
@@ -2452,19 +2209,14 @@ progressWrap.addEventListener(
         video.currentTime =
             Math.max(
                 0,
-                Math.min(
-                    1,
-                    position
-                )
+                Math.min(1,position)
             ) * video.duration;
 
     }
 );
 
 
-/* =====================================================
-   VOLUME
-===================================================== */
+/* VOLUME */
 
 volumeControl.addEventListener(
     "input",
@@ -2476,13 +2228,11 @@ volumeControl.addEventListener(
         if(video.volume === 0){
 
             video.muted = true;
-
             muteButton.textContent = "🔇";
 
         }else{
 
             video.muted = false;
-
             muteButton.textContent = "🔊";
 
         }
@@ -2493,8 +2243,7 @@ volumeControl.addEventListener(
 
 function toggleMute(){
 
-    video.muted =
-        !video.muted;
+    video.muted = !video.muted;
 
     muteButton.textContent =
         video.muted
@@ -2504,9 +2253,7 @@ function toggleMute(){
 }
 
 
-/* =====================================================
-   QUALITY MENU
-===================================================== */
+/* QUALITY */
 
 function toggleQualityMenu(){
 
@@ -2515,16 +2262,10 @@ function toggleQualityMenu(){
 }
 
 
-/* =====================================================
-   QUALITY SWITCHING
-===================================================== */
-
 function changeQuality(quality){
 
     if(!VIDEO_SOURCES[quality]){
-
         return;
-
     }
 
     const wasPlaying =
@@ -2535,26 +2276,18 @@ function changeQuality(quality){
         ? video.currentTime
         : 0;
 
-    currentQuality =
-        quality;
-
+    currentQuality = quality;
 
     document
         .querySelectorAll(".quality-option")
         .forEach(function(option){
 
-            option.classList.remove("active");
-
-            if(
+            option.classList.toggle(
+                "active",
                 option.dataset.quality === quality
-            ){
-
-                option.classList.add("active");
-
-            }
+            );
 
         });
-
 
     qualityMenu.classList.remove("show");
 
@@ -2562,13 +2295,7 @@ function changeQuality(quality){
 
     loading.classList.remove("hidden");
 
-    videoArea.classList.add("waiting");
-
-    videoArea.classList.add("paused");
-
-
     video.removeAttribute("src");
-
     video.load();
 
     video.src =
@@ -2576,57 +2303,44 @@ function changeQuality(quality){
 
     video.load();
 
-
-    const restore = function(){
-
-        try{
-
-            if(
-                currentTime > 0 &&
-                Number.isFinite(video.duration)
-            ){
-
-                video.currentTime =
-                    Math.min(
-                        currentTime,
-                        video.duration
-                    );
-
-            }
-
-        }catch(error){}
-
-
-        loading.classList.add("hidden");
-
-        videoArea.classList.remove("waiting");
-
-        updateTime();
-
-        updateProgress();
-
-
-        if(wasPlaying){
-
-            playVideo();
-
-        }
-
-    };
-
-
     video.addEventListener(
         "loadedmetadata",
-        restore,
+        function(){
+
+            try{
+
+                if(
+                    currentTime > 0 &&
+                    Number.isFinite(video.duration)
+                ){
+                    video.currentTime =
+                        Math.min(
+                            currentTime,
+                            video.duration
+                        );
+                }
+
+            }catch(error){}
+
+            loading.classList.add("hidden");
+
+            videoArea.classList.remove("waiting");
+
+            updateTime();
+            updateProgress();
+
+            if(wasPlaying){
+                playVideo();
+            }
+
+        },
         {once:true}
     );
 
 }
 
 
-/* =====================================================
-   ENTER FULLSCREEN
-===================================================== */
+/* FULLSCREEN */
 
 async function enterFullscreen(){
 
@@ -2634,11 +2348,8 @@ async function enterFullscreen(){
         document.fullscreenElement ||
         playerBox.classList.contains("mobile-fullscreen")
     ){
-
         return;
-
     }
-
 
     if(playerBox.requestFullscreen){
 
@@ -2646,33 +2357,20 @@ async function enterFullscreen(){
 
             await playerBox.requestFullscreen();
 
-            document.body.classList.add("locked");
-
             fullscreenButton.textContent = "✕";
 
             return;
 
-        }catch(error){
-
-            /* Use mobile fallback below. */
-
-        }
+        }catch(error){}
 
     }
 
-
     playerBox.classList.add("mobile-fullscreen");
-
-    document.body.classList.add("locked");
 
     fullscreenButton.textContent = "✕";
 
 }
 
-
-/* =====================================================
-   FULLSCREEN TOGGLE
-===================================================== */
 
 async function toggleFullscreen(){
 
@@ -2684,7 +2382,6 @@ async function toggleFullscreen(){
             "mobile-fullscreen"
         );
 
-
     if(!native && !fallback){
 
         await enterFullscreen();
@@ -2693,33 +2390,24 @@ async function toggleFullscreen(){
 
     }
 
-
     if(native){
 
         try{
-
             await document.exitFullscreen();
-
         }catch(error){}
 
         return;
 
     }
 
-
     playerBox.classList.remove(
         "mobile-fullscreen"
     );
 
-    fullscreenButton.textContent =
-        "⛶";
+    fullscreenButton.textContent = "⛶";
 
 }
 
-
-/* =====================================================
-   FULLSCREEN CHANGE
-===================================================== */
 
 document.addEventListener(
     "fullscreenchange",
@@ -2727,8 +2415,7 @@ document.addEventListener(
 
         if(document.fullscreenElement){
 
-            fullscreenButton.textContent =
-                "✕";
+            fullscreenButton.textContent = "✕";
 
         }else{
 
@@ -2736,8 +2423,7 @@ document.addEventListener(
                 "mobile-fullscreen"
             );
 
-            fullscreenButton.textContent =
-                "⛶";
+            fullscreenButton.textContent = "⛶";
 
         }
 
@@ -2745,9 +2431,7 @@ document.addEventListener(
 );
 
 
-/* =====================================================
-   CLOSE VIDEO
-===================================================== */
+/* CLOSE */
 
 function closeVideoViewer(){
 
@@ -2759,50 +2443,41 @@ function closeVideoViewer(){
 
     }
 
-
     playerBox.classList.remove(
         "mobile-fullscreen"
     );
 
-    document.body.classList.remove("locked");
-
     video.pause();
 
     video.removeAttribute("src");
-
     video.load();
 
     modal.classList.remove("show");
 
     qualityMenu.classList.remove("show");
 
-    fullscreenButton.textContent =
-        "⛶";
+    document.body.classList.remove("locked");
+
+    fullscreenButton.textContent = "⛶";
 
 }
 
 
-/* =====================================================
-   OUTSIDE CLICK
-===================================================== */
+/* OUTSIDE CLICK */
 
 modal.addEventListener(
     "click",
     function(event){
 
         if(event.target === modal){
-
             closeVideoViewer();
-
         }
 
     }
 );
 
 
-/* =====================================================
-   ESCAPE + SPACE
-===================================================== */
+/* ESCAPE + SPACE */
 
 document.addEventListener(
     "keydown",
@@ -2818,7 +2493,6 @@ document.addEventListener(
                 document.exitFullscreen();
 
                 return;
-
             }
 
             if(
@@ -2831,11 +2505,9 @@ document.addEventListener(
                     "mobile-fullscreen"
                 );
 
-                fullscreenButton.textContent =
-                    "⛶";
+                fullscreenButton.textContent = "⛶";
 
                 return;
-
             }
 
             closeVideoViewer();
@@ -2859,38 +2531,25 @@ document.addEventListener(
 );
 
 
-/* =====================================================
-   ERROR
-===================================================== */
+/* ERROR */
 
 function showVideoError(){
-
     videoError.classList.add("show");
-
 }
-
 
 function hideVideoError(){
-
     videoError.classList.remove("show");
-
 }
 
 
-/* =====================================================
-   GENERAL MESSAGE
-===================================================== */
+/* MESSAGE */
 
 function showMessage(message){
-
     alert(message);
-
 }
 
 
-/* =====================================================
-   CLOSE QUALITY MENU
-===================================================== */
+/* CLOSE QUALITY */
 
 document.addEventListener(
     "click",
@@ -2912,9 +2571,7 @@ document.addEventListener(
 );
 
 
-/* =====================================================
-   CHIP INTERACTION
-===================================================== */
+/* CHIPS */
 
 document
     .querySelectorAll(".chip")
@@ -2924,7 +2581,7 @@ document
             "click",
             function(){
 
-                document
+                chip.parentElement
                     .querySelectorAll(".chip")
                     .forEach(function(item){
 
