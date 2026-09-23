@@ -1,38 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>XKiss</title>
+
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #111;
-      color: white;
-      text-align: center;
+      background: #0b0b0f;
+      color: #ffffff;
     }
 
     header {
+      background: #15151c;
+      border-bottom: 1px solid #292932;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .logo {
+      font-size: 30px;
+      font-weight: bold;
+    }
+
+    .search {
+      flex: 1;
+      max-width: 500px;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 13px 16px;
+      border-radius: 25px;
+      border: 1px solid #33333d;
+      background: #0d0d12;
+      color: white;
+      outline: none;
+    }
+
+    .menu {
+      display: flex;
+      gap: 10px;
+    }
+
+    .menu button {
+      padding: 10px 15px;
+      border: 1px solid #383842;
+      border-radius: 20px;
+      background: #22222b;
+      color: white;
+      cursor: pointer;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 65px 20px;
+      background: linear-gradient(180deg, #191923, #0b0b0f);
+    }
+
+    .hero h1 {
+      font-size: 46px;
+      margin: 0 0 15px;
+    }
+
+    .hero p {
+      color: #b8b8c2;
+      font-size: 18px;
+      margin-bottom: 25px;
+    }
+
+    .hero button {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 25px;
+      background: #ffffff;
+      color: #111111;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .section {
       padding: 30px 20px;
-      background: #1c1c1c;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 42px;
-    }
-
-    main {
-      padding: 60px 20px;
-    }
-
-    .message {
-      max-width: 600px;
+      max-width: 1200px;
       margin: auto;
-      padding: 30px;
-      background: #222;
-      border-radius: 15px;
+    }
+
+    .section h2 {
+      margin-bottom: 20px;
+    }
+
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+    }
+
+    .category {
+      background: #181820;
+      border: 1px solid #292932;
+      border-radius: 14px;
+      padding: 25px 15px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .category:hover {
+      background: #22222b;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: #777783;
+      border-top: 1px solid #22222a;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 700px) {
+      header {
+        flex-direction: column;
+      }
+
+      .search {
+        max-width: none;
+        width: 100%;
+      }
+
+      .menu {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .hero h1 {
+        font-size: 36px;
+      }
     }
   </style>
 </head>
@@ -40,16 +150,28 @@
 <body>
 
   <header>
-    <h1>XKiss</h1>
+    <div class="logo">XKiss</div>
+
+    <div class="search">
+      <input type="search" placeholder="بحث...">
+    </div>
+
+    <div class="menu">
+      <button>تسجيل الدخول</button>
+      <button>إنشاء حساب</button>
+    </div>
   </header>
 
-  <main>
-    <div class="message">
-      <h2>Welcome to XKiss</h2>
-      <p>Adult content platform.</p>
-      <p>Content is intended for adults 18+ only.</p>
-    </div>
-  </main>
+  <section class="hero">
+    <h1>مرحباً بك في XKiss</h1>
+    <p>منصة محتوى للبالغين فقط — 18+</p>
+    <button>استكشف المنصة</button>
+  </section>
 
-</body>
-</html>
+  <section class="section">
+    <h2>الأقسام</h2>
+
+    <div class="categories">
+      <div class="category">الأحدث</div>
+      <div class="category">الأكثر مشاهدة</div>
+      <div class="category">المميز
