@@ -1,614 +1,408 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>XKiss</title>
-
-<style>
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  background: #09090d;
-  color: #ffffff;
-  font-family: Arial, sans-serif;
-}
-
-/* HEADER */
-
-header {
-  min-height: 70px;
-  background: #14141b;
-  border-bottom: 1px solid #292932;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 25px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.logo {
-  font-size: 30px;
-  font-weight: 800;
-  letter-spacing: 1px;
-}
-
-nav {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-nav button {
-  background: #22222b;
-  color: #ffffff;
-  border: 1px solid #363640;
-  padding: 10px 15px;
-  border-radius: 20px;
-  cursor: pointer;
-}
-
-nav button:hover {
-  background: #30303a;
-}
-
-.login-button {
-  background: #ffffff;
-  color: #111111;
-  font-weight: bold;
-}
-
-/* HERO */
-
-.hero {
-  min-height: 430px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 60px 20px;
-  background:
-    radial-gradient(
-      circle at center,
-      #292936 0%,
-      #111118 45%,
-      #09090d 80%
-    );
-}
-
-.hero-content {
-  max-width: 800px;
-}
-
-.hero h1 {
-  font-size: 58px;
-  margin: 0 0 18px;
-}
-
-.hero p {
-  color: #b8b8c2;
-  font-size: 19px;
-  line-height: 1.6;
-  margin-bottom: 30px;
-}
-
-.hero-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.hero-button {
-  border: 0;
-  padding: 13px 22px;
-  border-radius: 25px;
-  font-size: 15px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.primary {
-  background: #ffffff;
-  color: #111111;
-}
-
-.secondary {
-  background: #22222b;
-  color: #ffffff;
-  border: 1px solid #363640;
-}
-
-/* GENERAL */
-
-.container {
-  max-width: 1250px;
-  margin: auto;
-  padding: 45px 20px;
-}
-
-.section {
-  margin-bottom: 55px;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
-}
-
-.section-title {
-  font-size: 28px;
-  margin: 0;
-}
-
-.view-all {
-  color: #aaaab5;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-/* VIDEO GRID */
-
-.video-grid {
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(240px, 1fr)
-  );
-  gap: 20px;
-}
-
-.video-card {
-  background: #14141b;
-  border: 1px solid #292932;
-  border-radius: 14px;
-  overflow: hidden;
-  transition: 0.2s;
-}
-
-.video-card:hover {
-  transform: translateY(-4px);
-  border-color: #454552;
-}
-
-.thumbnail {
-  height: 150px;
-  background:
-    linear-gradient(
-      135deg,
-      #292936,
-      #111118
-    );
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.play {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.95);
-  color: #111111;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-}
-
-.duration {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  background: rgba(0,0,0,0.8);
-  padding: 5px 7px;
-  border-radius: 5px;
-  font-size: 12px;
-}
-
-.video-info {
-  padding: 15px;
-}
-
-.video-title {
-  font-weight: bold;
-  margin-bottom: 8px;
-  line-height: 1.4;
-}
-
-.creator {
-  color: #9999a5;
-  font-size: 13px;
-  margin-bottom: 12px;
-}
-
-.video-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #858592;
-  font-size: 12px;
-}
-
-.badges {
-  display: flex;
-  gap: 6px;
-}
-
-.badge {
-  padding: 4px 7px;
-  border-radius: 5px;
-  background: #24242d;
-  color: #ccccd5;
-  font-size: 10px;
-}
-
-/* LIVE */
-
-.live-grid {
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(260px, 1fr)
-  );
-  gap: 20px;
-}
-
-.live-card {
-  background: #14141b;
-  border: 1px solid #292932;
-  border-radius: 14px;
-  padding: 20px;
-}
-
-.live-top {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-}
-
-.live-dot {
-  color: #ffffff;
-  font-size: 12px;
-}
-
-.live-card h3 {
-  margin: 8px 0;
-}
-
-.live-card p {
-  color: #9999a5;
-  font-size: 13px;
-}
-
-/* CATEGORIES */
-
-.category-grid {
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(160px, 1fr)
-  );
-  gap: 15px;
-}
-
-.category {
-  background: #15151c;
-  border: 1px solid #292932;
-  border-radius: 14px;
-  padding: 25px 15px;
-  text-align: center;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.category:hover {
-  transform: translateY(-3px);
-  background: #1d1d26;
-}
-
-/* CREATORS */
-
-.creator-grid {
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(200px, 1fr)
-  );
-  gap: 18px;
-}
-
-.creator-card {
-  background: #14141b;
-  border: 1px solid #292932;
-  border-radius: 14px;
-  padding: 20px;
-  text-align: center;
-}
-
-.creator-avatar {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background: #292936;
-  margin: 0 auto 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 22px;
-}
-
-.creator-card h3 {
-  margin: 8px 0;
-}
-
-.creator-card p {
-  margin: 0;
-  color: #9999a5;
-  font-size: 13px;
-}
-
-/* SEARCH */
-
-.search-box {
-  display: flex;
-  max-width: 700px;
-  margin: auto;
-}
-
-.search-box input {
-  flex: 1;
-  padding: 15px 18px;
-  border: 1px solid #363640;
-  border-right: 0;
-  background: #14141b;
-  color: #ffffff;
-  outline: none;
-  border-radius: 25px 0 0 25px;
-}
-
-.search-box button {
-  padding: 15px 22px;
-  border: 0;
-  background: #ffffff;
-  color: #111111;
-  font-weight: bold;
-  border-radius: 0 25px 25px 0;
-  cursor: pointer;
-}
-
-/* FOOTER */
-
-footer {
-  margin-top: 40px;
-  padding: 35px 20px;
-  text-align: center;
-  border-top: 1px solid #22222a;
-  color: #777783;
-}
-
-.footer-links {
-  margin-bottom: 15px;
-}
-
-.footer-links span {
-  margin: 0 10px;
-  cursor: pointer;
-}
-
-/* MOBILE */
-
-@media (max-width: 700px) {
-
-  header {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  nav {
-    width: 100%;
-  }
-
-  nav button {
-    padding: 9px 12px;
-  }
-
-  .hero {
-    min-height: 380px;
-  }
-
-  .hero h1 {
-    font-size: 40px;
-  }
-
-  .hero p {
-    font-size: 16px;
-  }
-
-  .section-title {
-    font-size: 23px;
-  }
-
-  .search-box {
-    width: 100%;
-  }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>XKiss</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #09090d;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      min-height: 70px;
+      background: #14141b;
+      border-bottom: 1px solid #292932;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 25px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    nav button {
+      background: #22222b;
+      color: #ffffff;
+      border: 1px solid #363640;
+      padding: 10px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    nav button:hover {
+      background: #30303a;
+    }
+
+    .login-button {
+      background: #ffffff;
+      color: #111111;
+      font-weight: bold;
+    }
+
+    .login-button:hover {
+      background: #dddddd;
+    }
+
+    .hero {
+      min-height: 420px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 50px 20px;
+
+      background:
+        radial-gradient(
+          circle at center,
+          #292936 0%,
+          #111118 45%,
+          #09090d 80%
+        );
+    }
+
+    .hero-content {
+      max-width: 750px;
+    }
+
+    .hero h1 {
+      font-size: 58px;
+      margin: 0 0 15px;
+    }
+
+    .hero p {
+      color: #b8b8c2;
+      font-size: 19px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .age {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 8px 18px;
+      border: 1px solid #444450;
+      border-radius: 20px;
+      color: #dddddd;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 40px 20px;
+    }
+
+    .section-title {
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(
+        auto-fit,
+        minmax(160px, 1fr)
+      );
+      gap: 15px;
+    }
+
+    .category {
+      background: #15151c;
+      border: 1px solid #292932;
+      border-radius: 14px;
+      padding: 25px 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .category:hover {
+      transform: translateY(-3px);
+      background: #1d1d26;
+    }
+
+    .admin-preview {
+      margin-top: 50px;
+      padding: 25px;
+      border-radius: 16px;
+      background: #111118;
+      border: 1px dashed #383842;
+    }
+
+    .admin-preview h2 {
+      margin-top: 0;
+    }
+
+    .admin-preview p {
+      color: #aaaaB5;
+      line-height: 1.6;
+      margin-bottom: 0;
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(
+        auto-fit,
+        minmax(160px, 1fr)
+      );
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .admin-card {
+      background: #191922;
+      border: 1px solid #292932;
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .admin-card strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 7px;
+    }
+
+    .admin-card span {
+      color: #9999a5;
+      font-size: 14px;
+    }
+
+    footer {
+      margin-top: 50px;
+      padding: 30px 20px;
+      text-align: center;
+      border-top: 1px solid #22222a;
+      color: #777783;
+    }
+
+    @media (max-width: 700px) {
+
+      header {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      nav {
+        width: 100%;
+      }
+
+      nav button {
+        padding: 9px 12px;
+      }
+
+      .hero {
+        min-height: 350px;
+      }
+
+      .hero h1 {
+        font-size: 40px;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
+  <header>
 
-<header>
+    <div class="logo">
+      XKiss
+    </div>
 
-  <div class="logo">
-    XKiss
-  </div>
+    <nav>
+      <button>Home</button>
+      <button>Categories</button>
+      <button>Search</button>
 
-  <nav>
-    <button onclick="scrollToSection('home')">
-      Home
-    </button>
-
-    <button onclick="scrollToSection('videos')">
-      Videos
-    </button>
-
-    <button onclick="scrollToSection('live')">
-      Live
-    </button>
-
-    <button onclick="scrollToSection('creators')">
-      Creators
-    </button>
-
-    <button onclick="scrollToSection('search')">
-      Search
-    </button>
-
-    <button class="login-button">
-      Login
-    </button>
-  </nav>
-
-</header>
-
-
-<!-- HERO -->
-
-<section class="hero" id="home">
-
-  <div class="hero-content">
-
-    <h1>
-      Discover Your Next Video
-    </h1>
-
-    <p>
-      Explore videos, creators, live streams
-      and personalized content in one place.
-    </p>
-
-    <div class="hero-buttons">
-
-      <button
-        class="hero-button primary"
-        onclick="scrollToSection('videos')">
-        Explore Videos
+      <button class="login-button">
+        Login
       </button>
+    </nav>
 
-      <button
-        class="hero-button secondary"
-        onclick="scrollToSection('live')">
-        Live Now
-      </button>
+  </header>
+
+
+  <section class="hero">
+
+    <div class="hero-content">
+
+      <h1>
+        Welcome to XKiss
+      </h1>
+
+      <p>
+        A private adult-content platform
+        designed with scalability,
+        privacy and security in mind.
+      </p>
+
+      <div class="age">
+        18+ Adults Only
+      </div>
 
     </div>
 
-  </div>
-
-</section>
+  </section>
 
 
-<main class="container">
-
-
-<!-- LATEST -->
-
-<section class="section" id="videos">
-
-  <div class="section-header">
+  <main class="container">
 
     <h2 class="section-title">
-      Latest Videos
+      Platform
     </h2>
 
-    <span class="view-all">
-      View All
-    </span>
+    <div class="categories">
 
-  </div>
-
-  <div class="video-grid">
-
-    <div class="video-card">
-
-      <div class="thumbnail">
-        <div class="play">▶</div>
-        <div class="duration">08:42</div>
+      <div class="category">
+        Latest
       </div>
 
-      <div class="video-info">
+      <div class="category">
+        Popular
+      </div>
 
-        <div class="video-title">
-          New Video Experience
-        </div>
+      <div class="category">
+        Categories
+      </div>
 
-        <div class="creator">
-          Creator One
-        </div>
+      <div class="category">
+        Creators
+      </div>
 
-        <div class="video-meta">
+      <div class="category">
+        Videos
+      </div>
 
-          <span>
-            12.4K views
-          </span>
-
-          <div class="badges">
-            <span class="badge">FREE</span>
-            <span class="badge">720P</span>
-          </div>
-
-        </div>
-
+      <div class="category">
+        Favorites
       </div>
 
     </div>
 
 
-    <div class="video-card">
+    <section class="admin-preview">
 
-      <div class="thumbnail">
-        <div class="play">▶</div>
-        <div class="duration">12:18</div>
-      </div>
+      <h2>
+        Super Admin System
+      </h2>
 
-      <div class="video-info">
+      <p>
+        The administrator will have full control
+        through a secure management system for
+        platform configuration, user management,
+        creator management, content moderation,
+        verification, analytics and security.
+      </p>
 
-        <div class="video-title">
-          Featured Creator Video
-        </div>
 
-        <div class="creator">
-          Creator Two
-        </div>
+      <div class="admin-grid">
 
-        <div class="video-meta">
+        <div class="admin-card">
+          <strong>
+            Users
+          </strong>
 
           <span>
-            8.7K views
+            User account management
           </span>
+        </div>
 
-          <div class="badges">
-            <span class="badge">PAID</span>
-            <span class="badge">1080P</span>
-          </div>
 
-  </div>
+        <div class="admin-card">
+          <strong>
+            Creators
+          </strong>
+
+          <span>
+            Creator account management
+          </span>
+        </div>
+
+
+        <div class="admin-card">
+          <strong>
+            Content
+          </strong>
+
+          <span>
+            Content management and moderation
+          </span>
+        </div>
+
+
+        <div class="admin-card">
+          <strong>
+            Verification
+          </strong>
+
+          <span>
+            Account and creator verification
+          </span>
+        </div>
+
+
+        <div class="admin-card">
+          <strong>
+            Analytics
+          </strong>
+
+          <span>
+            Platform statistics and reports
+          </span>
+        </div>
+
+
+        <div class="admin-card">
+          <strong>
+            Security
+          </strong>
+
+          <span>
+            Security and access controls
+          </span>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <footer>
+
+    © 2026 XKiss — All Rights Reserved
+
+  </footer>
+
+</body>
+</html>
