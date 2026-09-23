@@ -20,43 +20,18 @@
     --shadow:0 20px 70px rgba(0,0,0,.45);
 }
 
-*{
-    box-sizing:border-box;
-}
-
-html{
-    scroll-behavior:smooth;
-}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
 
 body{
-    margin:0;
-    padding:0;
-    min-height:100%;
-    overflow-x:hidden;
-    background:var(--bg);
-    color:var(--text);
-    font-family:
-        Inter,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Arial,
-        sans-serif;
+    margin:0;padding:0;min-height:100%;overflow-x:hidden;
+    background:var(--bg);color:var(--text);
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
 }
 
-button,
-input{
-    font:inherit;
-}
-
-button{
-    cursor:pointer;
-}
-
-a{
-    color:inherit;
-    text-decoration:none;
-}
+button,input{font:inherit;}
+button{cursor:pointer;}
+a{color:inherit;text-decoration:none;}
 
 
 /* =========================================================
@@ -64,70 +39,32 @@ a{
 ========================================================= */
 
 header{
-    position:sticky;
-    top:0;
-    z-index:1000;
-
+    position:sticky;top:0;z-index:1000;
     border-bottom:1px solid var(--border);
-
     background:rgba(8,9,12,.88);
-
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
 }
 
 .nav{
-    width:min(1200px,calc(100% - 32px));
-    min-height:70px;
-    margin:auto;
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:20px;
+    width:min(1200px,calc(100% - 32px));min-height:70px;margin:auto;
+    display:flex;align-items:center;justify-content:space-between;gap:20px;
 }
 
-.logo{
-    font-size:25px;
-    font-weight:900;
-    letter-spacing:-1px;
-}
+.logo{font-size:25px;font-weight:900;letter-spacing:-1px;}
+.logo span{color:var(--pink);}
 
-.logo span{
-    color:var(--pink);
-}
-
-.nav-links{
-    display:flex;
-    align-items:center;
-    gap:8px;
-}
+.nav-links{display:flex;align-items:center;gap:8px;}
 
 .nav-links a{
-    padding:10px 13px;
-    border-radius:9px;
-
-    color:#c8cad2;
-
-    font-size:13px;
-    font-weight:700;
+    padding:10px 13px;border-radius:9px;
+    color:#c8cad2;font-size:13px;font-weight:700;
 }
 
-.nav-links a:hover{
-    color:#fff;
-    background:rgba(255,255,255,.06);
-}
+.nav-links a:hover{color:#fff;background:rgba(255,255,255,.06);}
 
 .nav-button{
-    padding:10px 14px;
-
-    border:1px solid var(--border);
-    border-radius:10px;
-
-    color:#fff;
-    background:rgba(255,255,255,.05);
-
-    font-weight:800;
+    padding:10px 14px;border:1px solid var(--border);border-radius:10px;
+    color:#fff;background:rgba(255,255,255,.05);font-weight:800;
 }
 
 
@@ -136,222 +73,81 @@ header{
 ========================================================= */
 
 .hero{
-    position:relative;
-
-    min-height:520px;
-
-    display:flex;
-    align-items:center;
-
-    overflow:hidden;
-
-    border-bottom:1px solid var(--border);
-
+    position:relative;min-height:520px;display:flex;align-items:center;
+    overflow:hidden;border-bottom:1px solid var(--border);
     background:
-        radial-gradient(
-            circle at 75% 35%,
-            rgba(191,90,242,.20),
-            transparent 35%
-        ),
-        radial-gradient(
-            circle at 20% 60%,
-            rgba(255,45,117,.13),
-            transparent 30%
-        ),
+        radial-gradient(circle at 75% 35%,rgba(191,90,242,.20),transparent 35%),
+        radial-gradient(circle at 20% 60%,rgba(255,45,117,.13),transparent 30%),
         var(--bg);
 }
 
-.hero-inner{
-    width:min(1200px,calc(100% - 32px));
-    margin:auto;
-    padding:90px 0;
-}
+.hero-inner{width:min(1200px,calc(100% - 32px));margin:auto;padding:90px 0;}
 
 .hero-badge{
-    display:inline-flex;
-    align-items:center;
-
-    padding:8px 12px;
-
-    border:1px solid rgba(255,255,255,.1);
-    border-radius:999px;
-
-    color:#c9cad1;
-    background:rgba(255,255,255,.04);
-
-    font-size:12px;
-    font-weight:800;
+    display:inline-flex;align-items:center;padding:8px 12px;
+    border:1px solid rgba(255,255,255,.1);border-radius:999px;
+    color:#c9cad1;background:rgba(255,255,255,.04);
+    font-size:12px;font-weight:800;
 }
 
 .hero h1{
-    max-width:800px;
-
-    margin:22px 0 15px;
-
-    font-size:clamp(44px,7vw,82px);
-    line-height:.98;
-    letter-spacing:-4px;
+    max-width:800px;margin:22px 0 15px;
+    font-size:clamp(44px,7vw,82px);line-height:.98;letter-spacing:-4px;
 }
 
 .hero h1 span{
-    background:
-        linear-gradient(
-            135deg,
-            var(--pink),
-            var(--purple)
-        );
-
-    -webkit-background-clip:text;
-    background-clip:text;
-
-    color:transparent;
+    background:linear-gradient(135deg,var(--pink),var(--purple));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
 }
 
-.hero p{
-    max-width:650px;
+.hero p{max-width:650px;margin:0;color:var(--muted);font-size:17px;line-height:1.7;}
 
-    margin:0;
+.hero-actions{margin-top:30px;display:flex;flex-wrap:wrap;gap:12px;}
 
-    color:var(--muted);
+.primary-btn,.secondary-btn{padding:13px 18px;border-radius:12px;font-weight:900;}
 
-    font-size:17px;
-    line-height:1.7;
-}
+.primary-btn{border:0;color:#fff;background:linear-gradient(135deg,var(--pink),var(--purple));}
 
-.hero-actions{
-    margin-top:30px;
-
-    display:flex;
-    flex-wrap:wrap;
-    gap:12px;
-}
-
-.primary-btn,
-.secondary-btn{
-    padding:13px 18px;
-
-    border-radius:12px;
-
-    font-weight:900;
-}
-
-.primary-btn{
-    border:0;
-
-    color:#fff;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--pink),
-            var(--purple)
-        );
-}
-
-.secondary-btn{
-    border:1px solid var(--border);
-
-    color:#fff;
-
-    background:rgba(255,255,255,.05);
-}
+.secondary-btn{border:1px solid var(--border);color:#fff;background:rgba(255,255,255,.05);}
 
 
 /* =========================================================
    MAIN
 ========================================================= */
 
-main{
-    width:min(1200px,calc(100% - 32px));
-    margin:auto;
-}
-
-section{
-    padding:70px 0;
-}
+main{width:min(1200px,calc(100% - 32px));margin:auto;}
+section{padding:70px 0;}
 
 .section-head{
-    display:flex;
-    align-items:end;
-    justify-content:space-between;
-
-    gap:20px;
-
-    margin-bottom:25px;
+    display:flex;align-items:end;justify-content:space-between;
+    gap:20px;margin-bottom:25px;
 }
 
-.section-head h2{
-    margin:0;
-
-    font-size:30px;
-    letter-spacing:-1px;
-}
-
-.section-head p{
-    margin:5px 0 0;
-
-    color:var(--muted);
-
-    font-size:14px;
-}
+.section-head h2{margin:0;font-size:30px;letter-spacing:-1px;}
+.section-head p{margin:5px 0 0;color:var(--muted);font-size:14px;}
 
 
 /* =========================================================
    QUICK
 ========================================================= */
 
-.quick-grid{
-    display:grid;
-    grid-template-columns:repeat(4,minmax(0,1fr));
-    gap:14px;
-}
+.quick-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
 
 .quick-card{
-    padding:22px;
-
-    border:1px solid var(--border);
-    border-radius:16px;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255,255,255,.06),
-            rgba(255,255,255,.02)
-        );
-
-    transition:.2s;
+    padding:22px;border:1px solid var(--border);border-radius:16px;
+    background:linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+    transition:.2s;cursor:pointer;
 }
 
-.quick-card:hover{
-    transform:translateY(-3px);
-    border-color:rgba(255,45,117,.3);
-}
+.quick-card:hover{transform:translateY(-3px);border-color:rgba(255,45,117,.3);}
 
 .quick-icon{
-    width:42px;
-    height:42px;
-
-    display:grid;
-    place-items:center;
-
-    margin-bottom:15px;
-
-    border-radius:12px;
-
-    background:rgba(255,45,117,.1);
-
-    font-size:20px;
+    width:42px;height:42px;display:grid;place-items:center;margin-bottom:15px;
+    border-radius:12px;background:rgba(255,45,117,.1);font-size:20px;
 }
 
-.quick-card strong{
-    display:block;
-    margin-bottom:7px;
-}
-
-.quick-card span{
-    color:var(--muted);
-    font-size:13px;
-}
+.quick-card strong{display:block;margin-bottom:7px;}
+.quick-card span{color:var(--muted);font-size:13px;}
 
 
 /* =========================================================
@@ -359,269 +155,104 @@ section{
 ========================================================= */
 
 .featured{
-    min-height:280px;
-
-    display:flex;
-    align-items:center;
-
-    padding:35px;
-
-    overflow:hidden;
-
-    border:1px solid var(--border);
-    border-radius:22px;
-
+    min-height:280px;display:flex;align-items:center;padding:35px;
+    overflow:hidden;border:1px solid var(--border);border-radius:22px;
     background:
-        radial-gradient(
-            circle at 80% 50%,
-            rgba(191,90,242,.22),
-            transparent 35%
-        ),
-        linear-gradient(
-            135deg,
-            #11131a,
-            #0b0c10
-        );
+        radial-gradient(circle at 80% 50%,rgba(191,90,242,.22),transparent 35%),
+        linear-gradient(135deg,#11131a,#0b0c10);
 }
 
-.featured-content{
-    max-width:620px;
-}
-
-.featured small{
-    color:var(--pink);
-    font-weight:900;
-    letter-spacing:2px;
-}
-
-.featured h2{
-    margin:10px 0;
-    font-size:40px;
-    letter-spacing:-2px;
-}
-
-.featured p{
-    color:var(--muted);
-    line-height:1.7;
-}
+.featured-content{max-width:620px;}
+.featured small{color:var(--pink);font-weight:900;letter-spacing:2px;}
+.featured h2{margin:10px 0;font-size:40px;letter-spacing:-2px;}
+.featured p{color:var(--muted);line-height:1.7;}
 
 
 /* =========================================================
    VIDEOS
 ========================================================= */
 
-.video-grid{
-    display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:18px;
-}
+.video-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;}
 
 .video-card{
-    overflow:hidden;
-
-    border:1px solid var(--border);
-    border-radius:16px;
-
-    background:var(--surface);
-
-    box-shadow:var(--shadow);
+    overflow:hidden;border:1px solid var(--border);border-radius:16px;
+    background:var(--surface);box-shadow:var(--shadow);
 }
 
 .video-thumb{
-    position:relative;
-
-    aspect-ratio:16 / 9;
-
-    overflow:hidden;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    cursor:pointer;
-
+    position:relative;aspect-ratio:16 / 9;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
     background:
-        radial-gradient(
-            circle at 50% 45%,
-            rgba(191,90,242,.25),
-            transparent 28%
-        ),
-        linear-gradient(
-            135deg,
-            #11131a,
-            #08090c
-        );
+        radial-gradient(circle at 50% 45%,rgba(191,90,242,.25),transparent 28%),
+        linear-gradient(135deg,#11131a,#08090c);
 }
 
 .video-thumb::before{
-    content:"";
-
-    position:absolute;
-    inset:18px;
-
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:12px;
+    content:"";position:absolute;inset:18px;
+    border:1px solid rgba(255,255,255,.08);border-radius:12px;
 }
 
-.thumb-logo{
-    position:relative;
-    z-index:2;
-
-    text-align:center;
-}
+.thumb-logo{position:relative;z-index:2;text-align:center;}
 
 .thumb-logo .x{
-    display:block;
-
-    font-size:62px;
-    line-height:.9;
-
-    font-weight:1000;
-    font-style:italic;
-
-    color:#fff;
+    display:block;font-size:62px;line-height:.9;
+    font-weight:1000;font-style:italic;color:#fff;
 }
 
 .thumb-logo .kiss{
-    display:block;
-
-    margin-top:7px;
-
-    color:var(--pink);
-
-    font-size:13px;
-    font-weight:900;
-
-    letter-spacing:5px;
+    display:block;margin-top:7px;color:var(--pink);
+    font-size:13px;font-weight:900;letter-spacing:5px;
 }
 
 .thumb-title{
-    display:block;
-
-    margin-top:10px;
-
-    color:#fff;
-
-    font-size:11px;
-    letter-spacing:2px;
-    font-weight:900;
+    display:block;margin-top:10px;color:#fff;
+    font-size:11px;letter-spacing:2px;font-weight:900;
 }
 
 .play-circle{
-    position:absolute;
-    z-index:5;
-
-    left:50%;
-    top:50%;
-
-    transform:translate(-50%,-50%);
-
-    width:58px;
-    height:58px;
-
-    display:grid;
-    place-items:center;
-
-    border:1px solid rgba(255,255,255,.18);
-    border-radius:50%;
-
-    color:#fff;
-    background:rgba(0,0,0,.68);
-
-    font-size:22px;
+    position:absolute;z-index:5;left:50%;top:50%;
+    transform:translate(-50%,-50%);width:58px;height:58px;
+    display:grid;place-items:center;
+    border:1px solid rgba(255,255,255,.18);border-radius:50%;
+    color:#fff;background:rgba(0,0,0,.68);font-size:22px;
 }
 
 .play-circle:hover{
     transform:translate(-50%,-50%) scale(1.08);
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--pink),
-            var(--purple)
-        );
+    background:linear-gradient(135deg,var(--pink),var(--purple));
 }
 
 .video-quality{
-    position:absolute;
-    left:12px;
-    bottom:12px;
-    z-index:4;
-
-    padding:5px 8px;
-
-    border-radius:6px;
-
-    color:#fff;
-    background:rgba(0,0,0,.7);
-
-    font-size:10px;
-    font-weight:900;
+    position:absolute;left:12px;bottom:12px;z-index:4;
+    padding:5px 8px;border-radius:6px;color:#fff;
+    background:rgba(0,0,0,.7);font-size:10px;font-weight:900;
 }
 
 .video-duration{
-    position:absolute;
-    right:12px;
-    bottom:12px;
-    z-index:4;
-
-    padding:5px 8px;
-
-    border-radius:6px;
-
-    color:#fff;
-    background:rgba(0,0,0,.7);
-
-    font-size:10px;
-    font-weight:900;
+    position:absolute;right:12px;bottom:12px;z-index:4;
+    padding:5px 8px;border-radius:6px;color:#fff;
+    background:rgba(0,0,0,.7);font-size:10px;font-weight:900;
 }
 
-.video-info{
-    padding:15px;
-}
-
-.video-info h3{
-    margin:0 0 7px;
-    font-size:16px;
-}
-
-.video-info p{
-    margin:0;
-    color:var(--muted);
-    font-size:12px;
-}
+.video-info{padding:15px;}
+.video-info h3{margin:0 0 7px;font-size:16px;}
+.video-info p{margin:0;color:var(--muted);font-size:12px;}
 
 
 /* =========================================================
    CATEGORIES
 ========================================================= */
 
-.chips{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-}
+.chips{display:flex;flex-wrap:wrap;gap:10px;}
 
 .chip{
-    padding:10px 14px;
-
-    border:1px solid var(--border);
-    border-radius:999px;
-
-    color:#c8cad2;
-    background:rgba(255,255,255,.04);
-
-    font-size:13px;
-    font-weight:800;
+    padding:10px 14px;border:1px solid var(--border);border-radius:999px;
+    color:#c8cad2;background:rgba(255,255,255,.04);
+    font-size:13px;font-weight:800;
 }
 
-.chip.active,
-.chip:hover{
-    color:#fff;
-
-    border-color:rgba(255,45,117,.4);
-
-    background:rgba(255,45,117,.1);
+.chip.active,.chip:hover{
+    color:#fff;border-color:rgba(255,45,117,.4);background:rgba(255,45,117,.1);
 }
 
 
@@ -629,57 +260,24 @@ section{
    LIVE / CREATORS
 ========================================================= */
 
-.live-grid,
-.creator-grid{
-    display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:16px;
+.live-grid,.creator-grid{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;
 }
 
-.live-card,
-.creator-card{
-    padding:22px;
-
-    border:1px solid var(--border);
-    border-radius:16px;
-
+.live-card,.creator-card{
+    padding:22px;border:1px solid var(--border);border-radius:16px;
     background:var(--surface);
 }
 
 .live-dot{
-    display:inline-block;
-
-    width:8px;
-    height:8px;
-
-    margin-right:7px;
-
-    border-radius:50%;
-
-    background:#ff375f;
-
-    box-shadow:0 0 15px #ff375f;
+    display:inline-block;width:8px;height:8px;margin-right:7px;
+    border-radius:50%;background:#ff375f;box-shadow:0 0 15px #ff375f;
 }
 
 .creator-avatar{
-    width:55px;
-    height:55px;
-
-    display:grid;
-    place-items:center;
-
-    margin-bottom:15px;
-
-    border-radius:50%;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--pink),
-            var(--purple)
-        );
-
-    font-weight:1000;
+    width:55px;height:55px;display:grid;place-items:center;
+    margin-bottom:15px;border-radius:50%;
+    background:linear-gradient(135deg,var(--pink),var(--purple));font-weight:1000;
 }
 
 
@@ -687,31 +285,15 @@ section{
    SEARCH
 ========================================================= */
 
-.search-box{
-    display:flex;
-    gap:10px;
-
-    max-width:700px;
-}
+.search-box{display:flex;gap:10px;max-width:700px;}
 
 .search-box input{
-    flex:1;
-    min-width:0;
-
-    padding:14px 16px;
-
-    border:1px solid var(--border);
-    border-radius:12px;
-
-    outline:none;
-
-    color:#fff;
-    background:var(--surface);
+    flex:1;min-width:0;padding:14px 16px;
+    border:1px solid var(--border);border-radius:12px;
+    outline:none;color:#fff;background:var(--surface);
 }
 
-.search-box input:focus{
-    border-color:rgba(255,45,117,.5);
-}
+.search-box input:focus{border-color:rgba(255,45,117,.5);}
 
 
 /* =========================================================
@@ -719,17 +301,8 @@ section{
 ========================================================= */
 
 .account-box{
-    padding:30px;
-
-    border:1px solid var(--border);
-    border-radius:18px;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255,45,117,.07),
-            rgba(191,90,242,.07)
-        );
+    padding:30px;border:1px solid var(--border);border-radius:18px;
+    background:linear-gradient(135deg,rgba(255,45,117,.07),rgba(191,90,242,.07));
 }
 
 
@@ -737,32 +310,14 @@ section{
    FOOTER
 ========================================================= */
 
-footer{
-    margin-top:30px;
-
-    border-top:1px solid var(--border);
-
-    background:#06070a;
-}
+footer{margin-top:30px;border-top:1px solid var(--border);background:#06070a;}
 
 .footer-inner{
-    width:min(1200px,calc(100% - 32px));
-    margin:auto;
-
-    padding:35px 0;
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-
-    gap:20px;
+    width:min(1200px,calc(100% - 32px));margin:auto;padding:35px 0;
+    display:flex;align-items:center;justify-content:space-between;gap:20px;
 }
 
-.footer-inner p{
-    margin:0;
-    color:var(--muted);
-    font-size:12px;
-}
+.footer-inner p{margin:0;color:var(--muted);font-size:12px;}
 
 
 /* =========================================================
@@ -770,444 +325,220 @@ footer{
 ========================================================= */
 
 .modal{
-    position:fixed;
-    inset:0;
-
-    z-index:900000;
-
-    display:none;
-
-    align-items:center;
-    justify-content:center;
-
-    padding:18px;
-
-    background:rgba(0,0,0,.94);
-
-    overflow:auto;
+    position:fixed;inset:0;z-index:900000;display:none;
+    align-items:center;justify-content:center;padding:18px;
+    background:rgba(0,0,0,.94);overflow:auto;
 }
 
-.modal.show{
-    display:flex;
-}
+.modal.show{display:flex;}
 
 .player-box{
-    position:relative;
+    position:relative;width:min(1000px,100%);
+    max-height:calc(100vh - 36px);overflow:hidden;
+    border:1px solid rgba(255,255,255,.1);border-radius:16px;
+    background:#08090c;box-shadow:0 30px 100px rgba(0,0,0,.8);
+}
 
-    width:min(1000px,100%);
+.player-box.pseudo-fullscreen{
+    position:fixed;inset:0;width:100vw;height:100vh;
+    max-height:100vh;z-index:9999999;border-radius:0;
+    display:flex;flex-direction:column;
+}
 
-    max-height:calc(100vh - 36px);
-
-    overflow:hidden;
-
-    border:1px solid rgba(255,255,255,.1);
-    border-radius:16px;
-
-    background:#08090c;
-
-    box-shadow:0 30px 100px rgba(0,0,0,.8);
+.player-box.pseudo-fullscreen .video-area{
+    flex:1 1 auto;aspect-ratio:auto;min-height:0;
 }
 
 .player-top{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-
-    padding:12px 15px;
-
-    border-bottom:1px solid var(--border);
-
-    background:#0d0f14;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 15px;border-bottom:1px solid var(--border);background:#0d0f14;
 }
 
-.player-title{
-    font-size:13px;
-    font-weight:900;
-}
+.player-title{font-size:13px;font-weight:900;}
 
 .close-btn{
-    width:38px;
-    height:38px;
-
-    display:grid;
-    place-items:center;
-
-    border:1px solid var(--border);
-    border-radius:9px;
-
-    color:#fff;
-    background:rgba(255,255,255,.05);
-
-    font-size:22px;
+    width:38px;height:38px;display:grid;place-items:center;
+    border:1px solid var(--border);border-radius:9px;
+    color:#fff;background:rgba(255,255,255,.05);font-size:22px;
 }
 
-.close-btn:hover{
-    background:rgba(255,45,117,.75);
-}
+.close-btn:hover{background:rgba(255,45,117,.75);}
 
-.video-area{
-    position:relative;
+.video-area{position:relative;aspect-ratio:16 / 9;background:#000;}
 
-    aspect-ratio:16 / 9;
-
-    background:#000;
-}
-
-#realVideo{
-    display:block;
-
-    width:100%;
-    height:100%;
-
-    background:#000;
-}
+#realVideo{display:block;width:100%;height:100%;background:#000;}
 
 .video-controls{
-    display:flex;
-    align-items:center;
-    gap:8px;
-
-    padding:10px;
-
-    border-top:1px solid var(--border);
-
-    background:#0d0f14;
+    display:flex;align-items:center;gap:8px;padding:10px;
+    border-top:1px solid var(--border);background:#0d0f14;
 }
 
 .control-btn{
-    min-width:38px;
-    height:36px;
-
-    padding:0 10px;
-
-    border:1px solid var(--border);
-    border-radius:8px;
-
-    color:#fff;
-    background:rgba(255,255,255,.05);
-
-    font-weight:900;
+    min-width:38px;height:36px;padding:0 10px;
+    border:1px solid var(--border);border-radius:8px;
+    color:#fff;background:rgba(255,255,255,.05);font-weight:900;
 }
 
-.control-btn:hover{
-    background:rgba(255,255,255,.1);
-}
+.control-btn:hover{background:rgba(255,255,255,.1);}
 
-.quality-wrap{
-    position:relative;
-    margin-left:auto;
-}
+.quality-wrap{position:relative;margin-left:auto;}
 
 .quality-menu{
-    position:absolute;
-
-    right:0;
-    bottom:45px;
-
-    display:none;
-
-    min-width:100px;
-
-    padding:6px;
-
-    border:1px solid var(--border);
-    border-radius:10px;
-
-    background:#101218;
-
-    box-shadow:var(--shadow);
+    position:absolute;right:0;bottom:45px;display:none;min-width:100px;
+    padding:6px;border:1px solid var(--border);border-radius:10px;
+    background:#101218;box-shadow:var(--shadow);
 }
 
-.quality-menu.show{
-    display:block;
-}
+.quality-menu.show{display:block;}
 
 .quality-menu button{
-    width:100%;
-
-    padding:9px;
-
-    border:0;
-    border-radius:7px;
-
-    color:#fff;
-    background:transparent;
-
-    text-align:left;
+    width:100%;padding:9px;border:0;border-radius:7px;
+    color:#fff;background:transparent;text-align:left;
 }
 
-.quality-menu button:hover{
-    background:rgba(255,255,255,.07);
-}
+.quality-menu button:hover{background:rgba(255,255,255,.07);}
 
 
 /* =========================================================
-   SCREENSHOT — FIXED
+   SCREENSHOT MODAL  —  FIXED
 ========================================================= */
 
-/*
-   IMPORTANT FIX:
-
-   The screenshot NEVER locks the BODY.
-   It is simply a fixed layer over the page.
-
-   This prevents Android browser from jumping
-   the page to the top.
-*/
-
 .screenshot-modal{
-    position:fixed !important;
-
-    top:0 !important;
-    left:0 !important;
-    right:0 !important;
-    bottom:0 !important;
-
-    width:100vw !important;
-    height:100vh !important;
-
-    z-index:999999 !important;
-
+    position:fixed;
+    inset:0;
+    z-index:999999;
     display:none;
-
-    align-items:center !important;
-    justify-content:center !important;
-
-    padding:10px !important;
-
-    margin:0 !important;
-
     background:rgba(0,0,0,.97);
-
-    box-sizing:border-box !important;
-
-    overflow:auto !important;
-
-    overscroll-behavior:contain;
-
-    -webkit-overflow-scrolling:touch;
+    /* لا يوجد overscroll-behavior:contain هنا */
+    /* لا يوجد -webkit-overflow-scrolling:touch هنا */
 }
 
 .screenshot-modal.show{
-    display:flex !important;
-}
-
-
-/*
-   Screenshot box stays centered.
-*/
-
-.screenshot-box{
-    position:relative !important;
-
-    width:min(1100px,100%) !important;
-
-    max-width:1100px !important;
-
-    max-height:calc(100vh - 20px) !important;
-
-    margin:auto !important;
-    padding:0 !important;
-
-    display:flex !important;
-    flex-direction:column !important;
-
-    overflow:hidden !important;
-
-    flex:none !important;
-
-    border:1px solid rgba(255,255,255,.12);
-
-    border-radius:14px;
-
-    background:#08090c;
-
-    box-shadow:
-        0 30px 100px rgba(0,0,0,.9);
-
-    transform:none !important;
-}
-
-
-/*
-   Image area.
-*/
-
-.screenshot-image-wrap{
-    position:relative;
-
-    width:100%;
-
-    min-height:0;
-
-    flex:1 1 auto;
-
     display:flex;
+    flex-direction:column;
+    /* مساحة فوق لزر الإغلاق والكابشن */
+    padding:68px 12px 12px;
+}
 
+/* الحاوية الأساسية */
+.screenshot-box{
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+/* منطقة الصورة — تأخذ كل المساحة المتبقية */
+.screenshot-image-wrap{
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
     align-items:center;
     justify-content:center;
-
     overflow:auto;
-
-    background:#000;
-
-    -webkit-overflow-scrolling:touch;
-
-    overscroll-behavior:contain;
+    padding:0;
 }
 
+/* الصورة — تتوسّط دائماً، ما تطلع لفوق */
 .screenshot-image{
-    display:block !important;
-
-    width:auto !important;
-    height:auto !important;
-
-    max-width:100% !important;
-
-    max-height:calc(100vh - 115px) !important;
-
-    object-fit:contain !important;
-
-    margin:0 !important;
+    display:block;
+    width:auto;
+    height:auto;
+    max-width:100%;
+    max-height:100%;
+    object-fit:contain;
+    margin:auto;
 }
 
-
-/*
-   Screenshot missing.
-*/
-
+/* رسالة عدم وجود الصورة */
 .screenshot-placeholder{
     width:100%;
-
-    min-height:250px;
-
+    min-height:200px;
     display:flex;
-
     align-items:center;
     justify-content:center;
-
     text-align:center;
-
-    padding:35px;
-
+    padding:30px;
     color:#9699a6;
-
     background:#090a0e;
+    border-radius:12px;
 }
 
 .screenshot-placeholder strong{
-    display:block;
-
-    color:#fff;
-
-    margin-bottom:8px;
-
-    font-size:19px;
+    display:block;color:#fff;margin-bottom:8px;font-size:19px;
 }
 
-
-/*
-   X button.
-*/
-
+/* زر الإغلاق — ثابت على الشاشة، ما يختفي أبداً */
 .screenshot-close{
-    position:absolute !important;
-
-    top:9px !important;
-    right:9px !important;
-
-    z-index:100 !important;
-
-    width:42px !important;
-    height:42px !important;
-
-    display:grid !important;
-    place-items:center !important;
-
-    padding:0 !important;
-
-    border:1px solid rgba(255,255,255,.2);
-
+    position:fixed;
+    top:12px;
+    right:12px;
+    z-index:1000000;
+    width:44px;
+    height:44px;
+    display:grid;
+    place-items:center;
+    padding:0;
+    border:1px solid rgba(255,255,255,.25);
     border-radius:10px;
-
     color:#fff;
-
-    background:rgba(0,0,0,.82);
-
-    font-size:25px;
-
+    background:rgba(0,0,0,.9);
+    font-size:26px;
     line-height:1;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
 }
 
-.screenshot-close:hover{
-    background:rgba(255,45,117,.85);
+.screenshot-close:active{
+    background:rgba(255,45,117,.9);
 }
 
-
-/*
-   Caption.
-*/
-
+/* الكابشن — ثابت أيضاً */
 .screenshot-caption{
-    flex:none;
-
-    padding:11px 15px;
-
+    position:fixed;
+    top:12px;
+    left:12px;
+    right:68px;
+    height:44px;
+    display:flex;
+    align-items:center;
+    padding:0 14px;
     color:#aeb1bd;
-
     font-size:12px;
-
-    border-top:1px solid rgba(255,255,255,.07);
-
-    background:#0b0d12;
+    background:rgba(255,255,255,.06);
+    border-radius:10px;
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    pointer-events:none;
 }
 
-
-/*
-   Actions.
-*/
-
+/* الأزرار السفلية */
 .screenshot-actions{
     flex:none;
-
-    padding:0 15px 15px;
-
     display:flex;
-
     gap:8px;
-
-    flex-wrap:wrap;
-
-    background:#0b0d12;
 }
 
 .screenshot-actions button{
+    flex:1;
+    min-width:0;
+    padding:14px;
     border:1px solid rgba(255,255,255,.09);
-
-    border-radius:9px;
-
-    padding:10px 14px;
-
+    border-radius:10px;
     color:#fff;
-
     background:rgba(255,255,255,.06);
-
     font-weight:700;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
 }
 
-.screenshot-actions button:hover{
-    background:rgba(255,255,255,.1);
-}
+.screenshot-actions button:active{background:rgba(255,255,255,.12);}
 
 .screenshot-actions .primary{
     border:0;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--pink),
-            var(--purple)
-        );
+    background:linear-gradient(135deg,var(--pink),var(--purple));
 }
 
 
@@ -1216,180 +547,55 @@ footer{
 ========================================================= */
 
 @media(max-width:900px){
-
-    .nav-links{
-        display:none;
-    }
-
-    .quick-grid{
-        grid-template-columns:repeat(2,minmax(0,1fr));
-    }
-
-    .video-grid{
-        grid-template-columns:repeat(2,minmax(0,1fr));
-    }
-
-    .live-grid,
-    .creator-grid{
-        grid-template-columns:repeat(2,minmax(0,1fr));
-    }
+    .nav-links{display:none;}
+    .quick-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .video-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .live-grid,.creator-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
 }
 
-
 @media(max-width:700px){
+    .hero{min-height:470px;}
+    .hero-inner{padding:65px 0;}
+    .hero h1{font-size:48px;letter-spacing:-2.5px;}
+    .hero p{font-size:15px;}
+    section{padding:50px 0;}
+    .section-head{align-items:flex-start;flex-direction:column;}
+    .quick-grid,.video-grid,.live-grid,.creator-grid{grid-template-columns:1fr;}
+    .featured{padding:25px;min-height:250px;}
+    .featured h2{font-size:31px;}
+    .footer-inner{align-items:flex-start;flex-direction:column;}
 
-    .hero{
-        min-height:470px;
-    }
+    .screenshot-modal.show{padding:62px 8px 8px;}
 
-    .hero-inner{
-        padding:65px 0;
-    }
-
-    .hero h1{
-        font-size:48px;
-        letter-spacing:-2.5px;
-    }
-
-    .hero p{
-        font-size:15px;
-    }
-
-    section{
-        padding:50px 0;
-    }
-
-    .section-head{
-        align-items:flex-start;
-        flex-direction:column;
-    }
-
-    .quick-grid,
-    .video-grid,
-    .live-grid,
-    .creator-grid{
-        grid-template-columns:1fr;
-    }
-
-    .featured{
-        padding:25px;
-        min-height:250px;
-    }
-
-    .featured h2{
-        font-size:31px;
-    }
-
-    .footer-inner{
-        align-items:flex-start;
-        flex-direction:column;
-    }
-
-
-    /* -----------------------------------------------
-       SCREENSHOT MOBILE
-    ------------------------------------------------ */
-
-    .screenshot-modal{
-        position:fixed !important;
-
-        inset:0 !important;
-
-        width:100vw !important;
-        height:100vh !important;
-
-        padding:7px !important;
-
-        align-items:center !important;
-        justify-content:center !important;
-
-        overflow:auto !important;
-    }
-
-    .screenshot-box{
-        width:100% !important;
-
-        max-width:100% !important;
-
-        max-height:calc(100vh - 14px) !important;
-
-        margin:auto !important;
-
-        border-radius:12px;
-    }
-
-    .screenshot-image-wrap{
-        max-height:calc(100vh - 105px) !important;
-    }
-
-    .screenshot-image{
-        max-width:100% !important;
-
-        max-height:calc(100vh - 115px) !important;
+    .screenshot-caption{
+        top:8px;left:8px;right:60px;height:44px;font-size:11px;
     }
 
     .screenshot-close{
-        top:7px !important;
-        right:7px !important;
-    }
-
-    .screenshot-caption{
-        padding:9px 12px;
-    }
-
-    .screenshot-actions{
-        padding:0 10px 10px;
-    }
-
-    .screenshot-actions button{
-        flex:1;
+        top:8px;right:8px;width:44px;height:44px;
     }
 }
 
-
 @media(max-width:390px){
-
-    .hero h1{
-        font-size:41px;
-    }
-
-    .hero-actions{
-        flex-direction:column;
-    }
-
-    .primary-btn,
-    .secondary-btn{
-        width:100%;
-    }
-
-    .video-controls{
-        gap:5px;
-    }
-
-    .control-btn{
-        min-width:34px;
-        padding:0 7px;
-    }
+    .hero h1{font-size:41px;}
+    .hero-actions{flex-direction:column;}
+    .primary-btn,.secondary-btn{width:100%;}
+    .video-controls{gap:5px;}
+    .control-btn{min-width:34px;padding:0 7px;}
 }
 
 </style>
 </head>
 
-
 <body>
-
 
 <!-- =======================================================
      HEADER
 ======================================================= -->
 
 <header>
-
     <div class="nav">
-
-        <a href="#home" class="logo">
-            X<span>K</span>iss
-        </a>
+        <a href="#home" class="logo">X<span>K</span>iss</a>
 
         <nav class="nav-links">
             <a href="#videos">Videos</a>
@@ -1399,16 +605,11 @@ footer{
             <a href="#account">Account</a>
         </nav>
 
-        <button
-            class="nav-button"
+        <button class="nav-button" type="button"
             onclick="document.getElementById('search').scrollIntoView({behavior:'smooth'})">
-
             Search
-
         </button>
-
     </div>
-
 </header>
 
 
@@ -1417,18 +618,9 @@ footer{
 ======================================================= -->
 
 <section class="hero" id="home">
-
     <div class="hero-inner">
-
-        <span class="hero-badge">
-            18+ PREMIUM VIDEO PLATFORM
-        </span>
-
-        <h1>
-            Welcome to
-            <span>XKiss</span>
-        </h1>
-
+        <span class="hero-badge">18+ PREMIUM VIDEO PLATFORM</span>
+        <h1>Welcome to <span>XKiss</span></h1>
         <p>
             A premium video platform built for viewers,
             creators and live experiences.
@@ -1437,706 +629,226 @@ footer{
         </p>
 
         <div class="hero-actions">
-
-            <button
-                class="primary-btn"
+            <button class="primary-btn" type="button"
                 onclick="document.getElementById('videos').scrollIntoView({behavior:'smooth'})">
-
                 Watch Videos
-
             </button>
-
-            <button
-                class="secondary-btn"
+            <button class="secondary-btn" type="button"
                 onclick="document.getElementById('creators').scrollIntoView({behavior:'smooth'})">
-
                 Explore Creators
-
             </button>
-
         </div>
-
     </div>
-
 </section>
 
 
 <main>
 
-
-<!-- =======================================================
-     QUICK ACCESS
-======================================================= -->
-
+<!-- QUICK ACCESS -->
 <section>
-
     <div class="section-head">
-
-        <div>
-
-            <h2>Quick Access</h2>
-
-            <p>
-                Everything you need in one place.
-            </p>
-
-        </div>
-
+        <div><h2>Quick Access</h2><p>Everything you need in one place.</p></div>
     </div>
-
 
     <div class="quick-grid">
-
-        <div
-            class="quick-card"
-            onclick="document.getElementById('videos').scrollIntoView({behavior:'smooth'})">
-
-            <div class="quick-icon">▶</div>
-
-            <strong>Videos</strong>
-
-            <span>
-                Browse premium videos.
-            </span>
-
+        <div class="quick-card" onclick="document.getElementById('videos').scrollIntoView({behavior:'smooth'})">
+            <div class="quick-icon">▶</div><strong>Videos</strong><span>Browse premium videos.</span>
         </div>
-
-
-        <div
-            class="quick-card"
-            onclick="document.getElementById('live').scrollIntoView({behavior:'smooth'})">
-
-            <div class="quick-icon">●</div>
-
-            <strong>Live</strong>
-
-            <span>
-                Discover live creators.
-            </span>
-
+        <div class="quick-card" onclick="document.getElementById('live').scrollIntoView({behavior:'smooth'})">
+            <div class="quick-icon">●</div><strong>Live</strong><span>Discover live creators.</span>
         </div>
-
-
-        <div
-            class="quick-card"
-            onclick="document.getElementById('creators').scrollIntoView({behavior:'smooth'})">
-
-            <div class="quick-icon">◆</div>
-
-            <strong>Creators</strong>
-
-            <span>
-                Find your favorite creators.
-            </span>
-
+        <div class="quick-card" onclick="document.getElementById('creators').scrollIntoView({behavior:'smooth'})">
+            <div class="quick-icon">◆</div><strong>Creators</strong><span>Find your favorite creators.</span>
         </div>
-
-
-        <div
-            class="quick-card"
-            onclick="document.getElementById('account').scrollIntoView({behavior:'smooth'})">
-
-            <div class="quick-icon">♙</div>
-
-            <strong>Account</strong>
-
-            <span>
-                Manage your personal account.
-            </span>
-
+        <div class="quick-card" onclick="document.getElementById('account').scrollIntoView({behavior:'smooth'})">
+            <div class="quick-icon">♙</div><strong>Account</strong><span>Manage your personal account.</span>
         </div>
-
     </div>
-
 </section>
 
 
-<!-- =======================================================
-     FEATURED
-======================================================= -->
-
+<!-- FEATURED -->
 <section>
-
     <div class="featured">
-
         <div class="featured-content">
-
-            <small>
-                FEATURED EXPERIENCE
-            </small>
-
-            <h2>
-                Discover XKiss
-            </h2>
-
+            <small>FEATURED EXPERIENCE</small>
+            <h2>Discover XKiss</h2>
             <p>
                 Watch premium content, explore creators,
                 discover live experiences and build your
                 personal viewing environment.
             </p>
-
-            <button
-                class="primary-btn"
+            <button class="primary-btn" type="button"
                 onclick="document.getElementById('videos').scrollIntoView({behavior:'smooth'})">
-
                 Start Watching
-
             </button>
-
         </div>
-
     </div>
-
 </section>
 
 
-<!-- =======================================================
-     VIDEOS
-======================================================= -->
-
+<!-- VIDEOS -->
 <section id="videos">
-
     <div class="section-head">
-
-        <div>
-
-            <h2>Videos</h2>
-
-            <p>
-                Featured video content.
-            </p>
-
-        </div>
-
+        <div><h2>Videos</h2><p>Featured video content.</p></div>
     </div>
-
 
     <div class="video-grid">
 
-
-        <!-- ALI EXCEL -->
-
         <article class="video-card">
-
-            <div
-                class="video-thumb"
-                tabindex="0"
-                role="button"
+            <div class="video-thumb" tabindex="0" role="button"
                 aria-label="Open screenshot for Ali Excel"
                 onclick="openScreenshot('Ali Excel')"
                 onkeydown="handleThumbKey(event,'Ali Excel')">
 
-
                 <div class="thumb-logo">
-
-                    <span class="x">
-                        X
-                    </span>
-
-                    <span class="kiss">
-                        KISS
-                    </span>
-
-                    <span class="thumb-title">
-                        ALI EXCEL
-                    </span>
-
+                    <span class="x">X</span>
+                    <span class="kiss">KISS</span>
+                    <span class="thumb-title">ALI EXCEL</span>
                 </div>
 
+                <button class="play-circle" type="button" aria-label="Play Ali Excel"
+                    onclick="event.stopPropagation();watchVideo('Ali Excel')">▶</button>
 
-                <!-- PLAY DOES NOT OPEN SCREENSHOT -->
-
-                <button
-                    class="play-circle"
-                    type="button"
-                    aria-label="Play Ali Excel"
-                    onclick="event.stopPropagation();watchVideo('Ali Excel')">
-
-                    ▶
-
-                </button>
-
-
-                <span class="video-quality">
-                    720p
-                </span>
-
-
-                <span class="video-duration">
-                    00:14
-                </span>
-
+                <span class="video-quality">720p</span>
+                <span class="video-duration">00:14</span>
             </div>
 
-
-            <div class="video-info">
-
-                <h3>
-                    Ali Excel
-                </h3>
-
-                <p>
-                    By Ali Sr.M
-                </p>
-
-            </div>
-
+            <div class="video-info"><h3>Ali Excel</h3><p>By Ali Sr.M</p></div>
         </article>
 
 
-        <!-- FEATURED -->
-
         <article class="video-card">
-
-            <div
-                class="video-thumb"
-                tabindex="0"
-                role="button"
+            <div class="video-thumb" tabindex="0" role="button"
                 aria-label="Open screenshot for Featured Video"
                 onclick="openScreenshot('Featured Video')"
                 onkeydown="handleThumbKey(event,'Featured Video')">
 
                 <div class="thumb-logo">
-
-                    <span class="x">
-                        X
-                    </span>
-
-                    <span class="kiss">
-                        KISS
-                    </span>
-
-                    <span class="thumb-title">
-                        FEATURED
-                    </span>
-
+                    <span class="x">X</span>
+                    <span class="kiss">KISS</span>
+                    <span class="thumb-title">FEATURED</span>
                 </div>
 
-                <button
-                    class="play-circle"
-                    type="button"
-                    aria-label="Play Featured Video"
-                    onclick="event.stopPropagation();watchVideo('Featured Video')">
+                <button class="play-circle" type="button" aria-label="Play Featured Video"
+                    onclick="event.stopPropagation();watchVideo('Featured Video')">▶</button>
 
-                    ▶
-
-                </button>
-
-                <span class="video-quality">
-                    720p
-                </span>
-
+                <span class="video-quality">720p</span>
             </div>
 
-            <div class="video-info">
-
-                <h3>
-                    Featured Video
-                </h3>
-
-                <p>
-                    XKiss Premium
-                </p>
-
-            </div>
-
+            <div class="video-info"><h3>Featured Video</h3><p>XKiss Premium</p></div>
         </article>
 
 
-        <!-- PREMIUM -->
-
         <article class="video-card">
-
-            <div
-                class="video-thumb"
-                tabindex="0"
-                role="button"
+            <div class="video-thumb" tabindex="0" role="button"
                 aria-label="Open screenshot for Premium Video"
                 onclick="openScreenshot('Premium Video')"
                 onkeydown="handleThumbKey(event,'Premium Video')">
 
                 <div class="thumb-logo">
-
-                    <span class="x">
-                        X
-                    </span>
-
-                    <span class="kiss">
-                        KISS
-                    </span>
-
-                    <span class="thumb-title">
-                        PREMIUM
-                    </span>
-
+                    <span class="x">X</span>
+                    <span class="kiss">KISS</span>
+                    <span class="thumb-title">PREMIUM</span>
                 </div>
 
-                <button
-                    class="play-circle"
-                    type="button"
-                    aria-label="Play Premium Video"
-                    onclick="event.stopPropagation();watchVideo('Premium Video')">
+                <button class="play-circle" type="button" aria-label="Play Premium Video"
+                    onclick="event.stopPropagation();watchVideo('Premium Video')">▶</button>
 
-                    ▶
-
-                </button>
-
-                <span class="video-quality">
-                    720p
-                </span>
-
+                <span class="video-quality">720p</span>
             </div>
 
-            <div class="video-info">
-
-                <h3>
-                    Premium Video
-                </h3>
-
-                <p>
-                    XKiss Premium
-                </p>
-
-            </div>
-
+            <div class="video-info"><h3>Premium Video</h3><p>XKiss Premium</p></div>
         </article>
 
-
     </div>
-
 </section>
 
 
-<!-- =======================================================
-     CATEGORIES
-======================================================= -->
-
+<!-- CATEGORIES -->
 <section id="categories">
-
-    <div class="section-head">
-
-        <div>
-
-            <h2>Categories</h2>
-
-            <p>
-                Explore content by category.
-            </p>
-
-        </div>
-
-    </div>
-
+    <div class="section-head"><div><h2>Categories</h2><p>Explore content by category.</p></div></div>
 
     <div class="chips">
-
-        <button class="chip active">
-            All
-        </button>
-
-        <button class="chip">
-            Trending
-        </button>
-
-        <button class="chip">
-            New
-        </button>
-
-        <button class="chip">
-            Premium
-        </button>
-
-        <button class="chip">
-            Live
-        </button>
-
-        <button class="chip">
-            Creators
-        </button>
-
+        <button class="chip active" type="button">All</button>
+        <button class="chip" type="button">Trending</button>
+        <button class="chip" type="button">New</button>
+        <button class="chip" type="button">Premium</button>
+        <button class="chip" type="button">Live</button>
+        <button class="chip" type="button">Creators</button>
     </div>
-
 </section>
 
 
-<!-- =======================================================
-     LIVE
-======================================================= -->
-
+<!-- LIVE -->
 <section id="live">
-
-    <div class="section-head">
-
-        <div>
-
-            <h2>Live</h2>
-
-            <p>
-                Live creator experiences.
-            </p>
-
-        </div>
-
-    </div>
-
+    <div class="section-head"><div><h2>Live</h2><p>Live creator experiences.</p></div></div>
 
     <div class="live-grid">
-
-        <div class="live-card">
-
-            <span class="live-dot"></span>
-
-            <strong>
-                Live Room 01
-            </strong>
-
-            <p style="color:var(--muted);font-size:13px;">
-                Live experience
-            </p>
-
-        </div>
-
-
-        <div class="live-card">
-
-            <span class="live-dot"></span>
-
-            <strong>
-                Live Room 02
-            </strong>
-
-            <p style="color:var(--muted);font-size:13px;">
-                Live experience
-            </p>
-
-        </div>
-
-
-        <div class="live-card">
-
-            <span class="live-dot"></span>
-
-            <strong>
-                Live Room 03
-            </strong>
-
-            <p style="color:var(--muted);font-size:13px;">
-                Live experience
-            </p>
-
-        </div>
-
+        <div class="live-card"><span class="live-dot"></span><strong>Live Room 01</strong>
+            <p style="color:var(--muted);font-size:13px;">Live experience</p></div>
+        <div class="live-card"><span class="live-dot"></span><strong>Live Room 02</strong>
+            <p style="color:var(--muted);font-size:13px;">Live experience</p></div>
+        <div class="live-card"><span class="live-dot"></span><strong>Live Room 03</strong>
+            <p style="color:var(--muted);font-size:13px;">Live experience</p></div>
     </div>
-
 </section>
 
 
-<!-- =======================================================
-     CREATORS
-======================================================= -->
-
+<!-- CREATORS -->
 <section id="creators">
-
-    <div class="section-head">
-
-        <div>
-
-            <h2>Creators</h2>
-
-            <p>
-                Discover creators on XKiss.
-            </p>
-
-        </div>
-
-    </div>
-
+    <div class="section-head"><div><h2>Creators</h2><p>Discover creators on XKiss.</p></div></div>
 
     <div class="creator-grid">
-
-        <div class="creator-card">
-
-            <div class="creator-avatar">
-                AS
-            </div>
-
-            <strong>
-                Ali Sr.M
-            </strong>
-
-            <p style="color:var(--muted);font-size:13px;">
-                Creator
-            </p>
-
-        </div>
-
-
-        <div class="creator-card">
-
-            <div class="creator-avatar">
-                X
-            </div>
-
-            <strong>
-                Creator
-            </strong>
-
-            <p style="color:var(--muted);font-size:13px;">
-                XKiss Creator
-            </p>
-
-        </div>
-
-
-        <div class="creator-card">
-
-            <div class="creator-avatar">
-                +
-            </div>
-
-            <strong>
-                Become a Creator
-            </strong>
-
-            <p style="color:var(--muted);font-size:13px;">
-                Creator registration
-            </p>
-
-        </div>
-
+        <div class="creator-card"><div class="creator-avatar">AS</div><strong>Ali Sr.M</strong>
+            <p style="color:var(--muted);font-size:13px;">Creator</p></div>
+        <div class="creator-card"><div class="creator-avatar">X</div><strong>Creator</strong>
+            <p style="color:var(--muted);font-size:13px;">XKiss Creator</p></div>
+        <div class="creator-card"><div class="creator-avatar">+</div><strong>Become a Creator</strong>
+            <p style="color:var(--muted);font-size:13px;">Creator registration</p></div>
     </div>
-
 </section>
 
 
-<!-- =======================================================
-     SEARCH
-======================================================= -->
-
+<!-- SEARCH -->
 <section id="search">
-
-    <div class="section-head">
-
-        <div>
-
-            <h2>Search</h2>
-
-            <p>
-                Search videos and creators.
-            </p>
-
-        </div>
-
-    </div>
-
+    <div class="section-head"><div><h2>Search</h2><p>Search videos and creators.</p></div></div>
 
     <div class="search-box">
-
-        <input
-            id="searchInput"
-            type="search"
-            placeholder="Search XKiss...">
-
-        <button
-            class="primary-btn"
-            onclick="performSearch()">
-
-            Search
-
-        </button>
-
+        <input id="searchInput" type="search" placeholder="Search XKiss...">
+        <button class="primary-btn" type="button" onclick="performSearch()">Search</button>
     </div>
 
-
-    <p
-        id="searchResult"
-        style="
-            margin-top:15px;
-            color:var(--muted);
-            font-size:13px;
-        ">
-
-    </p>
-
+    <p id="searchResult" style="margin-top:15px;color:var(--muted);font-size:13px;"></p>
 </section>
 
 
-<!-- =======================================================
-     ACCOUNT
-======================================================= -->
-
+<!-- ACCOUNT -->
 <section id="account">
-
-    <div class="section-head">
-
-        <div>
-
-            <h2>Account</h2>
-
-            <p>
-                Your private XKiss account area.
-            </p>
-
-        </div>
-
-    </div>
-
+    <div class="section-head"><div><h2>Account</h2><p>Your private XKiss account area.</p></div></div>
 
     <div class="account-box">
-
-        <strong>
-            Welcome to your account
-        </strong>
-
+        <strong>Welcome to your account</strong>
         <p style="color:var(--muted);line-height:1.7;">
-            Account registration, favorites,
-            viewing history, creator subscriptions,
-            wallet and personal settings will be connected
-            here as the XKiss platform develops.
+            Account registration, favorites, viewing history,
+            creator subscriptions, wallet and personal settings
+            will be connected here as the XKiss platform develops.
         </p>
-
-        <button
-            class="primary-btn"
+        <button class="primary-btn" type="button"
             onclick="alert('Account system will be connected here.')">
-
             Open Account
-
         </button>
-
     </div>
-
 </section>
-
 
 </main>
 
 
-<!-- =======================================================
-     FOOTER
-======================================================= -->
-
 <footer>
-
     <div class="footer-inner">
-
-        <div>
-
-            <strong>
-                XKiss
-            </strong>
-
-            <p>
-                Premium Adult Video Platform — 18+
-            </p>
-
-        </div>
-
-        <p>
-            © 2026 XKiss. All rights reserved.
-        </p>
-
+        <div><strong>XKiss</strong><p>Premium Adult Video Platform — 18+</p></div>
+        <p>© 2026 XKiss. All rights reserved.</p>
     </div>
-
 </footer>
 
 
@@ -2144,238 +856,75 @@ footer{
      VIDEO MODAL
 ======================================================= -->
 
-<div
-    class="modal"
-    id="videoModal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="playerTitle">
+<div class="modal" id="videoModal" role="dialog" aria-modal="true"
+    aria-hidden="true" aria-labelledby="playerTitle">
 
     <div class="player-box">
-
-
         <div class="player-top">
-
-            <div
-                class="player-title"
-                id="playerTitle">
-
-                Ali Excel
-
-            </div>
-
-
-            <button
-                class="close-btn"
-                type="button"
-                aria-label="Close video"
-                onclick="closeVideoViewer()">
-
-                ×
-
-            </button>
-
+            <div class="player-title" id="playerTitle">Ali Excel</div>
+            <button class="close-btn" type="button" aria-label="Close video"
+                onclick="closeVideoViewer()">×</button>
         </div>
-
 
         <div class="video-area">
-
-            <video
-                id="realVideo"
-                playsinline
-                preload="metadata">
-
+            <video id="realVideo" playsinline preload="metadata">
                 Your browser does not support HTML5 video.
-
             </video>
-
         </div>
-
 
         <div class="video-controls">
+            <button class="control-btn" id="playPauseBtn" type="button"
+                aria-label="Play or pause" onclick="togglePlayPause()">▶</button>
 
-            <button
-                class="control-btn"
-                id="playPauseBtn"
-                type="button"
-                onclick="togglePlayPause()">
-
-                ▶
-
-            </button>
-
-
-            <button
-                class="control-btn"
-                type="button"
-                onclick="toggleMute()">
-
-                🔊
-
-            </button>
-
+            <button class="control-btn" id="muteBtn" type="button"
+                aria-label="Mute or unmute" onclick="toggleMute()">🔊</button>
 
             <div class="quality-wrap">
-
-                <button
-                    class="control-btn"
-                    type="button"
-                    onclick="toggleQualityMenu()">
-
-                    720p
-
-                </button>
-
-
-                <div
-                    class="quality-menu"
-                    id="qualityMenu">
-
-                    <button
-                        type="button"
-                        onclick="setQuality('360')">
-
-                        360p
-
-                    </button>
-
-                    <button
-                        type="button"
-                        onclick="setQuality('480')">
-
-                        480p
-
-                    </button>
-
-                    <button
-                        type="button"
-                        onclick="setQuality('720')">
-
-                        720p
-
-                    </button>
-
+                <button class="control-btn" type="button" onclick="toggleQualityMenu()">720p</button>
+                <div class="quality-menu" id="qualityMenu">
+                    <button type="button" onclick="setQuality('360')">360p</button>
+                    <button type="button" onclick="setQuality('480')">480p</button>
+                    <button type="button" onclick="setQuality('720')">720p</button>
                 </div>
-
             </div>
 
-
-            <!-- FULLSCREEN ONLY HERE -->
-
-            <button
-                class="control-btn"
-                type="button"
-                onclick="toggleFullscreen()"
-                aria-label="Fullscreen">
-
-                ⛶
-
-            </button>
-
-
+            <button class="control-btn" id="fsBtn" type="button"
+                onclick="toggleFullscreen()" aria-label="Fullscreen">⛶</button>
         </div>
-
     </div>
-
 </div>
 
 
 <!-- =======================================================
-     SCREENSHOT MODAL
+     SCREENSHOT MODAL  —  FIXED
 ======================================================= -->
 
-<div
-    class="screenshot-modal"
-    id="screenshotModal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="screenshotTitle"
-    aria-hidden="true">
+<div class="screenshot-modal" id="screenshotModal" role="dialog"
+    aria-modal="true" aria-labelledby="screenshotTitle" aria-hidden="true">
 
+    <button class="screenshot-close" type="button"
+        aria-label="Close screenshot" onclick="closeScreenshot()">×</button>
+
+    <div class="screenshot-caption" id="screenshotTitle">Ali Excel — Screenshot</div>
 
     <div class="screenshot-box">
-
-
-        <button
-            class="screenshot-close"
-            type="button"
-            aria-label="Close screenshot"
-            onclick="closeScreenshot()">
-
-            ×
-
-        </button>
-
-
         <div class="screenshot-image-wrap">
+            <img id="screenshotImage" class="screenshot-image"
+                src="XKiss-screenshot.jpg" alt="XKiss screenshot">
 
-            <img
-                id="screenshotImage"
-                class="screenshot-image"
-                src="XKiss-screenshot.jpg"
-                alt="XKiss screenshot"
-                onerror="showScreenshotPlaceholder()">
-
-
-            <div
-                id="screenshotPlaceholder"
-                class="screenshot-placeholder"
-                style="display:none;">
-
+            <div id="screenshotPlaceholder" class="screenshot-placeholder" style="display:none;">
                 <div>
-
-                    <strong>
-                        Screenshot not found
-                    </strong>
-
-                    <span>
-                        Place
-                        <b>XKiss-screenshot.jpg</b>
-                        next to
-                        <b>index.html</b>.
-                    </span>
-
+                    <strong>Screenshot not found</strong>
+                    <span>Place <b>XKiss-screenshot.jpg</b> next to <b>index.html</b>.</span>
                 </div>
-
             </div>
-
         </div>
-
-
-        <div
-            class="screenshot-caption"
-            id="screenshotTitle">
-
-            Ali Excel — Screenshot
-
-        </div>
-
 
         <div class="screenshot-actions">
-
-            <button
-                class="primary"
-                type="button"
-                onclick="playFromScreenshot()">
-
-                ▶ Play Video
-
-            </button>
-
-
-            <button
-                type="button"
-                onclick="closeScreenshot()">
-
-                Close
-
-            </button>
-
+            <button class="primary" type="button" onclick="playFromScreenshot()">▶ Play Video</button>
+            <button type="button" onclick="closeScreenshot()">Close</button>
         </div>
-
-
     </div>
-
 </div>
 
 
@@ -2386,374 +935,210 @@ footer{
 ========================================================= */
 
 const VIDEO_SOURCES = {
-
-    "360":
-        "https://aligassrm.github.io/XKiss/20260923_234200-1.mp4",
-
-    "480":
-        "https://aligassrm.github.io/XKiss/20260923_234200-2.mp4",
-
-    "720":
-        "https://aligassrm.github.io/XKiss/20260923_234200-3.mp4"
-
+    "360": "https://aligassrm.github.io/XKiss/20260923_234200-1.mp4",
+    "480": "https://aligassrm.github.io/XKiss/20260923_234200-2.mp4",
+    "720": "https://aligassrm.github.io/XKiss/20260923_234200-3.mp4"
 };
 
-
-/* =========================================================
-   SCREENSHOT
-========================================================= */
-
-const SCREENSHOT_URL =
-    "XKiss-screenshot.jpg";
-
-
-let currentScreenshotTitle =
-    "Ali Excel";
-
-let screenshotScrollPosition =
-    0;
+const SCREENSHOT_URL = "XKiss-screenshot.jpg";
 
 
 /* =========================================================
    DOM
 ========================================================= */
 
-const screenshotModal =
-    document.getElementById(
-        "screenshotModal"
-    );
+const screenshotModal       = document.getElementById("screenshotModal");
+const screenshotImage       = document.getElementById("screenshotImage");
+const screenshotPlaceholder = document.getElementById("screenshotPlaceholder");
+const screenshotTitle       = document.getElementById("screenshotTitle");
 
-const screenshotImage =
-    document.getElementById(
-        "screenshotImage"
-    );
+const modal        = document.getElementById("videoModal");
+const realVideo    = document.getElementById("realVideo");
+const playerTitle  = document.getElementById("playerTitle");
+const playPauseBtn = document.getElementById("playPauseBtn");
+const muteBtn      = document.getElementById("muteBtn");
+const qualityMenu  = document.getElementById("qualityMenu");
 
-const screenshotPlaceholder =
-    document.getElementById(
-        "screenshotPlaceholder"
-    );
+let currentScreenshotTitle = "Ali Excel";
+let currentVideoTitle      = "Ali Excel";
+let currentQuality         = "720";
+let fallbackFullscreen     = false;
 
-const screenshotTitle =
-    document.getElementById(
-        "screenshotTitle"
-    );
-
-
-const modal =
-    document.getElementById(
-        "videoModal"
-    );
-
-const realVideo =
-    document.getElementById(
-        "realVideo"
-    );
-
-const playerTitle =
-    document.getElementById(
-        "playerTitle"
-    );
-
-const playPauseBtn =
-    document.getElementById(
-        "playPauseBtn"
-    );
-
-const qualityMenu =
-    document.getElementById(
-        "qualityMenu"
-    );
-
-
-let currentQuality =
-    "720";
-
-let currentVideoTitle =
-    "Ali Excel";
+/* حالات القفل */
+let isScreenshotOpen = false;
+let isVideoOpen      = false;
+let savedScrollY     = 0;
 
 
 /* =========================================================
-   SCREENSHOT OPEN
+   قفل التمرير — التقنية الصحيحة للجوال
+   (position:fixed على body، مع حفظ الموضع)
+========================================================= */
+
+function lockBodyScroll(){
+    savedScrollY = window.pageYOffset
+        || window.scrollY
+        || document.documentElement.scrollTop
+        || document.body.scrollTop
+        || 0;
+
+    document.body.style.position  = "fixed";
+    document.body.style.top       = "-" + savedScrollY + "px";
+    document.body.style.left      = "0";
+    document.body.style.right     = "0";
+    document.body.style.width     = "100%";
+    document.body.style.overflow  = "hidden";
+}
+
+function unlockBodyScroll(){
+    document.body.style.position = "";
+    document.body.style.top      = "";
+    document.body.style.left     = "";
+    document.body.style.right    = "";
+    document.body.style.width    = "";
+    document.body.style.overflow = "";
+
+    window.scrollTo(0, savedScrollY);
+}
+
+
+/* =========================================================
+   SCREENSHOT — فتح
 ========================================================= */
 
 function openScreenshot(title){
 
-    currentScreenshotTitle =
-        title || "Ali Excel";
+    if(isScreenshotOpen) return;
 
+    /* إذا كان الفيديو مفتوح، نسكره أولاً */
+    if(isVideoOpen) closeVideoViewer();
 
-    /*
-       IMPORTANT:
-       Save the exact current scroll position.
+    isScreenshotOpen = true;
 
-       We DO NOT:
-       - lock body
-       - lock html
-       - change position
-       - call scrollTo
-       - add body.locked
+    currentScreenshotTitle = title || "Ali Excel";
 
-       This is the fix for the Android
-       browser jumping to the top.
-    */
+    lockBodyScroll();
 
-    screenshotScrollPosition =
-        window.pageYOffset ||
-        window.scrollY ||
-        document.documentElement.scrollTop ||
-        document.body.scrollTop ||
-        0;
+    /* تصفير الحالة قبل كل فتح */
+    screenshotPlaceholder.style.display = "none";
+    screenshotImage.style.display      = "block";
+    screenshotImage.src                = SCREENSHOT_URL;
+    screenshotImage.alt                = currentScreenshotTitle + " screenshot";
+    screenshotTitle.textContent        = currentScreenshotTitle + " — Screenshot";
 
-
-    screenshotTitle.textContent =
-        currentScreenshotTitle +
-        " — Screenshot";
-
-
-    screenshotPlaceholder.style.display =
-        "none";
-
-    screenshotImage.style.display =
-        "block";
-
-
-    screenshotImage.src =
-        SCREENSHOT_URL;
-
-
-    screenshotImage.alt =
-        currentScreenshotTitle +
-        " screenshot";
-
-
-    /*
-       Only show the fixed overlay.
-       The underlying page is untouched.
-    */
-
-    screenshotModal.classList.add(
-        "show"
-    );
-
-    screenshotModal.setAttribute(
-        "aria-hidden",
-        "false"
-    );
-
+    screenshotModal.classList.add("show");
+    screenshotModal.setAttribute("aria-hidden", "false");
 }
 
 
 /* =========================================================
-   SCREENSHOT ERROR
-========================================================= */
-
-function showScreenshotPlaceholder(){
-
-    screenshotImage.style.display =
-        "none";
-
-    screenshotPlaceholder.style.display =
-        "flex";
-
-}
-
-
-/* =========================================================
-   SCREENSHOT CLOSE
+   SCREENSHOT — إغلاق
 ========================================================= */
 
 function closeScreenshot(){
 
-    /*
-       First remove the overlay.
-    */
+    if(!isScreenshotOpen) return;
 
-    screenshotModal.classList.remove(
-        "show"
-    );
+    isScreenshotOpen = false;
 
-    screenshotModal.setAttribute(
-        "aria-hidden",
-        "true"
-    );
+    screenshotModal.classList.remove("show");
+    screenshotModal.setAttribute("aria-hidden", "true");
 
-
-    /*
-       Return to EXACTLY the position
-       where the user opened the screenshot.
-
-       No body overflow changes.
-    */
-
-    requestAnimationFrame(function(){
-
-        window.scrollTo(
-            0,
-            screenshotScrollPosition
-        );
-
-    });
-
+    unlockBodyScroll();
 }
 
 
 /* =========================================================
-   PLAY FROM SCREENSHOT
+   SCREENSHOT — معالجة فشل الصورة
+========================================================= */
+
+function showScreenshotPlaceholder(){
+    screenshotImage.style.display      = "none";
+    screenshotPlaceholder.style.display = "flex";
+}
+
+screenshotImage.addEventListener("error", showScreenshotPlaceholder);
+
+
+/* =========================================================
+   تشغيل الفيديو من داخل السكرين شوت
 ========================================================= */
 
 function playFromScreenshot(){
-
-    const title =
-        currentScreenshotTitle;
-
-
+    const title = currentScreenshotTitle;
     closeScreenshot();
-
-
-    setTimeout(function(){
-
-        watchVideo(title);
-
-    },50);
-
+    /* ننتظر إطار واحد حتى يستقر التمرير ثم نفتح الفيديو */
+    requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+            watchVideo(title);
+        });
+    });
 }
 
 
 /* =========================================================
-   THUMBNAIL KEYBOARD
+   كيبورد الصور المصغرة
 ========================================================= */
 
-function handleThumbKey(event,title){
-
-    if(
-        event.key === "Enter" ||
-        event.key === " "
-    ){
-
+function handleThumbKey(event, title){
+    if(event.key === "Enter" || event.key === " "){
         event.preventDefault();
-
         openScreenshot(title);
-
     }
-
 }
 
 
 /* =========================================================
-   VIDEO OPEN
+   VIDEO — فتح
 ========================================================= */
 
 function watchVideo(title){
 
-    currentVideoTitle =
-        title || "Ali Excel";
+    if(isVideoOpen) return;
 
+    isVideoOpen = true;
+    currentVideoTitle = title || "Ali Excel";
+    playerTitle.textContent = currentVideoTitle;
 
-    playerTitle.textContent =
-        currentVideoTitle;
-
-
-    /*
-       IMPORTANT:
-       NO FULLSCREEN HERE.
-    */
-
-    currentQuality =
-        "720";
-
-
-    realVideo.src =
-        VIDEO_SOURCES["720"];
-
-
+    currentQuality = "720";
+    realVideo.src = VIDEO_SOURCES["720"];
     realVideo.load();
 
+    lockBodyScroll();
 
-    modal.classList.add(
-        "show"
-    );
-
-    modal.setAttribute(
-        "aria-hidden",
-        "false"
-    );
-
-
-    /*
-       Video modal can lock the page,
-       because this is the actual player.
-
-       Screenshot does NOT do this.
-    */
-
-    document.documentElement.style.overflow =
-        "hidden";
-
-    document.body.style.overflow =
-        "hidden";
-
+    modal.classList.add("show");
+    modal.setAttribute("aria-hidden", "false");
 
     realVideo.play()
-        .then(function(){
-
-            updatePlayButton();
-
-        })
-        .catch(function(){
-
-            updatePlayButton();
-
-        });
-
+        .then(updatePlayButton)
+        .catch(updatePlayButton);
 }
 
 
 /* =========================================================
-   VIDEO CLOSE
+   VIDEO — إغلاق
 ========================================================= */
 
 function closeVideoViewer(){
 
+    if(!isVideoOpen) return;
+
+    isVideoOpen = false;
+
     realVideo.pause();
-
-    realVideo.removeAttribute(
-        "src"
-    );
-
+    realVideo.removeAttribute("src");
     realVideo.load();
 
-
-    if(
-        document.fullscreenElement
-    ){
-
-        document.exitFullscreen()
-            .catch(function(){});
-
+    if(document.fullscreenElement || document.webkitFullscreenElement){
+        restoreNormalScreen();
     }
+    exitFallbackFullscreen();
 
+    modal.classList.remove("show");
+    modal.setAttribute("aria-hidden", "true");
+    qualityMenu.classList.remove("show");
 
-    modal.classList.remove(
-        "show"
-    );
-
-    modal.setAttribute(
-        "aria-hidden",
-        "true"
-    );
-
-
-    qualityMenu.classList.remove(
-        "show"
-    );
-
-
-    document.body.style.overflow =
-        "";
-
-    document.documentElement.style.overflow =
-        "";
-
+    unlockBodyScroll();
 }
 
 
@@ -2762,40 +1147,19 @@ function closeVideoViewer(){
 ========================================================= */
 
 function togglePlayPause(){
-
     if(realVideo.paused){
-
-        realVideo.play()
-            .catch(function(){});
-
+        realVideo.play().catch(function(){});
     }else{
-
         realVideo.pause();
-
     }
-
 }
-
 
 function updatePlayButton(){
-
-    playPauseBtn.textContent =
-        realVideo.paused
-            ? "▶"
-            : "Ⅱ";
-
+    playPauseBtn.textContent = realVideo.paused ? "▶" : "Ⅱ";
 }
 
-
-realVideo.addEventListener(
-    "play",
-    updatePlayButton
-);
-
-realVideo.addEventListener(
-    "pause",
-    updatePlayButton
-);
+realVideo.addEventListener("play",  updatePlayButton);
+realVideo.addEventListener("pause", updatePlayButton);
 
 
 /* =========================================================
@@ -2803,10 +1167,8 @@ realVideo.addEventListener(
 ========================================================= */
 
 function toggleMute(){
-
-    realVideo.muted =
-        !realVideo.muted;
-
+    realVideo.muted = !realVideo.muted;
+    muteBtn.textContent = realVideo.muted ? "🔇" : "🔊";
 }
 
 
@@ -2815,67 +1177,25 @@ function toggleMute(){
 ========================================================= */
 
 function toggleQualityMenu(){
-
-    qualityMenu.classList.toggle(
-        "show"
-    );
-
+    qualityMenu.classList.toggle("show");
 }
-
 
 function setQuality(quality){
 
-    const wasPlaying =
-        !realVideo.paused;
+    const wasPlaying  = !realVideo.paused;
+    const currentTime = realVideo.currentTime || 0;
 
-    const currentTime =
-        realVideo.currentTime || 0;
+    currentQuality = quality;
+    qualityMenu.classList.remove("show");
 
-
-    currentQuality =
-        quality;
-
-
-    qualityMenu.classList.remove(
-        "show"
-    );
-
-
-    realVideo.src =
-        VIDEO_SOURCES[quality];
-
-
+    realVideo.src = VIDEO_SOURCES[quality];
     realVideo.load();
 
-
-    realVideo.addEventListener(
-        "loadedmetadata",
-        function restorePosition(){
-
-            realVideo.removeEventListener(
-                "loadedmetadata",
-                restorePosition
-            );
-
-
-            try{
-
-                realVideo.currentTime =
-                    currentTime;
-
-            }catch(error){}
-
-
-            if(wasPlaying){
-
-                realVideo.play()
-                    .catch(function(){});
-
-            }
-
-        }
-    );
-
+    realVideo.addEventListener("loadedmetadata", function restorePosition(){
+        realVideo.removeEventListener("loadedmetadata", restorePosition);
+        try{ realVideo.currentTime = currentTime; }catch(error){}
+        if(wasPlaying) realVideo.play().catch(function(){});
+    });
 }
 
 
@@ -2885,291 +1205,109 @@ function setQuality(quality){
 
 function toggleFullscreen(){
 
-    const player =
-        document.querySelector(
-            ".player-box"
-        );
+    if(fallbackFullscreen){ exitFallbackFullscreen(); return; }
 
-
-    if(
-        document.fullscreenElement ||
-        document.webkitFullscreenElement
-    ){
-
-        restoreNormalScreen();
-
-        return;
-
+    if(document.fullscreenElement || document.webkitFullscreenElement){
+        restoreNormalScreen(); return;
     }
 
-
-    enterFullscreen(player);
-
+    enterFullscreen(document.querySelector(".player-box"));
 }
-
 
 function enterFullscreen(element){
-
     if(element.requestFullscreen){
-
-        element.requestFullscreen()
-            .catch(function(){
-
-                mobileFullscreenFallback();
-
-            });
-
+        element.requestFullscreen().catch(enterFallbackFullscreen);
         return;
-
     }
-
-
     if(element.webkitRequestFullscreen){
-
-        element.webkitRequestFullscreen();
-
+        try{ element.webkitRequestFullscreen(); }
+        catch(error){ enterFallbackFullscreen(); }
         return;
-
     }
-
-
-    mobileFullscreenFallback();
-
+    enterFallbackFullscreen();
 }
-
 
 function restoreNormalScreen(){
-
     if(document.exitFullscreen){
-
-        document.exitFullscreen()
-            .catch(function(){});
-
+        document.exitFullscreen().catch(function(){});
         return;
-
     }
-
-
-    if(document.webkitExitFullscreen){
-
-        document.webkitExitFullscreen();
-
-    }
-
+    if(document.webkitExitFullscreen) document.webkitExitFullscreen();
+    exitFallbackFullscreen();
 }
 
-
-function mobileFullscreenFallback(){
-
-    const player =
-        document.querySelector(
-            ".player-box"
-        );
-
-
-    player.style.position =
-        "fixed";
-
-    player.style.inset =
-        "0";
-
-    player.style.width =
-        "100vw";
-
-    player.style.height =
-        "100vh";
-
-    player.style.maxHeight =
-        "100vh";
-
-    player.style.zIndex =
-        "9999999";
-
-    player.style.borderRadius =
-        "0";
-
+function enterFallbackFullscreen(){
+    fallbackFullscreen = true;
+    document.querySelector(".player-box").classList.add("pseudo-fullscreen");
 }
 
+function exitFallbackFullscreen(){
+    fallbackFullscreen = false;
+    document.querySelector(".player-box").classList.remove("pseudo-fullscreen");
+}
 
-/* =========================================================
-   FULLSCREEN CHANGE
-========================================================= */
-
-document.addEventListener(
-    "fullscreenchange",
-    function(){
-
-        if(
-            !document.fullscreenElement &&
-            !document.webkitFullscreenElement
-        ){
-
-            const player =
-                document.querySelector(
-                    ".player-box"
-                );
-
-
-            player.style.position =
-                "";
-
-            player.style.inset =
-                "";
-
-            player.style.width =
-                "";
-
-            player.style.height =
-                "";
-
-            player.style.maxHeight =
-                "";
-
-            player.style.zIndex =
-                "";
-
-            player.style.borderRadius =
-                "";
-
+["fullscreenchange", "webkitfullscreenchange"].forEach(function(evt){
+    document.addEventListener(evt, function(){
+        if(!document.fullscreenElement && !document.webkitFullscreenElement){
+            if(!fallbackFullscreen){
+                document.querySelector(".player-box").classList.remove("pseudo-fullscreen");
+            }
         }
-
-    }
-);
+    });
+});
 
 
 /* =========================================================
-   VIDEO BACKGROUND CLICK
+   إغلاق بالنقر على الخلفية
 ========================================================= */
 
-modal.addEventListener(
-    "click",
-    function(event){
+modal.addEventListener("click", function(event){
+    if(event.target === modal) closeVideoViewer();
+});
 
-        if(
-            event.target === modal
-        ){
-
-            closeVideoViewer();
-
-        }
-
-    }
-);
+screenshotModal.addEventListener("click", function(event){
+    if(event.target === screenshotModal) closeScreenshot();
+});
 
 
 /* =========================================================
-   SCREENSHOT BACKGROUND CLICK
+   إغلاق قائمة الجودة عند النقر خارجها
 ========================================================= */
 
-screenshotModal.addEventListener(
-    "click",
-    function(event){
-
-        if(
-            event.target === screenshotModal
-        ){
-
-            closeScreenshot();
-
-        }
-
-    }
-);
+document.addEventListener("click", function(event){
+    if(!qualityMenu.classList.contains("show")) return;
+    if(event.target.closest(".quality-wrap")) return;
+    qualityMenu.classList.remove("show");
+});
 
 
 /* =========================================================
-   ESCAPE
+   ESC
 ========================================================= */
 
-document.addEventListener(
-    "keydown",
-    function(event){
+document.addEventListener("keydown", function(event){
+    if(event.key !== "Escape") return;
 
-        if(
-            event.key !== "Escape"
-        ){
-
-            return;
-
-        }
-
-
-        if(
-            screenshotModal.classList.contains(
-                "show"
-            )
-        ){
-
-            closeScreenshot();
-
-            return;
-
-        }
-
-
-        if(
-            modal.classList.contains(
-                "show"
-            )
-        ){
-
-            closeVideoViewer();
-
-        }
-
-    }
-);
+    if(isScreenshotOpen){ closeScreenshot(); return; }
+    if(isVideoOpen){ closeVideoViewer(); }
+});
 
 
 /* =========================================================
-   SPACE — VIDEO
+   SPACE — تشغيل/إيقاف
 ========================================================= */
 
-document.addEventListener(
-    "keydown",
-    function(event){
+document.addEventListener("keydown", function(event){
+    if(event.code !== "Space") return;
+    if(!isVideoOpen) return;
 
-        if(
-            event.code !== "Space"
-        ){
+    const active = document.activeElement;
+    const tag = active ? active.tagName : "";
+    if(tag === "INPUT" || tag === "TEXTAREA" || tag === "BUTTON") return;
 
-            return;
-
-        }
-
-
-        if(
-            !modal.classList.contains(
-                "show"
-            )
-        ){
-
-            return;
-
-        }
-
-
-        const tag =
-            document.activeElement.tagName;
-
-
-        if(
-            tag === "INPUT" ||
-            tag === "TEXTAREA" ||
-            tag === "BUTTON"
-        ){
-
-            return;
-
-        }
-
-
-        event.preventDefault();
-
-        togglePlayPause();
-
-    }
-);
+    event.preventDefault();
+    togglePlayPause();
+});
 
 
 /* =========================================================
@@ -3177,37 +1315,15 @@ document.addEventListener(
 ========================================================= */
 
 function performSearch(){
-
-    const input =
-        document.getElementById(
-            "searchInput"
-        );
-
-    const result =
-        document.getElementById(
-            "searchResult"
-        );
-
-
-    const value =
-        input.value.trim();
-
+    const input  = document.getElementById("searchInput");
+    const result = document.getElementById("searchResult");
+    const value  = input.value.trim();
 
     if(!value){
-
-        result.textContent =
-            "Type something to search.";
-
+        result.textContent = "Type something to search.";
         return;
-
     }
-
-
-    result.textContent =
-        'Search results for "' +
-        value +
-        '" will appear here.';
-
+    result.textContent = 'Search results for "' + value + '" will appear here.';
 }
 
 
@@ -3215,51 +1331,16 @@ function performSearch(){
    CHIPS
 ========================================================= */
 
-document.querySelectorAll(
-    ".chip"
-).forEach(function(chip){
-
-    chip.addEventListener(
-        "click",
-        function(){
-
-            document.querySelectorAll(
-                ".chip"
-            ).forEach(function(item){
-
-                item.classList.remove(
-                    "active"
-                );
-
-            });
-
-
-            chip.classList.add(
-                "active"
-            );
-
-        }
-    );
-
+document.querySelectorAll(".chip").forEach(function(chip){
+    chip.addEventListener("click", function(){
+        document.querySelectorAll(".chip").forEach(function(item){
+            item.classList.remove("active");
+        });
+        chip.classList.add("active");
+    });
 });
-
-
-/* =========================================================
-   IMPORTANT:
-   NO RESIZE SCROLL RESET
-========================================================= */
-
-/*
-   Deliberately no window.resize handler.
-
-   Android browser UI changes viewport height
-   when address/navigation bars appear.
-
-   Resetting scroll during resize was another
-   possible cause of the page jumping upward.
-*/
 
 </script>
 
 </body>
-</html>
+    </html>
