@@ -2,18 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <title>XKiss — Premium Adult Video Platform</title>
 
 <style>
-
-/* =========================================================
-   XKISS — CORE
-========================================================= */
 
 :root{
     --bg:#08090c;
@@ -35,11 +28,11 @@ html{
     scroll-behavior:smooth;
 }
 
-html,
 body{
     margin:0;
     padding:0;
     min-height:100%;
+    overflow-x:hidden;
     background:var(--bg);
     color:var(--text);
     font-family:
@@ -49,14 +42,6 @@ body{
         "Segoe UI",
         Arial,
         sans-serif;
-}
-
-body{
-    overflow-x:hidden;
-}
-
-body.locked{
-    overflow:hidden !important;
 }
 
 button,
@@ -83,8 +68,6 @@ header{
     top:0;
     z-index:1000;
 
-    width:100%;
-
     border-bottom:1px solid var(--border);
 
     background:rgba(8,9,12,.88);
@@ -95,14 +78,12 @@ header{
 
 .nav{
     width:min(1200px,calc(100% - 32px));
-    margin:auto;
-
     min-height:70px;
+    margin:auto;
 
     display:flex;
     align-items:center;
     justify-content:space-between;
-
     gap:20px;
 }
 
@@ -124,15 +105,12 @@ header{
 
 .nav-links a{
     padding:10px 13px;
+    border-radius:9px;
 
     color:#c8cad2;
 
-    border-radius:9px;
-
     font-size:13px;
     font-weight:700;
-
-    transition:.2s;
 }
 
 .nav-links a:hover{
@@ -141,15 +119,13 @@ header{
 }
 
 .nav-button{
-    border:1px solid var(--border);
-
-    background:rgba(255,255,255,.05);
-
-    color:#fff;
-
     padding:10px 14px;
 
+    border:1px solid var(--border);
     border-radius:10px;
+
+    color:#fff;
+    background:rgba(255,255,255,.05);
 
     font-weight:800;
 }
@@ -188,23 +164,19 @@ header{
 .hero-inner{
     width:min(1200px,calc(100% - 32px));
     margin:auto;
-
     padding:90px 0;
 }
 
 .hero-badge{
     display:inline-flex;
     align-items:center;
-    gap:8px;
 
     padding:8px 12px;
 
     border:1px solid rgba(255,255,255,.1);
-
     border-radius:999px;
 
     color:#c9cad1;
-
     background:rgba(255,255,255,.04);
 
     font-size:12px;
@@ -217,9 +189,7 @@ header{
     margin:22px 0 15px;
 
     font-size:clamp(44px,7vw,82px);
-
     line-height:.98;
-
     letter-spacing:-4px;
 }
 
@@ -258,13 +228,11 @@ header{
 
 .primary-btn,
 .secondary-btn{
-    border-radius:12px;
-
     padding:13px 18px;
 
-    font-weight:900;
+    border-radius:12px;
 
-    border:1px solid var(--border);
+    font-weight:900;
 }
 
 .primary-btn{
@@ -281,6 +249,8 @@ header{
 }
 
 .secondary-btn{
+    border:1px solid var(--border);
+
     color:#fff;
 
     background:rgba(255,255,255,.05);
@@ -314,7 +284,6 @@ section{
     margin:0;
 
     font-size:30px;
-
     letter-spacing:-1px;
 }
 
@@ -328,15 +297,12 @@ section{
 
 
 /* =========================================================
-   QUICK ACCESS
+   QUICK
 ========================================================= */
 
 .quick-grid{
     display:grid;
-
-    grid-template-columns:
-        repeat(4,minmax(0,1fr));
-
+    grid-template-columns:repeat(4,minmax(0,1fr));
     gap:14px;
 }
 
@@ -344,7 +310,6 @@ section{
     padding:22px;
 
     border:1px solid var(--border);
-
     border-radius:16px;
 
     background:
@@ -359,9 +324,7 @@ section{
 
 .quick-card:hover{
     transform:translateY(-3px);
-
-    border-color:
-        rgba(255,45,117,.3);
+    border-color:rgba(255,45,117,.3);
 }
 
 .quick-icon{
@@ -382,13 +345,11 @@ section{
 
 .quick-card strong{
     display:block;
-
     margin-bottom:7px;
 }
 
 .quick-card span{
     color:var(--muted);
-
     font-size:13px;
 }
 
@@ -398,8 +359,6 @@ section{
 ========================================================= */
 
 .featured{
-    position:relative;
-
     min-height:280px;
 
     display:flex;
@@ -410,7 +369,6 @@ section{
     overflow:hidden;
 
     border:1px solid var(--border);
-
     border-radius:22px;
 
     background:
@@ -427,45 +385,34 @@ section{
 }
 
 .featured-content{
-    position:relative;
-    z-index:2;
-
     max-width:620px;
 }
 
 .featured small{
     color:var(--pink);
-
     font-weight:900;
-
     letter-spacing:2px;
 }
 
 .featured h2{
     margin:10px 0;
-
     font-size:40px;
-
     letter-spacing:-2px;
 }
 
 .featured p{
     color:var(--muted);
-
     line-height:1.7;
 }
 
 
 /* =========================================================
-   VIDEO GRID
+   VIDEOS
 ========================================================= */
 
 .video-grid{
     display:grid;
-
-    grid-template-columns:
-        repeat(3,minmax(0,1fr));
-
+    grid-template-columns:repeat(3,minmax(0,1fr));
     gap:18px;
 }
 
@@ -473,7 +420,6 @@ section{
     overflow:hidden;
 
     border:1px solid var(--border);
-
     border-radius:16px;
 
     background:var(--surface);
@@ -511,17 +457,14 @@ section{
     content:"";
 
     position:absolute;
-
     inset:18px;
 
     border:1px solid rgba(255,255,255,.08);
-
     border-radius:12px;
 }
 
 .thumb-logo{
     position:relative;
-
     z-index:2;
 
     text-align:center;
@@ -531,11 +474,9 @@ section{
     display:block;
 
     font-size:62px;
-
     line-height:.9;
 
     font-weight:1000;
-
     font-style:italic;
 
     color:#fff;
@@ -549,7 +490,6 @@ section{
     color:var(--pink);
 
     font-size:13px;
-
     font-weight:900;
 
     letter-spacing:5px;
@@ -563,15 +503,12 @@ section{
     color:#fff;
 
     font-size:11px;
-
     letter-spacing:2px;
-
     font-weight:900;
 }
 
 .play-circle{
     position:absolute;
-
     z-index:5;
 
     left:50%;
@@ -586,17 +523,12 @@ section{
     place-items:center;
 
     border:1px solid rgba(255,255,255,.18);
-
     border-radius:50%;
 
     color:#fff;
-
-    background:
-        rgba(0,0,0,.68);
+    background:rgba(0,0,0,.68);
 
     font-size:22px;
-
-    transition:.2s;
 }
 
 .play-circle:hover{
@@ -612,43 +544,35 @@ section{
 
 .video-quality{
     position:absolute;
-
     left:12px;
     bottom:12px;
-
     z-index:4;
 
     padding:5px 8px;
 
     border-radius:6px;
 
+    color:#fff;
     background:rgba(0,0,0,.7);
 
-    color:#fff;
-
     font-size:10px;
-
     font-weight:900;
 }
 
 .video-duration{
     position:absolute;
-
     right:12px;
     bottom:12px;
-
     z-index:4;
 
     padding:5px 8px;
 
     border-radius:6px;
 
+    color:#fff;
     background:rgba(0,0,0,.7);
 
-    color:#fff;
-
     font-size:10px;
-
     font-weight:900;
 }
 
@@ -658,15 +582,12 @@ section{
 
 .video-info h3{
     margin:0 0 7px;
-
     font-size:16px;
 }
 
 .video-info p{
     margin:0;
-
     color:var(--muted);
-
     font-size:12px;
 }
 
@@ -678,7 +599,6 @@ section{
 .chips{
     display:flex;
     flex-wrap:wrap;
-
     gap:10px;
 }
 
@@ -686,14 +606,10 @@ section{
     padding:10px 14px;
 
     border:1px solid var(--border);
-
     border-radius:999px;
 
     color:#c8cad2;
-
     background:rgba(255,255,255,.04);
-
-    cursor:pointer;
 
     font-size:13px;
     font-weight:800;
@@ -705,8 +621,7 @@ section{
 
     border-color:rgba(255,45,117,.4);
 
-    background:
-        rgba(255,45,117,.1);
+    background:rgba(255,45,117,.1);
 }
 
 
@@ -717,10 +632,7 @@ section{
 .live-grid,
 .creator-grid{
     display:grid;
-
-    grid-template-columns:
-        repeat(3,minmax(0,1fr));
-
+    grid-template-columns:repeat(3,minmax(0,1fr));
     gap:16px;
 }
 
@@ -729,7 +641,6 @@ section{
     padding:22px;
 
     border:1px solid var(--border);
-
     border-radius:16px;
 
     background:var(--surface);
@@ -778,7 +689,6 @@ section{
 
 .search-box{
     display:flex;
-
     gap:10px;
 
     max-width:700px;
@@ -786,19 +696,16 @@ section{
 
 .search-box input{
     flex:1;
-
     min-width:0;
 
     padding:14px 16px;
 
     border:1px solid var(--border);
+    border-radius:12px;
 
     outline:none;
 
-    border-radius:12px;
-
     color:#fff;
-
     background:var(--surface);
 }
 
@@ -815,7 +722,6 @@ section{
     padding:30px;
 
     border:1px solid var(--border);
-
     border-radius:18px;
 
     background:
@@ -854,9 +760,7 @@ footer{
 
 .footer-inner p{
     margin:0;
-
     color:var(--muted);
-
     font-size:12px;
 }
 
@@ -867,7 +771,6 @@ footer{
 
 .modal{
     position:fixed;
-
     inset:0;
 
     z-index:900000;
@@ -898,18 +801,15 @@ footer{
     overflow:hidden;
 
     border:1px solid rgba(255,255,255,.1);
-
     border-radius:16px;
 
     background:#08090c;
 
-    box-shadow:
-        0 30px 100px rgba(0,0,0,.8);
+    box-shadow:0 30px 100px rgba(0,0,0,.8);
 }
 
 .player-top{
     display:flex;
-
     align-items:center;
     justify-content:space-between;
 
@@ -933,11 +833,9 @@ footer{
     place-items:center;
 
     border:1px solid var(--border);
-
     border-radius:9px;
 
     color:#fff;
-
     background:rgba(255,255,255,.05);
 
     font-size:22px;
@@ -950,9 +848,9 @@ footer{
 .video-area{
     position:relative;
 
-    background:#000;
-
     aspect-ratio:16 / 9;
+
+    background:#000;
 }
 
 #realVideo{
@@ -966,9 +864,7 @@ footer{
 
 .video-controls{
     display:flex;
-
     align-items:center;
-
     gap:8px;
 
     padding:10px;
@@ -985,11 +881,9 @@ footer{
     padding:0 10px;
 
     border:1px solid var(--border);
-
     border-radius:8px;
 
     color:#fff;
-
     background:rgba(255,255,255,.05);
 
     font-weight:900;
@@ -1001,7 +895,6 @@ footer{
 
 .quality-wrap{
     position:relative;
-
     margin-left:auto;
 }
 
@@ -1018,7 +911,6 @@ footer{
     padding:6px;
 
     border:1px solid var(--border);
-
     border-radius:10px;
 
     background:#101218;
@@ -1036,11 +928,9 @@ footer{
     padding:9px;
 
     border:0;
-
     border-radius:7px;
 
     color:#fff;
-
     background:transparent;
 
     text-align:left;
@@ -1052,28 +942,29 @@ footer{
 
 
 /* =========================================================
-   SCREENSHOT LIGHTBOX — FIXED VERSION
+   SCREENSHOT — FIXED
 ========================================================= */
 
 /*
-    IMPORTANT:
-    This modal is completely independent
-    from the normal page flow.
+   IMPORTANT FIX:
 
-    It uses fixed + inset:0.
-    Therefore the page cannot jump to the top.
+   The screenshot NEVER locks the BODY.
+   It is simply a fixed layer over the page.
+
+   This prevents Android browser from jumping
+   the page to the top.
 */
 
 .screenshot-modal{
     position:fixed !important;
 
-    inset:0 !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
 
     width:100vw !important;
     height:100vh !important;
-    height:100dvh !important;
-
-    min-height:100vh !important;
 
     z-index:999999 !important;
 
@@ -1082,17 +973,19 @@ footer{
     align-items:center !important;
     justify-content:center !important;
 
-    padding:15px !important;
+    padding:10px !important;
 
     margin:0 !important;
 
     background:rgba(0,0,0,.97);
 
+    box-sizing:border-box !important;
+
     overflow:auto !important;
 
     overscroll-behavior:contain;
 
-    box-sizing:border-box !important;
+    -webkit-overflow-scrolling:touch;
 }
 
 .screenshot-modal.show{
@@ -1101,8 +994,7 @@ footer{
 
 
 /*
-    Main screenshot window.
-    It is centered vertically and horizontally.
+   Screenshot box stays centered.
 */
 
 .screenshot-box{
@@ -1112,14 +1004,12 @@ footer{
 
     max-width:1100px !important;
 
-    max-height:calc(100dvh - 30px) !important;
+    max-height:calc(100vh - 20px) !important;
 
     margin:auto !important;
-
     padding:0 !important;
 
     display:flex !important;
-
     flex-direction:column !important;
 
     overflow:hidden !important;
@@ -1128,7 +1018,7 @@ footer{
 
     border:1px solid rgba(255,255,255,.12);
 
-    border-radius:16px;
+    border-radius:14px;
 
     background:#08090c;
 
@@ -1140,19 +1030,17 @@ footer{
 
 
 /*
-    Image area.
-    The image itself is NEVER allowed
-    to push the modal outside the screen.
+   Image area.
 */
 
 .screenshot-image-wrap{
     position:relative;
 
-    flex:1 1 auto;
+    width:100%;
 
     min-height:0;
 
-    width:100%;
+    flex:1 1 auto;
 
     display:flex;
 
@@ -1162,6 +1050,8 @@ footer{
     overflow:auto;
 
     background:#000;
+
+    -webkit-overflow-scrolling:touch;
 
     overscroll-behavior:contain;
 }
@@ -1173,18 +1063,17 @@ footer{
     height:auto !important;
 
     max-width:100% !important;
-    max-height:calc(100dvh - 120px) !important;
+
+    max-height:calc(100vh - 115px) !important;
 
     object-fit:contain !important;
 
     margin:0 !important;
-
-    background:#000;
 }
 
 
 /*
-    Screenshot not found message
+   Screenshot missing.
 */
 
 .screenshot-placeholder{
@@ -1199,55 +1088,51 @@ footer{
 
     text-align:center;
 
-    padding:40px;
+    padding:35px;
 
     color:#9699a6;
 
-    background:
-        radial-gradient(
-            circle at center,
-            rgba(191,90,242,.18),
-            transparent 38%
-        ),
-        #090a0e;
+    background:#090a0e;
 }
 
 .screenshot-placeholder strong{
     display:block;
 
-    margin-bottom:8px;
-
     color:#fff;
 
-    font-size:20px;
+    margin-bottom:8px;
+
+    font-size:19px;
 }
 
 
 /*
-    Close button
+   X button.
 */
 
 .screenshot-close{
     position:absolute !important;
 
-    top:12px !important;
-    right:12px !important;
+    top:9px !important;
+    right:9px !important;
 
     z-index:100 !important;
 
     width:42px !important;
     height:42px !important;
 
-    display:grid;
-    place-items:center;
+    display:grid !important;
+    place-items:center !important;
 
-    border:1px solid rgba(255,255,255,.15);
+    padding:0 !important;
+
+    border:1px solid rgba(255,255,255,.2);
 
     border-radius:10px;
 
     color:#fff;
 
-    background:rgba(0,0,0,.78);
+    background:rgba(0,0,0,.82);
 
     font-size:25px;
 
@@ -1260,13 +1145,13 @@ footer{
 
 
 /*
-    Screenshot title
+   Caption.
 */
 
 .screenshot-caption{
     flex:none;
 
-    padding:12px 16px;
+    padding:11px 15px;
 
     color:#aeb1bd;
 
@@ -1279,13 +1164,13 @@ footer{
 
 
 /*
-    Screenshot buttons
+   Actions.
 */
 
 .screenshot-actions{
     flex:none;
 
-    padding:0 16px 16px;
+    padding:0 15px 15px;
 
     display:flex;
 
@@ -1337,22 +1222,19 @@ footer{
     }
 
     .quick-grid{
-        grid-template-columns:
-            repeat(2,minmax(0,1fr));
+        grid-template-columns:repeat(2,minmax(0,1fr));
     }
 
     .video-grid{
-        grid-template-columns:
-            repeat(2,minmax(0,1fr));
+        grid-template-columns:repeat(2,minmax(0,1fr));
     }
 
     .live-grid,
     .creator-grid{
-        grid-template-columns:
-            repeat(2,minmax(0,1fr));
+        grid-template-columns:repeat(2,minmax(0,1fr));
     }
-
 }
+
 
 @media(max-width:700px){
 
@@ -1366,7 +1248,6 @@ footer{
 
     .hero h1{
         font-size:48px;
-
         letter-spacing:-2.5px;
     }
 
@@ -1380,7 +1261,6 @@ footer{
 
     .section-head{
         align-items:flex-start;
-
         flex-direction:column;
     }
 
@@ -1393,7 +1273,6 @@ footer{
 
     .featured{
         padding:25px;
-
         min-height:250px;
     }
 
@@ -1403,20 +1282,28 @@ footer{
 
     .footer-inner{
         align-items:flex-start;
-
         flex-direction:column;
     }
 
 
-    /* ============================================
+    /* -----------------------------------------------
        SCREENSHOT MOBILE
-    ============================================ */
+    ------------------------------------------------ */
 
     .screenshot-modal{
-        padding:8px !important;
+        position:fixed !important;
+
+        inset:0 !important;
+
+        width:100vw !important;
+        height:100vh !important;
+
+        padding:7px !important;
 
         align-items:center !important;
         justify-content:center !important;
+
+        overflow:auto !important;
     }
 
     .screenshot-box{
@@ -1424,46 +1311,41 @@ footer{
 
         max-width:100% !important;
 
-        max-height:calc(100dvh - 16px) !important;
+        max-height:calc(100vh - 14px) !important;
+
+        margin:auto !important;
 
         border-radius:12px;
     }
 
     .screenshot-image-wrap{
-        min-height:0;
-
-        max-height:calc(100dvh - 105px);
+        max-height:calc(100vh - 105px) !important;
     }
 
     .screenshot-image{
         max-width:100% !important;
 
-        max-height:calc(100dvh - 115px) !important;
+        max-height:calc(100vh - 115px) !important;
     }
 
     .screenshot-close{
-        top:8px !important;
-        right:8px !important;
+        top:7px !important;
+        right:7px !important;
     }
 
     .screenshot-caption{
-        padding:10px 12px;
+        padding:9px 12px;
     }
 
     .screenshot-actions{
-        padding:0 12px 12px;
+        padding:0 10px 10px;
     }
 
     .screenshot-actions button{
         flex:1;
     }
-
 }
 
-
-/* =========================================================
-   VERY SMALL PHONES
-========================================================= */
 
 @media(max-width:390px){
 
@@ -1486,10 +1368,8 @@ footer{
 
     .control-btn{
         min-width:34px;
-
         padding:0 7px;
     }
-
 }
 
 </style>
@@ -1512,13 +1392,11 @@ footer{
         </a>
 
         <nav class="nav-links">
-
             <a href="#videos">Videos</a>
             <a href="#live">Live</a>
             <a href="#creators">Creators</a>
             <a href="#categories">Categories</a>
             <a href="#account">Account</a>
-
         </nav>
 
         <button
@@ -1583,14 +1461,12 @@ footer{
 </section>
 
 
-<!-- =======================================================
-     MAIN
-======================================================= -->
-
 <main>
 
 
-<!-- QUICK ACCESS -->
+<!-- =======================================================
+     QUICK ACCESS
+======================================================= -->
 
 <section>
 
@@ -1675,7 +1551,9 @@ footer{
 </section>
 
 
-<!-- FEATURED -->
+<!-- =======================================================
+     FEATURED
+======================================================= -->
 
 <section>
 
@@ -1736,13 +1614,7 @@ footer{
     <div class="video-grid">
 
 
-        <!-- =================================================
-             ALI EXCEL VIDEO
-
-             IMPORTANT:
-             Clicking the square opens SCREENSHOT.
-             Clicking ▶ opens VIDEO only.
-        ================================================== -->
+        <!-- ALI EXCEL -->
 
         <article class="video-card">
 
@@ -1772,13 +1644,13 @@ footer{
                 </div>
 
 
-                <!-- PLAY BUTTON -->
+                <!-- PLAY DOES NOT OPEN SCREENSHOT -->
 
                 <button
                     class="play-circle"
                     type="button"
                     aria-label="Play Ali Excel"
-                    onclick="event.stopPropagation(); watchVideo('Ali Excel')">
+                    onclick="event.stopPropagation();watchVideo('Ali Excel')">
 
                     ▶
 
@@ -1812,7 +1684,7 @@ footer{
         </article>
 
 
-        <!-- PLACEHOLDER CARD -->
+        <!-- FEATURED -->
 
         <article class="video-card">
 
@@ -1820,7 +1692,7 @@ footer{
                 class="video-thumb"
                 tabindex="0"
                 role="button"
-                aria-label="Open screenshot"
+                aria-label="Open screenshot for Featured Video"
                 onclick="openScreenshot('Featured Video')"
                 onkeydown="handleThumbKey(event,'Featured Video')">
 
@@ -1843,8 +1715,8 @@ footer{
                 <button
                     class="play-circle"
                     type="button"
-                    aria-label="Play featured video"
-                    onclick="event.stopPropagation(); watchVideo('Featured Video')">
+                    aria-label="Play Featured Video"
+                    onclick="event.stopPropagation();watchVideo('Featured Video')">
 
                     ▶
 
@@ -1871,7 +1743,7 @@ footer{
         </article>
 
 
-        <!-- PLACEHOLDER CARD -->
+        <!-- PREMIUM -->
 
         <article class="video-card">
 
@@ -1879,7 +1751,7 @@ footer{
                 class="video-thumb"
                 tabindex="0"
                 role="button"
-                aria-label="Open screenshot"
+                aria-label="Open screenshot for Premium Video"
                 onclick="openScreenshot('Premium Video')"
                 onkeydown="handleThumbKey(event,'Premium Video')">
 
@@ -1902,8 +1774,8 @@ footer{
                 <button
                     class="play-circle"
                     type="button"
-                    aria-label="Play premium video"
-                    onclick="event.stopPropagation(); watchVideo('Premium Video')">
+                    aria-label="Play Premium Video"
+                    onclick="event.stopPropagation();watchVideo('Premium Video')">
 
                     ▶
 
@@ -2295,6 +2167,7 @@ footer{
 
             <button
                 class="close-btn"
+                type="button"
                 aria-label="Close video"
                 onclick="closeVideoViewer()">
 
@@ -2321,10 +2194,10 @@ footer{
 
         <div class="video-controls">
 
-
             <button
                 class="control-btn"
                 id="playPauseBtn"
+                type="button"
                 onclick="togglePlayPause()">
 
                 ▶
@@ -2334,6 +2207,7 @@ footer{
 
             <button
                 class="control-btn"
+                type="button"
                 onclick="toggleMute()">
 
                 🔊
@@ -2345,6 +2219,7 @@ footer{
 
                 <button
                     class="control-btn"
+                    type="button"
                     onclick="toggleQualityMenu()">
 
                     720p
@@ -2357,6 +2232,7 @@ footer{
                     id="qualityMenu">
 
                     <button
+                        type="button"
                         onclick="setQuality('360')">
 
                         360p
@@ -2364,6 +2240,7 @@ footer{
                     </button>
 
                     <button
+                        type="button"
                         onclick="setQuality('480')">
 
                         480p
@@ -2371,6 +2248,7 @@ footer{
                     </button>
 
                     <button
+                        type="button"
                         onclick="setQuality('720')">
 
                         720p
@@ -2382,14 +2260,11 @@ footer{
             </div>
 
 
-            <!--
-                IMPORTANT:
-                Fullscreen happens ONLY here.
-                watchVideo() NEVER calls fullscreen.
-            -->
+            <!-- FULLSCREEN ONLY HERE -->
 
             <button
                 class="control-btn"
+                type="button"
                 onclick="toggleFullscreen()"
                 aria-label="Fullscreen">
 
@@ -2421,8 +2296,6 @@ footer{
     <div class="screenshot-box">
 
 
-        <!-- CLOSE -->
-
         <button
             class="screenshot-close"
             type="button"
@@ -2434,16 +2307,7 @@ footer{
         </button>
 
 
-        <!--
-            IMAGE WRAPPER
-
-            This is the important fix.
-            The image cannot push the modal
-            outside the viewport.
-        -->
-
         <div class="screenshot-image-wrap">
-
 
             <img
                 id="screenshotImage"
@@ -2468,19 +2332,15 @@ footer{
                         Place
                         <b>XKiss-screenshot.jpg</b>
                         next to
-                        <b>index.html</b>
-                        in your GitHub Pages folder.
+                        <b>index.html</b>.
                     </span>
 
                 </div>
 
             </div>
 
-
         </div>
 
-
-        <!-- TITLE -->
 
         <div
             class="screenshot-caption"
@@ -2491,10 +2351,7 @@ footer{
         </div>
 
 
-        <!-- ACTIONS -->
-
         <div class="screenshot-actions">
-
 
             <button
                 class="primary"
@@ -2513,7 +2370,6 @@ footer{
                 Close
 
             </button>
-
 
         </div>
 
@@ -2554,38 +2410,59 @@ const SCREENSHOT_URL =
 let currentScreenshotTitle =
     "Ali Excel";
 
+let screenshotScrollPosition =
+    0;
+
 
 /* =========================================================
    DOM
 ========================================================= */
 
 const screenshotModal =
-    document.getElementById("screenshotModal");
+    document.getElementById(
+        "screenshotModal"
+    );
 
 const screenshotImage =
-    document.getElementById("screenshotImage");
+    document.getElementById(
+        "screenshotImage"
+    );
 
 const screenshotPlaceholder =
-    document.getElementById("screenshotPlaceholder");
+    document.getElementById(
+        "screenshotPlaceholder"
+    );
 
 const screenshotTitle =
-    document.getElementById("screenshotTitle");
+    document.getElementById(
+        "screenshotTitle"
+    );
 
 
 const modal =
-    document.getElementById("videoModal");
+    document.getElementById(
+        "videoModal"
+    );
 
 const realVideo =
-    document.getElementById("realVideo");
+    document.getElementById(
+        "realVideo"
+    );
 
 const playerTitle =
-    document.getElementById("playerTitle");
+    document.getElementById(
+        "playerTitle"
+    );
 
 const playPauseBtn =
-    document.getElementById("playPauseBtn");
+    document.getElementById(
+        "playPauseBtn"
+    );
 
 const qualityMenu =
-    document.getElementById("qualityMenu");
+    document.getElementById(
+        "qualityMenu"
+    );
 
 
 let currentQuality =
@@ -2605,16 +2482,33 @@ function openScreenshot(title){
         title || "Ali Excel";
 
 
+    /*
+       IMPORTANT:
+       Save the exact current scroll position.
+
+       We DO NOT:
+       - lock body
+       - lock html
+       - change position
+       - call scrollTo
+       - add body.locked
+
+       This is the fix for the Android
+       browser jumping to the top.
+    */
+
+    screenshotScrollPosition =
+        window.pageYOffset ||
+        window.scrollY ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop ||
+        0;
+
+
     screenshotTitle.textContent =
         currentScreenshotTitle +
         " — Screenshot";
 
-
-    /*
-        Reset image every time.
-        This prevents an old failed/hidden
-        state from remaining.
-    */
 
     screenshotPlaceholder.style.display =
         "none";
@@ -2624,56 +2518,27 @@ function openScreenshot(title){
 
 
     screenshotImage.src =
-        "";
+        SCREENSHOT_URL;
 
-    /*
-        Small delay lets the browser clear
-        the old image before loading the
-        new screenshot.
-    */
 
-    requestAnimationFrame(function(){
-
-        screenshotImage.src =
-            SCREENSHOT_URL;
-
-    });
+    screenshotImage.alt =
+        currentScreenshotTitle +
+        " screenshot";
 
 
     /*
-        LOCK THE BACKGROUND.
-
-        IMPORTANT:
-        We do NOT change scroll position.
-        We do NOT call scrollTo().
-        We do NOT modify the page's top.
+       Only show the fixed overlay.
+       The underlying page is untouched.
     */
 
-    document.documentElement.style.overflow =
-        "hidden";
-
-    document.body.style.overflow =
-        "hidden";
-
-
-    /*
-        Show screenshot modal.
-    */
-
-    screenshotModal.classList.add("show");
+    screenshotModal.classList.add(
+        "show"
+    );
 
     screenshotModal.setAttribute(
         "aria-hidden",
         "false"
     );
-
-
-    /*
-        Make sure modal starts centered.
-    */
-
-    screenshotModal.scrollTop =
-        0;
 
 }
 
@@ -2699,7 +2564,13 @@ function showScreenshotPlaceholder(){
 
 function closeScreenshot(){
 
-    screenshotModal.classList.remove("show");
+    /*
+       First remove the overlay.
+    */
+
+    screenshotModal.classList.remove(
+        "show"
+    );
 
     screenshotModal.setAttribute(
         "aria-hidden",
@@ -2708,28 +2579,20 @@ function closeScreenshot(){
 
 
     /*
-        Restore page scrolling.
+       Return to EXACTLY the position
+       where the user opened the screenshot.
+
+       No body overflow changes.
     */
 
-    document.body.style.overflow =
-        "";
+    requestAnimationFrame(function(){
 
-    document.documentElement.style.overflow =
-        "";
-
-
-    /*
-        If video modal is not open,
-        make sure body is completely unlocked.
-    */
-
-    if(!modal.classList.contains("show")){
-
-        document.body.classList.remove(
-            "locked"
+        window.scrollTo(
+            0,
+            screenshotScrollPosition
         );
 
-    }
+    });
 
 }
 
@@ -2746,13 +2609,18 @@ function playFromScreenshot(){
 
     closeScreenshot();
 
-    watchVideo(title);
+
+    setTimeout(function(){
+
+        watchVideo(title);
+
+    },50);
 
 }
 
 
 /* =========================================================
-   KEYBOARD ON THUMBNAIL
+   THUMBNAIL KEYBOARD
 ========================================================= */
 
 function handleThumbKey(event,title){
@@ -2772,7 +2640,7 @@ function handleThumbKey(event,title){
 
 
 /* =========================================================
-   WATCH VIDEO
+   VIDEO OPEN
 ========================================================= */
 
 function watchVideo(title){
@@ -2786,16 +2654,9 @@ function watchVideo(title){
 
 
     /*
-        IMPORTANT:
-
-        NO FULLSCREEN HERE.
-
-        The video opens normally.
-
-        Fullscreen is ONLY activated
-        when the user presses ⛶.
+       IMPORTANT:
+       NO FULLSCREEN HERE.
     */
-
 
     currentQuality =
         "720";
@@ -2808,13 +2669,22 @@ function watchVideo(title){
     realVideo.load();
 
 
-    modal.classList.add("show");
+    modal.classList.add(
+        "show"
+    );
 
     modal.setAttribute(
         "aria-hidden",
         "false"
     );
 
+
+    /*
+       Video modal can lock the page,
+       because this is the actual player.
+
+       Screenshot does NOT do this.
+    */
 
     document.documentElement.style.overflow =
         "hidden";
@@ -2839,27 +2709,23 @@ function watchVideo(title){
 
 
 /* =========================================================
-   CLOSE VIDEO
+   VIDEO CLOSE
 ========================================================= */
 
 function closeVideoViewer(){
 
-    /*
-        Stop video.
-    */
-
     realVideo.pause();
 
-    realVideo.removeAttribute("src");
+    realVideo.removeAttribute(
+        "src"
+    );
 
     realVideo.load();
 
 
-    /*
-        Exit fullscreen if active.
-    */
-
-    if(document.fullscreenElement){
+    if(
+        document.fullscreenElement
+    ){
 
         document.exitFullscreen()
             .catch(function(){});
@@ -2867,7 +2733,9 @@ function closeVideoViewer(){
     }
 
 
-    modal.classList.remove("show");
+    modal.classList.remove(
+        "show"
+    );
 
     modal.setAttribute(
         "aria-hidden",
@@ -2880,19 +2748,11 @@ function closeVideoViewer(){
     );
 
 
-    /*
-        Restore page scrolling.
-    */
-
     document.body.style.overflow =
         "";
 
     document.documentElement.style.overflow =
         "";
-
-    document.body.classList.remove(
-        "locked"
-    );
 
 }
 
@@ -2919,17 +2779,10 @@ function togglePlayPause(){
 
 function updatePlayButton(){
 
-    if(realVideo.paused){
-
-        playPauseBtn.textContent =
-            "▶";
-
-    }else{
-
-        playPauseBtn.textContent =
-            "Ⅱ";
-
-    }
+    playPauseBtn.textContent =
+        realVideo.paused
+            ? "▶"
+            : "Ⅱ";
 
 }
 
@@ -2938,7 +2791,6 @@ realVideo.addEventListener(
     "play",
     updatePlayButton
 );
-
 
 realVideo.addEventListener(
     "pause",
@@ -2959,7 +2811,7 @@ function toggleMute(){
 
 
 /* =========================================================
-   QUALITY MENU
+   QUALITY
 ========================================================= */
 
 function toggleQualityMenu(){
@@ -3011,7 +2863,7 @@ function setQuality(quality){
                 realVideo.currentTime =
                     currentTime;
 
-            }catch(e){}
+            }catch(error){}
 
 
             if(wasPlaying){
@@ -3039,11 +2891,6 @@ function toggleFullscreen(){
         );
 
 
-    /*
-        If already fullscreen,
-        restore normal mode.
-    */
-
     if(
         document.fullscreenElement ||
         document.webkitFullscreenElement
@@ -3062,10 +2909,6 @@ function toggleFullscreen(){
 
 
 function enterFullscreen(element){
-
-    /*
-        Native fullscreen first.
-    */
 
     if(element.requestFullscreen){
 
@@ -3089,10 +2932,6 @@ function enterFullscreen(element){
 
     }
 
-
-    /*
-        Mobile fallback.
-    */
 
     mobileFullscreenFallback();
 
@@ -3119,11 +2958,6 @@ function restoreNormalScreen(){
 
 }
 
-
-/*
-    Fallback for browsers where native
-    fullscreen is not available.
-*/
 
 function mobileFullscreenFallback(){
 
@@ -3204,14 +3038,16 @@ document.addEventListener(
 
 
 /* =========================================================
-   VIDEO MODAL BACKGROUND CLICK
+   VIDEO BACKGROUND CLICK
 ========================================================= */
 
 modal.addEventListener(
     "click",
     function(event){
 
-        if(event.target === modal){
+        if(
+            event.target === modal
+        ){
 
             closeVideoViewer();
 
@@ -3229,14 +3065,6 @@ screenshotModal.addEventListener(
     "click",
     function(event){
 
-        /*
-            Only clicking the dark area itself
-            closes the screenshot.
-
-            Clicking inside the screenshot box
-            does NOT close it.
-        */
-
         if(
             event.target === screenshotModal
         ){
@@ -3250,23 +3078,21 @@ screenshotModal.addEventListener(
 
 
 /* =========================================================
-   ESCAPE KEY
+   ESCAPE
 ========================================================= */
 
 document.addEventListener(
     "keydown",
     function(event){
 
-        if(event.key !== "Escape"){
+        if(
+            event.key !== "Escape"
+        ){
 
             return;
 
         }
 
-
-        /*
-            Screenshot gets priority.
-        */
 
         if(
             screenshotModal.classList.contains(
@@ -3280,10 +3106,6 @@ document.addEventListener(
 
         }
 
-
-        /*
-            Then video.
-        */
 
         if(
             modal.classList.contains(
@@ -3300,14 +3122,16 @@ document.addEventListener(
 
 
 /* =========================================================
-   SPACE KEY FOR VIDEO
+   SPACE — VIDEO
 ========================================================= */
 
 document.addEventListener(
     "keydown",
     function(event){
 
-        if(event.code !== "Space"){
+        if(
+            event.code !== "Space"
+        ){
 
             return;
 
@@ -3325,12 +3149,9 @@ document.addEventListener(
         }
 
 
-        /*
-            Do not interfere with inputs.
-        */
-
         const tag =
             document.activeElement.tagName;
+
 
         if(
             tag === "INPUT" ||
@@ -3362,7 +3183,6 @@ function performSearch(){
             "searchInput"
         );
 
-
     const result =
         document.getElementById(
             "searchResult"
@@ -3392,7 +3212,7 @@ function performSearch(){
 
 
 /* =========================================================
-   CATEGORY CHIPS
+   CHIPS
 ========================================================= */
 
 document.querySelectorAll(
@@ -3425,33 +3245,21 @@ document.querySelectorAll(
 
 
 /* =========================================================
-   PREVENT BACKGROUND SCROLL THROUGH MODALS
+   IMPORTANT:
+   NO RESIZE SCROLL RESET
 ========================================================= */
 
-window.addEventListener(
-    "resize",
-    function(){
+/*
+   Deliberately no window.resize handler.
 
-        /*
-            Keep screenshot modal centered
-            after mobile browser UI changes.
-        */
+   Android browser UI changes viewport height
+   when address/navigation bars appear.
 
-        if(
-            screenshotModal.classList.contains(
-                "show"
-            )
-        ){
-
-            screenshotModal.scrollTop =
-                0;
-
-        }
-
-    }
-);
+   Resetting scroll during resize was another
+   possible cause of the page jumping upward.
+*/
 
 </script>
 
 </body>
-    </html>
+</html>
