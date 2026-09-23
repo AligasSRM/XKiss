@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>XKiss</title>
 
   <style>
@@ -28,17 +27,10 @@
       overflow: hidden;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
     button,
     input {
       font: inherit;
     }
-
-    /* HEADER */
 
     header {
       position: sticky;
@@ -63,7 +55,6 @@
       font-size: 26px;
       font-weight: 800;
       letter-spacing: 1px;
-      color: #ffffff;
     }
 
     nav {
@@ -86,8 +77,6 @@
       background: #181820;
       color: #ffffff;
     }
-
-    /* GENERAL */
 
     .container {
       max-width: 1200px;
@@ -174,8 +163,6 @@
       color: #858592;
     }
 
-    /* QUICK ACCESS */
-
     .quick-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -205,8 +192,6 @@
       font-size: 14px;
     }
 
-    /* VIDEO TABS */
-
     .tabs {
       display: flex;
       gap: 8px;
@@ -228,8 +213,6 @@
       background: #ffffff;
       color: #09090d;
     }
-
-    /* VIDEO GRID */
 
     .video-grid {
       display: grid;
@@ -258,7 +241,7 @@
       width: 58px;
       height: 58px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.94);
+      background: rgba(255,255,255,0.94);
       color: #09090d;
       display: flex;
       align-items: center;
@@ -271,7 +254,7 @@
       position: absolute;
       right: 10px;
       bottom: 10px;
-      background: rgba(0, 0, 0, 0.78);
+      background: rgba(0,0,0,0.78);
       padding: 4px 7px;
       border-radius: 5px;
       font-size: 12px;
@@ -312,8 +295,6 @@
       background: #25252e;
     }
 
-    /* SIMPLE SECTIONS */
-
     .info-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -336,8 +317,6 @@
       font-size: 14px;
     }
 
-    /* SEARCH */
-
     .search-box {
       display: flex;
       max-width: 650px;
@@ -356,10 +335,6 @@
       outline: none;
     }
 
-    .search-box input:focus {
-      border-color: #666674;
-    }
-
     .search-message {
       text-align: center;
       color: #8f8f9a;
@@ -367,7 +342,7 @@
       min-height: 22px;
     }
 
-    /* MODAL */
+    /* VIDEO MODAL */
 
     .video-modal {
       position: fixed;
@@ -377,7 +352,7 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
-      background: rgba(0, 0, 0, 0.88);
+      background: rgba(0,0,0,0.88);
     }
 
     .video-modal.active {
@@ -390,7 +365,7 @@
       border: 1px solid #30303a;
       border-radius: 14px;
       overflow: hidden;
-      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.65);
+      box-shadow: 0 25px 80px rgba(0,0,0,0.65);
     }
 
     .video-modal-header {
@@ -421,16 +396,13 @@
       flex-shrink: 0;
     }
 
-    .close-btn:hover {
-      background: #292933;
-    }
-
     .video-player {
       background: #000000;
       aspect-ratio: 16 / 9;
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
     }
 
     #realVideo {
@@ -441,14 +413,67 @@
       object-fit: contain;
     }
 
+    .quality-control {
+      position: absolute;
+      right: 12px;
+      bottom: 54px;
+      z-index: 5;
+    }
+
+    .quality-button {
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.82);
+      color: #ffffff;
+      border-radius: 7px;
+      padding: 7px 10px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .quality-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      bottom: 42px;
+      min-width: 120px;
+      background: #15151c;
+      border: 1px solid #30303a;
+      border-radius: 9px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+    }
+
+    .quality-menu.active {
+      display: block;
+    }
+
+    .quality-option {
+      display: block;
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: #dddddf;
+      padding: 10px 12px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .quality-option:hover {
+      background: #25252e;
+      color: #ffffff;
+    }
+
+    .quality-option.selected {
+      background: #ffffff;
+      color: #09090d;
+    }
+
     .video-modal-footer {
       padding: 12px 16px;
       color: #777783;
       font-size: 13px;
       border-top: 1px solid #24242d;
     }
-
-    /* FOOTER */
 
     footer {
       margin-top: 60px;
@@ -458,8 +483,6 @@
       color: #70707b;
       font-size: 13px;
     }
-
-    /* RESPONSIVE */
 
     @media (max-width: 900px) {
       .quick-grid {
@@ -508,757 +531,986 @@
 
 <body>
 
-  <!-- HEADER -->
+<header>
+  <div class="header-inner">
 
-  <header>
-    <div class="header-inner">
+    <div class="logo">XKiss</div>
 
-      <div class="logo">XKiss</div>
+    <nav>
+      <button onclick="goTo('home')">Home</button>
+      <button onclick="goTo('videos')">Videos</button>
+      <button onclick="goTo('live')">Live</button>
+      <button onclick="goTo('creators')">Creators</button>
+      <button onclick="goTo('categories')">Categories</button>
+      <button onclick="goTo('search')">Search</button>
+      <button onclick="goTo('account')">Login</button>
+    </nav>
 
-      <nav>
-        <button onclick="goTo('home')">Home</button>
-        <button onclick="goTo('videos')">Videos</button>
-        <button onclick="goTo('live')">Live</button>
-        <button onclick="goTo('creators')">Creators</button>
-        <button onclick="goTo('categories')">Categories</button>
-        <button onclick="goTo('search')">Search</button>
-        <button onclick="goTo('account')">Login</button>
-      </nav>
+  </div>
+</header>
+
+
+<main id="home">
+
+  <section class="hero">
+
+    <div class="age-badge">18+ Adults Only</div>
+
+    <h1>Welcome to XKiss</h1>
+
+    <p>
+      A private adult-content platform designed with scalability,
+      privacy and security in mind.
+    </p>
+
+    <div class="hero-buttons">
+
+      <button
+        class="btn btn-primary"
+        onclick="goTo('videos')">
+        Explore Videos
+      </button>
+
+      <button
+        class="btn btn-secondary"
+        onclick="goTo('creators')">
+        Discover Creators
+      </button>
 
     </div>
-  </header>
+
+  </section>
 
 
-  <!-- HOME -->
+  <section class="section">
 
-  <main id="home">
+    <div class="container">
 
-    <section class="hero">
+      <div class="section-header">
 
-      <div class="age-badge">18+ Adults Only</div>
+        <div>
+          <h2>Quick Access</h2>
+          <p>Explore the main XKiss platform areas.</p>
+        </div>
 
-      <h1>Welcome to XKiss</h1>
+      </div>
 
-      <p>
-        A private adult-content platform designed with scalability,
-        privacy and security in mind.
-      </p>
+      <div class="quick-grid">
 
-      <div class="hero-buttons">
-        <button class="btn btn-primary" onclick="goTo('videos')">
-          Explore Videos
+        <div class="quick-card" onclick="goTo('videos')">
+          <h3>Videos</h3>
+          <p>Browse available video content.</p>
+        </div>
+
+        <div class="quick-card" onclick="goTo('live')">
+          <h3>Live</h3>
+          <p>Live creator experiences.</p>
+        </div>
+
+        <div class="quick-card" onclick="goTo('creators')">
+          <h3>Creators</h3>
+          <p>Discover creators and their profiles.</p>
+        </div>
+
+        <div class="quick-card" onclick="goTo('account')">
+          <h3>My Account</h3>
+          <p>Manage your XKiss account.</p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <section class="section" id="videos">
+
+    <div class="container">
+
+      <div class="section-header">
+
+        <div>
+          <h2>Videos</h2>
+          <p>Featured content on XKiss.</p>
+        </div>
+
+      </div>
+
+      <div class="tabs">
+        <button class="tab active">Latest</button>
+        <button class="tab">Popular</button>
+        <button class="tab">New Creators</button>
+      </div>
+
+
+      <div class="video-grid">
+
+        <div class="video-card">
+
+          <div
+            class="video-thumb"
+            onclick="watchVideo('Featured Video One')">
+
+            <div class="play-icon">▶</div>
+            <div class="duration">08:24</div>
+
+          </div>
+
+          <div class="video-info">
+
+            <h3>Featured Video One</h3>
+
+            <div class="video-creator">
+              Creator One
+            </div>
+
+            <div class="video-views">
+              12.4K views
+            </div>
+
+            <button
+              class="watch-btn"
+              onclick="watchVideo('Featured Video One')">
+              Watch
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="video-card">
+
+          <div
+            class="video-thumb"
+            onclick="watchVideo('Featured Video Two')">
+
+            <div class="play-icon">▶</div>
+            <div class="duration">12:41</div>
+
+          </div>
+
+          <div class="video-info">
+
+            <h3>Featured Video Two</h3>
+
+            <div class="video-creator">
+              Creator Two
+            </div>
+
+            <div class="video-views">
+              8.7K views
+            </div>
+
+            <button
+              class="watch-btn"
+              onclick="watchVideo('Featured Video Two')">
+              Watch
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="video-card">
+
+          <div
+            class="video-thumb"
+            onclick="watchVideo('Featured Video Three')">
+
+            <div class="play-icon">▶</div>
+            <div class="duration">00:04</div>
+
+          </div>
+
+          <div class="video-info">
+
+            <h3>Featured Video Three</h3>
+
+            <div class="video-creator">
+              Creator Three
+            </div>
+
+            <div class="video-views">
+              5.3K views
+            </div>
+
+            <button
+              class="watch-btn"
+              onclick="watchVideo('Featured Video Three')">
+              Watch
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="video-card">
+
+          <div
+            class="video-thumb"
+            onclick="watchVideo('Featured Video Four')">
+
+            <div class="play-icon">▶</div>
+            <div class="duration">09:32</div>
+
+          </div>
+
+          <div class="video-info">
+
+            <h3>Featured Video Four</h3>
+
+            <div class="video-creator">
+              Creator Four
+            </div>
+
+            <div class="video-views">
+              4.8K views
+            </div>
+
+            <button
+              class="watch-btn"
+              onclick="watchVideo('Featured Video Four')">
+              Watch
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="video-card">
+
+          <div
+            class="video-thumb"
+            onclick="watchVideo('Featured Video Five')">
+
+            <div class="play-icon">▶</div>
+            <div class="duration">15:07</div>
+
+          </div>
+
+          <div class="video-info">
+
+            <h3>Featured Video Five</h3>
+
+            <div class="video-creator">
+              Creator Five
+            </div>
+
+            <div class="video-views">
+              3.9K views
+            </div>
+
+            <button
+              class="watch-btn"
+              onclick="watchVideo('Featured Video Five')">
+              Watch
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="video-card">
+
+          <div
+            class="video-thumb"
+            onclick="watchVideo('Featured Video Six')">
+
+            <div class="play-icon">▶</div>
+            <div class="duration">10:45</div>
+
+          </div>
+
+          <div class="video-info">
+
+            <h3>Featured Video Six</h3>
+
+            <div class="video-creator">
+              Creator Six
+            </div>
+
+            <div class="video-views">
+              2.7K views
+            </div>
+
+            <button
+              class="watch-btn"
+              onclick="watchVideo('Featured Video Six')">
+              Watch
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <section class="section" id="live">
+
+    <div class="container">
+
+      <div class="section-header">
+
+        <div>
+          <h2>Live</h2>
+          <p>Live streaming section foundation.</p>
+        </div>
+
+      </div>
+
+      <div class="info-grid">
+
+        <div class="info-card">
+          <h3>Live Streaming</h3>
+          <p>
+            The live streaming system will be connected
+            in a future platform stage.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Creator Live</h3>
+          <p>
+            Creators will be able to manage live sessions
+            from their dashboard.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Viewer Experience</h3>
+          <p>
+            Viewers will have a dedicated live viewing experience.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <section class="section" id="creators">
+
+    <div class="container">
+
+      <div class="section-header">
+
+        <div>
+          <h2>Creators</h2>
+          <p>Creator platform foundation.</p>
+        </div>
+
+      </div>
+
+      <div class="info-grid">
+
+        <div class="info-card">
+          <h3>Creator Profiles</h3>
+          <p>
+            Public creator profiles will be available here.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Creator Dashboard</h3>
+          <p>
+            Uploads, views, revenue and account management
+            will be connected here.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Creator Monetization</h3>
+          <p>
+            Monetization and payout systems will be added
+            as the platform develops.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <section class="section" id="categories">
+
+    <div class="container">
+
+      <div class="section-header">
+
+        <div>
+          <h2>Categories</h2>
+          <p>Content discovery and category structure.</p>
+        </div>
+
+      </div>
+
+      <div class="info-grid">
+
+        <div class="info-card">
+          <h3>Popular</h3>
+          <p>Popular content categories.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Latest</h3>
+          <p>Recently published content.</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Creators</h3>
+          <p>Browse content by creator.</p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <section class="section" id="search">
+
+    <div class="container">
+
+      <div class="section-header">
+
+        <div>
+          <h2>Search</h2>
+          <p>Search foundation for XKiss content.</p>
+        </div>
+
+      </div>
+
+      <div class="search-box">
+
+        <input
+          id="searchInput"
+          type="text"
+          placeholder="Search XKiss...">
+
+        <button
+          class="btn btn-primary"
+          onclick="performSearch()">
+          Search
         </button>
 
-        <button class="btn btn-secondary" onclick="goTo('creators')">
-          Discover Creators
+      </div>
+
+      <div
+        id="searchMessage"
+        class="search-message">
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <section class="section" id="account">
+
+    <div class="container">
+
+      <div class="section-header">
+
+        <div>
+          <h2>My Account</h2>
+          <p>User account foundation.</p>
+        </div>
+
+      </div>
+
+      <div class="info-grid">
+
+        <div class="info-card">
+          <h3>Login</h3>
+          <p>
+            User authentication will be connected here.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Favorites</h3>
+          <p>
+            Users will be able to save favorite content.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Account Settings</h3>
+          <p>
+            Privacy and account settings will be managed here.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <section class="section">
+
+    <div class="container">
+
+      <div class="section-header">
+
+        <div>
+          <h2>Admin Preview</h2>
+          <p>Platform administration foundation.</p>
+        </div>
+
+      </div>
+
+      <div class="info-grid">
+
+        <div class="info-card">
+          <h3>Admin Dashboard</h3>
+          <p>
+            Platform management tools will be connected here.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Safety & Verification</h3>
+          <p>
+            Verification, moderation and safety systems
+            will be developed here.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <h3>Super Admin</h3>
+          <p>
+            Advanced security and platform controls
+            will be developed here.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<!-- VIDEO MODAL -->
+
+<div
+  id="videoModal"
+  class="video-modal"
+  aria-hidden="true">
+
+  <div class="video-modal-content">
+
+    <div class="video-modal-header">
+
+      <h2 id="videoModalTitle">
+        XKiss Video
+      </h2>
+
+      <button
+        class="close-btn"
+        onclick="closeVideoViewer()"
+        aria-label="Close video">
+        ×
+      </button>
+
+    </div>
+
+
+    <div class="video-player">
+
+      <video
+        id="realVideo"
+        controls
+        controlsList="nodownload"
+        disablePictureInPicture
+        playsinline
+        preload="metadata">
+
+        <source
+          id="videoSource"
+          src="20260923_234200-3.mp4"
+          type="video/mp4">
+
+        Your browser does not support HTML5 video.
+
+      </video>
+
+
+      <div class="quality-control">
+
+        <button
+          id="qualityButton"
+          class="quality-button"
+          onclick="toggleQualityMenu()">
+          ⚙️ Quality
         </button>
-      </div>
 
-    </section>
 
-
-    <!-- QUICK ACCESS -->
-
-    <section class="section">
-
-      <div class="container">
-
-        <div class="section-header">
-          <div>
-            <h2>Quick Access</h2>
-            <p>Explore the main XKiss platform areas.</p>
-          </div>
-        </div>
-
-        <div class="quick-grid">
-
-          <div class="quick-card" onclick="goTo('videos')">
-            <h3>Videos</h3>
-            <p>Browse available video content.</p>
-          </div>
-
-          <div class="quick-card" onclick="goTo('live')">
-            <h3>Live</h3>
-            <p>Live creator experiences.</p>
-          </div>
-
-          <div class="quick-card" onclick="goTo('creators')">
-            <h3>Creators</h3>
-            <p>Discover creators and their profiles.</p>
-          </div>
-
-          <div class="quick-card" onclick="goTo('account')">
-            <h3>My Account</h3>
-            <p>Manage your XKiss account.</p>
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- VIDEOS -->
-
-    <section class="section" id="videos">
-
-      <div class="container">
-
-        <div class="section-header">
-          <div>
-            <h2>Videos</h2>
-            <p>Featured content on XKiss.</p>
-          </div>
-        </div>
-
-        <div class="tabs">
-          <button class="tab active">Latest</button>
-          <button class="tab">Popular</button>
-          <button class="tab">New Creators</button>
-        </div>
-
-
-        <div class="video-grid">
-
-          <!-- VIDEO 1 -->
-
-          <div class="video-card">
-
-            <div class="video-thumb"
-                 onclick="watchVideo('Featured Video One')">
-
-              <div class="play-icon">▶</div>
-
-              <div class="duration">08:24</div>
-
-            </div>
-
-            <div class="video-info">
-
-              <h3>Featured Video One</h3>
-
-              <div class="video-creator">
-                Creator One
-              </div>
-
-              <div class="video-views">
-                12.4K views
-              </div>
-
-              <button class="watch-btn"
-                      onclick="watchVideo('Featured Video One')">
-                Watch
-              </button>
-
-            </div>
-
-          </div>
-
-
-          <!-- VIDEO 2 -->
-
-          <div class="video-card">
-
-            <div class="video-thumb"
-                 onclick="watchVideo('Featured Video Two')">
-
-              <div class="play-icon">▶</div>
-
-              <div class="duration">12:41</div>
-
-            </div>
-
-            <div class="video-info">
-
-              <h3>Featured Video Two</h3>
-
-              <div class="video-creator">
-                Creator Two
-              </div>
-
-              <div class="video-views">
-                8.7K views
-              </div>
-
-              <button class="watch-btn"
-                      onclick="watchVideo('Featured Video Two')">
-                Watch
-              </button>
-
-            </div>
-
-          </div>
-
-
-          <!-- VIDEO 3 — TEST VIDEO -->
-
-          <div class="video-card">
-
-            <div class="video-thumb"
-                 onclick="watchVideo('Featured Video Three')">
-
-              <div class="play-icon">▶</div>
-
-              <div class="duration">00:04</div>
-
-            </div>
-
-            <div class="video-info">
-
-              <h3>Featured Video Three</h3>
-
-              <div class="video-creator">
-                Creator Three
-              </div>
-
-              <div class="video-views">
-                5.3K views
-              </div>
-
-              <button class="watch-btn"
-                      onclick="watchVideo('Featured Video Three')">
-                Watch
-              </button>
-
-            </div>
-
-          </div>
-
-
-          <!-- VIDEO 4 -->
-
-          <div class="video-card">
-
-            <div class="video-thumb"
-                 onclick="watchVideo('Featured Video Four')">
-
-              <div class="play-icon">▶</div>
-
-              <div class="duration">09:32</div>
-
-            </div>
-
-            <div class="video-info">
-
-              <h3>Featured Video Four</h3>
-
-              <div class="video-creator">
-                Creator Four
-              </div>
-
-              <div class="video-views">
-                4.8K views
-              </div>
-
-              <button class="watch-btn"
-                      onclick="watchVideo('Featured Video Four')">
-                Watch
-              </button>
-
-            </div>
-
-          </div>
-
-
-          <!-- VIDEO 5 -->
-
-          <div class="video-card">
-
-            <div class="video-thumb"
-                 onclick="watchVideo('Featured Video Five')">
-
-              <div class="play-icon">▶</div>
-
-              <div class="duration">15:07</div>
-
-            </div>
-
-            <div class="video-info">
-
-              <h3>Featured Video Five</h3>
-
-              <div class="video-creator">
-                Creator Five
-              </div>
-
-              <div class="video-views">
-                3.9K views
-              </div>
-
-              <button class="watch-btn"
-                      onclick="watchVideo('Featured Video Five')">
-                Watch
-              </button>
-
-            </div>
-
-          </div>
-
-
-          <!-- VIDEO 6 -->
-
-          <div class="video-card">
-
-            <div class="video-thumb"
-                 onclick="watchVideo('Featured Video Six')">
-
-              <div class="play-icon">▶</div>
-
-              <div class="duration">10:45</div>
-
-            </div>
-
-            <div class="video-info">
-
-              <h3>Featured Video Six</h3>
-
-              <div class="video-creator">
-                Creator Six
-              </div>
-
-              <div class="video-views">
-                2.7K views
-              </div>
-
-              <button class="watch-btn"
-                      onclick="watchVideo('Featured Video Six')">
-                Watch
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- LIVE -->
-
-    <section class="section" id="live">
-
-      <div class="container">
-
-        <div class="section-header">
-          <div>
-            <h2>Live</h2>
-            <p>Live streaming section foundation.</p>
-          </div>
-        </div>
-
-        <div class="info-grid">
-
-          <div class="info-card">
-            <h3>Live Streaming</h3>
-            <p>
-              The live streaming system will be connected
-              in a future platform stage.
-            </p>
-          </div>
-
-          <div class="info-card">
-            <h3>Creator Live</h3>
-            <p>
-              Creators will be able to manage live sessions
-              from their dashboard.
-            </p>
-          </div>
-
-          <div class="info-card">
-            <h3>Viewer Experience</h3>
-            <p>
-              Viewers will have a dedicated live viewing experience.
-            </p>
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- CREATORS -->
-
-    <section class="section" id="creators">
-
-      <div class="container">
-
-        <div class="section-header">
-          <div>
-            <h2>Creators</h2>
-            <p>Creator platform foundation.</p>
-          </div>
-        </div>
-
-        <div class="info-grid">
-
-          <div class="info-card">
-            <h3>Creator Profiles</h3>
-            <p>
-              Public creator profiles will be available here.
-            </p>
-          </div>
-
-          <div class="info-card">
-            <h3>Creator Dashboard</h3>
-            <p>
-              Uploads, views, revenue and account management
-              will be connected here.
-            </p>
-          </div>
-
-          <div class="info-card">
-            <h3>Creator Monetization</h3>
-            <p>
-              Monetization and payout systems will be added
-              as the platform develops.
-            </p>
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- CATEGORIES -->
-
-    <section class="section" id="categories">
-
-      <div class="container">
-
-        <div class="section-header">
-          <div>
-            <h2>Categories</h2>
-            <p>Content discovery and category structure.</p>
-          </div>
-        </div>
-
-        <div class="info-grid">
-
-          <div class="info-card">
-            <h3>Popular</h3>
-            <p>Popular content categories.</p>
-          </div>
-
-          <div class="info-card">
-            <h3>Latest</h3>
-            <p>Recently published content.</p>
-          </div>
-
-          <div class="info-card">
-            <h3>Creators</h3>
-            <p>Browse content by creator.</p>
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- SEARCH -->
-
-    <section class="section" id="search">
-
-      <div class="container">
-
-        <div class="section-header">
-          <div>
-            <h2>Search</h2>
-            <p>Search foundation for XKiss content.</p>
-          </div>
-        </div>
-
-        <div class="search-box">
-
-          <input
-            id="searchInput"
-            type="text"
-            placeholder="Search XKiss..."
-          >
+        <div
+          id="qualityMenu"
+          class="quality-menu">
 
           <button
-            class="btn btn-primary"
-            onclick="performSearch()">
-            Search
+            class="quality-option"
+            data-quality="360"
+            onclick="changeQuality('360')">
+            360p
+          </button>
+
+          <button
+            class="quality-option"
+            data-quality="480"
+            onclick="changeQuality('480')">
+            480p
+          </button>
+
+          <button
+            class="quality-option"
+            data-quality="720"
+            onclick="changeQuality('720')">
+            720p
           </button>
 
         </div>
 
-        <div
-          id="searchMessage"
-          class="search-message">
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- ACCOUNT -->
-
-    <section class="section" id="account">
-
-      <div class="container">
-
-        <div class="section-header">
-          <div>
-            <h2>My Account</h2>
-            <p>User account foundation.</p>
-          </div>
-        </div>
-
-        <div class="info-grid">
-
-          <div class="info-card">
-            <h3>Login</h3>
-            <p>
-              User authentication will be connected here.
-            </p>
-          </div>
-
-          <div class="info-card">
-            <h3>Favorites</h3>
-            <p>
-              Users will be able to save favorite content.
-            </p>
-          </div>
-
-          <div class="info-card">
-            <h3>Account Settings</h3>
-            <p>
-              Privacy and account settings will be managed here.
-            </p>
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- ADMIN -->
-
-    <section class="section">
-
-      <div class="container">
-
-        <div class="section-header">
-          <div>
-            <h2>Admin Preview</h2>
-            <p>Platform administration foundation.</p>
-          </div>
-        </div>
-
-        <div class="info-grid">
-
-          <div class="info-card">
-            <h3>Admin Dashboard</h3>
-            <p>
-              Platform management tools will be connected here.
-            </p>
-          </div>
-
-          <div class="info-card">
-            <h3>Safety & Verification</h3>
-            <p>
-              Verification, moderation and safety systems
-              will be developed here.
-            </p>
-          </div>
-
-          <div class="info-card">
-            <h3>Super Admin</h3>
-            <p>
-              Advanced security and platform controls
-              will be developed here.
-            </p>
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-  </main>
-
-
-  <!-- REAL VIDEO MODAL -->
-
-  <div
-    id="videoModal"
-    class="video-modal"
-    aria-hidden="true">
-
-    <div class="video-modal-content">
-
-      <div class="video-modal-header">
-
-        <h2 id="videoModalTitle">
-          XKiss Video
-        </h2>
-
-        <button
-          class="close-btn"
-          onclick="closeVideoViewer()"
-          aria-label="Close video">
-          ×
-        </button>
-
-      </div>
-
-
-      <div class="video-player">
-
-        <video
-          id="realVideo"
-          controls
-          playsinline
-          preload="metadata">
-
-          <source
-            src="20260923_230154.mp4"
-            type="video/mp4">
-
-          Your browser does not support HTML5 video.
-
-        </video>
-
-      </div>
-
-
-      <div class="video-modal-footer">
-        XKiss video player — test video.
       </div>
 
     </div>
 
+
+    <div class="video-modal-footer">
+      XKiss video player
+    </div>
+
   </div>
 
-
-  <!-- FOOTER -->
-
-  <footer>
-    © 2026 XKiss — Platform Foundation
-  </footer>
+</div>
 
 
-  <!-- JAVASCRIPT -->
-
-  <script>
-
-    function goTo(sectionId) {
-
-      const section = document.getElementById(sectionId);
-
-      if (section) {
-
-        section.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-
-      }
-
-    }
+<footer>
+  © 2026 XKiss — Platform Foundation
+</footer>
 
 
-    function watchVideo(title) {
+<script>
 
-      const modal = document.getElementById("videoModal");
-      const modalTitle = document.getElementById("videoModalTitle");
-      const video = document.getElementById("realVideo");
+  const qualitySources = {
 
-      if (modalTitle) {
-        modalTitle.textContent = title;
-      }
+    "360":
+      "20260923_234200-1.mp4",
 
-      if (video) {
+    "480":
+      "20260923_234200-2.mp4",
 
-        video.pause();
+    "720":
+      "20260923_234200-3.mp4"
 
-        video.currentTime = 0;
+  };
 
-        video.load();
 
-      }
+  let currentQuality = "720";
 
-      if (modal) {
 
-        modal.classList.add("active");
+  function goTo(sectionId) {
 
-        modal.setAttribute("aria-hidden", "false");
+    const section =
+      document.getElementById(sectionId);
 
-        document.body.classList.add("modal-open");
+    if (section) {
 
-      }
+      section.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
 
     }
 
-
-    function closeVideoViewer() {
-
-      const modal = document.getElementById("videoModal");
-      const video = document.getElementById("realVideo");
-
-      if (video) {
-
-        video.pause();
-
-        video.currentTime = 0;
-
-      }
-
-      if (modal) {
-
-        modal.classList.remove("active");
-
-        modal.setAttribute("aria-hidden", "true");
-
-      }
-
-      document.body.classList.remove("modal-open");
-
-    }
+  }
 
 
-    const videoModal =
+  function watchVideo(title) {
+
+    const modal =
       document.getElementById("videoModal");
 
+    const modalTitle =
+      document.getElementById("videoModalTitle");
 
-    if (videoModal) {
+    const video =
+      document.getElementById("realVideo");
 
-      videoModal.addEventListener(
-        "click",
-        function(event) {
 
-          if (event.target === videoModal) {
+    if (modalTitle) {
 
-            closeVideoViewer();
+      modalTitle.textContent = title;
 
-          }
+    }
 
-        }
+
+    if (video) {
+
+      video.pause();
+
+      video.currentTime = 0;
+
+      video.load();
+
+    }
+
+
+    currentQuality = "720";
+
+    updateQualitySelection();
+
+
+    if (modal) {
+
+      modal.classList.add("active");
+
+      modal.setAttribute(
+        "aria-hidden",
+        "false"
+      );
+
+      document.body.classList.add(
+        "modal-open"
+      );
+
+    }
+
+  }
+
+
+  function closeVideoViewer() {
+
+    const modal =
+      document.getElementById("videoModal");
+
+    const video =
+      document.getElementById("realVideo");
+
+
+    if (video) {
+
+      video.pause();
+
+      video.currentTime = 0;
+
+    }
+
+
+    closeQualityMenu();
+
+
+    if (modal) {
+
+      modal.classList.remove("active");
+
+      modal.setAttribute(
+        "aria-hidden",
+        "true"
       );
 
     }
 
 
-    document.addEventListener(
-      "keydown",
+    document.body.classList.remove(
+      "modal-open"
+    );
+
+  }
+
+
+  function toggleQualityMenu() {
+
+    const menu =
+      document.getElementById("qualityMenu");
+
+    if (!menu) return;
+
+    menu.classList.toggle("active");
+
+  }
+
+
+  function closeQualityMenu() {
+
+    const menu =
+      document.getElementById("qualityMenu");
+
+    if (menu) {
+
+      menu.classList.remove("active");
+
+    }
+
+  }
+
+
+  function updateQualitySelection() {
+
+    const options =
+      document.querySelectorAll(
+        ".quality-option"
+      );
+
+
+    options.forEach(function(option) {
+
+      if (
+        option.dataset.quality ===
+        currentQuality
+      ) {
+
+        option.classList.add(
+          "selected"
+        );
+
+      } else {
+
+        option.classList.remove(
+          "selected"
+        );
+
+      }
+
+    });
+
+
+    const button =
+      document.getElementById(
+        "qualityButton"
+      );
+
+
+    if (button) {
+
+      button.textContent =
+        "⚙️ " +
+        currentQuality +
+        "p";
+
+    }
+
+  }
+
+
+  function changeQuality(quality) {
+
+    const video =
+      document.getElementById(
+        "realVideo"
+      );
+
+    const source =
+      document.getElementById(
+        "videoSource"
+      );
+
+
+    if (!video || !source) {
+      return;
+    }
+
+
+    const wasPlaying =
+      !video.paused;
+
+
+    const currentTime =
+      video.currentTime;
+
+
+    if (!qualitySources[quality]) {
+      return;
+    }
+
+
+    currentQuality = quality;
+
+
+    video.pause();
+
+
+    source.src =
+      qualitySources[quality];
+
+
+    video.load();
+
+
+    video.addEventListener(
+      "loadedmetadata",
+      function restorePlayback() {
+
+        video.currentTime =
+          Math.min(
+            currentTime,
+            video.duration || currentTime
+          );
+
+
+        if (wasPlaying) {
+
+          video.play().catch(
+            function() {}
+          );
+
+        }
+
+
+        video.removeEventListener(
+          "loadedmetadata",
+          restorePlayback
+        );
+
+      }
+    );
+
+
+    updateQualitySelection();
+
+    closeQualityMenu();
+
+  }
+
+
+  const videoModal =
+    document.getElementById(
+      "videoModal"
+    );
+
+
+  if (videoModal) {
+
+    videoModal.addEventListener(
+      "click",
       function(event) {
 
-        if (event.key === "Escape") {
+        if (
+          event.target ===
+          videoModal
+        ) {
 
           closeVideoViewer();
 
@@ -1267,62 +1519,121 @@
       }
     );
 
-
-    function performSearch() {
-
-      const input =
-        document.getElementById("searchInput");
-
-      const message =
-        document.getElementById("searchMessage");
-
-      if (!input || !message) {
-        return;
-      }
-
-      const query =
-        input.value.trim();
+  }
 
 
-      if (!query) {
+  document.addEventListener(
+    "keydown",
+    function(event) {
 
-        message.textContent =
-          "Please enter a search term.";
+      if (event.key === "Escape") {
 
-        return;
+        closeVideoViewer();
 
       }
-
-
-      message.textContent =
-        "Search system is ready. Searching for: "
-        + query;
 
     }
+  );
 
 
-    const searchInput =
-      document.getElementById("searchInput");
+  document.addEventListener(
+    "click",
+    function(event) {
+
+      const menu =
+        document.getElementById(
+          "qualityMenu"
+        );
+
+      const button =
+        document.getElementById(
+          "qualityButton"
+        );
 
 
-    if (searchInput) {
+      if (
+        menu &&
+        button &&
+        !menu.contains(event.target) &&
+        !button.contains(event.target)
+      ) {
 
-      searchInput.addEventListener(
-        "keydown",
-        function(event) {
+        closeQualityMenu();
 
-          if (event.key === "Enter") {
+      }
 
-            performSearch();
+    }
+  );
 
-          }
 
-        }
+  function performSearch() {
+
+    const input =
+      document.getElementById(
+        "searchInput"
       );
 
+    const message =
+      document.getElementById(
+        "searchMessage"
+      );
+
+
+    if (!input || !message) {
+      return;
     }
 
-  </script>
+
+    const query =
+      input.value.trim();
+
+
+    if (!query) {
+
+      message.textContent =
+        "Please enter a search term.";
+
+      return;
+
+    }
+
+
+    message.textContent =
+      "Search system is ready. Searching for: " +
+      query;
+
+  }
+
+
+  const searchInput =
+    document.getElementById(
+      "searchInput"
+    );
+
+
+  if (searchInput) {
+
+    searchInput.addEventListener(
+      "keydown",
+      function(event) {
+
+        if (
+          event.key === "Enter"
+        ) {
+
+          performSearch();
+
+        }
+
+      }
+    );
+
+  }
+
+
+  updateQualitySelection();
+
+</script>
 
 </body>
   </html>
