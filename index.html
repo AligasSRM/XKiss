@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="XKiss — 18+ adult video platform">
-  <meta name="theme-color" content="#09090d">
+
   <title>XKiss</title>
 
   <style>
@@ -29,35 +28,31 @@
       overflow: hidden;
     }
 
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
     button,
     input {
       font: inherit;
     }
 
-    button {
-      cursor: pointer;
-    }
-
-    .container {
-      width: min(1180px, 92%);
-      margin: 0 auto;
-    }
-
-    /* =========================
-       HEADER
-       ========================= */
+    /* HEADER */
 
     header {
       position: sticky;
       top: 0;
-      z-index: 1000;
+      z-index: 100;
       background: rgba(9, 9, 13, 0.96);
-      border-bottom: 1px solid #24242d;
-      backdrop-filter: blur(12px);
+      border-bottom: 1px solid #22222b;
+      backdrop-filter: blur(10px);
     }
 
     .header-inner {
-      min-height: 70px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -65,247 +60,176 @@
     }
 
     .logo {
-      font-size: 30px;
-      font-weight: 900;
-      letter-spacing: -1px;
-      white-space: nowrap;
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #ffffff;
     }
 
-    .nav {
+    nav {
       display: flex;
-      align-items: center;
-      gap: 8px;
       flex-wrap: wrap;
+      gap: 8px;
       justify-content: flex-end;
     }
 
-    .nav button {
-      border: 1px solid #30303a;
-      background: #111118;
+    nav button {
+      background: transparent;
+      border: 0;
+      color: #bdbdc8;
+      padding: 8px 10px;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+
+    nav button:hover {
+      background: #181820;
       color: #ffffff;
-      padding: 9px 13px;
-      border-radius: 9px;
-      transition: 0.2s;
     }
 
-    .nav button:hover {
-      background: #1c1c26;
-      border-color: #555565;
+    /* GENERAL */
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
     }
 
-    /* =========================
-       HERO
-       ========================= */
+    section {
+      scroll-margin-top: 90px;
+    }
 
     .hero {
-      padding: 90px 0 70px;
+      padding: 80px 20px 60px;
       text-align: center;
-      border-bottom: 1px solid #202029;
-      background:
-        radial-gradient(circle at 50% 20%, #20202c 0, #09090d 55%);
     }
 
-    .badge {
+    .age-badge {
       display: inline-block;
-      margin-bottom: 22px;
-      padding: 7px 13px;
-      border: 1px solid #454552;
+      padding: 7px 12px;
+      border: 1px solid #444451;
       border-radius: 999px;
-      color: #d8d8df;
+      color: #dddddf;
       font-size: 13px;
-      font-weight: 700;
+      margin-bottom: 20px;
     }
 
     .hero h1 {
-      font-size: clamp(42px, 8vw, 78px);
-      line-height: 1;
-      margin-bottom: 20px;
-      letter-spacing: -3px;
+      font-size: clamp(38px, 7vw, 72px);
+      margin-bottom: 16px;
+      letter-spacing: -2px;
     }
 
     .hero p {
-      max-width: 720px;
-      margin: 0 auto 30px;
-      color: #a8a8b5;
-      font-size: 18px;
+      max-width: 680px;
+      margin: 0 auto 28px;
+      color: #a9a9b5;
+      font-size: 17px;
     }
 
-    .hero-actions {
+    .hero-buttons {
       display: flex;
       justify-content: center;
       gap: 12px;
       flex-wrap: wrap;
     }
 
-    .primary-btn,
-    .secondary-btn {
+    .btn {
+      border: 0;
       border-radius: 10px;
       padding: 13px 20px;
+      cursor: pointer;
       font-weight: 700;
-      transition: 0.2s;
     }
 
-    .primary-btn {
-      border: 1px solid #ffffff;
+    .btn-primary {
       background: #ffffff;
       color: #09090d;
     }
 
-    .primary-btn:hover {
-      opacity: 0.88;
-    }
-
-    .secondary-btn {
-      border: 1px solid #3b3b48;
-      background: #14141c;
+    .btn-secondary {
+      background: #1b1b24;
       color: #ffffff;
+      border: 1px solid #30303b;
     }
-
-    .secondary-btn:hover {
-      background: #1d1d27;
-    }
-
-    /* =========================
-       GENERAL SECTIONS
-       ========================= */
 
     .section {
       padding: 55px 0;
     }
 
     .section-header {
-      margin-bottom: 25px;
-    }
-
-    .section-header h2 {
-      font-size: 28px;
-      margin-bottom: 6px;
-    }
-
-    .section-header p {
-      color: #8f8f9d;
-    }
-
-    /* =========================
-       QUICK ACCESS
-       ========================= */
-
-    .quick-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-    }
-
-    .quick-card {
-      border: 1px solid #272731;
-      background: #101017;
-      border-radius: 14px;
-      padding: 24px;
-      transition: 0.2s;
-    }
-
-    .quick-card:hover {
-      transform: translateY(-3px);
-      border-color: #50505d;
-      background: #15151d;
-    }
-
-    .quick-card h3 {
-      margin-bottom: 8px;
-      font-size: 19px;
-    }
-
-    .quick-card p {
-      color: #92929f;
-      font-size: 14px;
-    }
-
-    /* =========================
-       GENERAL CONTENT CARDS
-       ========================= */
-
-    .content-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-    }
-
-    .content-card {
-      min-height: 180px;
-      border: 1px solid #272731;
-      border-radius: 14px;
-      background: #101017;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .content-card .number {
-      color: #70707d;
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
-
-    .content-card h3 {
-      font-size: 20px;
-      margin-bottom: 8px;
-    }
-
-    .content-card p {
-      color: #92929f;
-      font-size: 14px;
-    }
-
-    .status {
-      margin-top: 20px;
-      display: inline-block;
-      width: fit-content;
-      padding: 5px 9px;
-      border-radius: 7px;
-      border: 1px solid #30303a;
-      color: #9d9daa;
-      font-size: 12px;
-    }
-
-    /* =========================
-       VIDEOS SYSTEM
-       ========================= */
-
-    .video-section {
-      padding: 55px 0;
-    }
-
-    .video-toolbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 15px;
-      margin-bottom: 25px;
+      margin-bottom: 24px;
       flex-wrap: wrap;
     }
 
-    .video-tabs {
+    .section-header h2 {
+      font-size: 28px;
+    }
+
+    .section-header p {
+      color: #858592;
+    }
+
+    /* QUICK ACCESS */
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .quick-card {
+      background: #111118;
+      border: 1px solid #24242d;
+      border-radius: 14px;
+      padding: 22px;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .quick-card:hover {
+      transform: translateY(-2px);
+      border-color: #444450;
+    }
+
+    .quick-card h3 {
+      margin-bottom: 7px;
+    }
+
+    .quick-card p {
+      color: #858592;
+      font-size: 14px;
+    }
+
+    /* VIDEO TABS */
+
+    .tabs {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
+      margin-bottom: 22px;
     }
 
-    .video-tab {
-      border: 1px solid #30303a;
+    .tab {
+      border: 1px solid #292933;
       background: #111118;
-      color: #ffffff;
+      color: #bdbdc8;
       padding: 9px 14px;
-      border-radius: 8px;
-      transition: 0.2s;
+      border-radius: 999px;
+      cursor: pointer;
     }
 
-    .video-tab.active,
-    .video-tab:hover {
+    .tab.active,
+    .tab:hover {
       background: #ffffff;
       color: #09090d;
     }
+
+    /* VIDEO GRID */
 
     .video-grid {
       display: grid;
@@ -314,96 +238,141 @@
     }
 
     .video-card {
-      overflow: hidden;
-      border: 1px solid #272731;
+      background: #111118;
+      border: 1px solid #24242d;
       border-radius: 14px;
-      background: #101017;
-      transition: 0.2s;
-    }
-
-    .video-card:hover {
-      transform: translateY(-4px);
-      border-color: #50505d;
+      overflow: hidden;
     }
 
     .video-thumb {
       position: relative;
-      height: 190px;
+      aspect-ratio: 16 / 9;
+      background: linear-gradient(135deg, #171720, #0b0b10);
       display: flex;
       align-items: center;
       justify-content: center;
-      background:
-        linear-gradient(135deg, #252532, #101017);
-      color: #777784;
-      font-size: 14px;
-      font-weight: 700;
+      cursor: pointer;
     }
 
-    .video-duration {
+    .play-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.94);
+      color: #09090d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 23px;
+      padding-left: 4px;
+    }
+
+    .duration {
       position: absolute;
       right: 10px;
       bottom: 10px;
+      background: rgba(0, 0, 0, 0.78);
       padding: 4px 7px;
       border-radius: 5px;
-      background: rgba(0, 0, 0, 0.85);
-      color: #ffffff;
       font-size: 12px;
     }
 
     .video-info {
-      padding: 16px;
+      padding: 15px;
     }
 
     .video-info h3 {
+      margin-bottom: 8px;
       font-size: 17px;
-      margin-bottom: 7px;
     }
 
     .video-creator {
-      color: #aaaab5;
+      color: #9999a5;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .video-views {
+      color: #6f6f7c;
       font-size: 13px;
+    }
+
+    .watch-btn {
+      width: 100%;
+      margin-top: 12px;
+      padding: 10px;
+      border: 1px solid #30303a;
+      background: #191921;
+      color: #ffffff;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .watch-btn:hover {
+      background: #25252e;
+    }
+
+    /* SIMPLE SECTIONS */
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .info-card {
+      background: #111118;
+      border: 1px solid #24242d;
+      border-radius: 14px;
+      padding: 22px;
+    }
+
+    .info-card h3 {
       margin-bottom: 8px;
     }
 
-    .video-meta {
+    .info-card p {
+      color: #898995;
+      font-size: 14px;
+    }
+
+    /* SEARCH */
+
+    .search-box {
       display: flex;
-      justify-content: space-between;
+      max-width: 650px;
+      margin: 0 auto;
       gap: 10px;
-      color: #777784;
-      font-size: 12px;
     }
 
-    .video-watch {
-      width: 100%;
-      margin-top: 14px;
-      padding: 10px;
+    .search-box input {
+      flex: 1;
+      min-width: 0;
+      padding: 13px 15px;
+      border-radius: 10px;
       border: 1px solid #30303a;
-      border-radius: 8px;
-      background: #17171f;
+      background: #111118;
       color: #ffffff;
-      font-weight: 700;
-      transition: 0.2s;
+      outline: none;
     }
 
-    .video-watch:hover {
-      background: #ffffff;
-      color: #09090d;
+    .search-box input:focus {
+      border-color: #666674;
     }
 
-    .video-message {
-      margin-top: 15px;
-      color: #888895;
-      font-size: 13px;
+    .search-message {
+      text-align: center;
+      color: #8f8f9a;
+      margin-top: 14px;
+      min-height: 22px;
     }
 
-    /* =========================
-       VIDEO VIEWER MODAL
-       ========================= */
+    /* MODAL */
 
     .video-modal {
       position: fixed;
       inset: 0;
-      z-index: 5000;
+      z-index: 1000;
       display: none;
       align-items: center;
       justify-content: center;
@@ -415,194 +384,113 @@
       display: flex;
     }
 
-    .video-modal-box {
-      width: min(900px, 100%);
-      max-height: 92vh;
-      overflow: auto;
+    .video-modal-content {
+      width: min(950px, 100%);
+      background: #101016;
       border: 1px solid #30303a;
-      border-radius: 16px;
-      background: #101017;
-      box-shadow: 0 20px 80px rgba(0, 0, 0, 0.6);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.65);
     }
 
     .video-modal-header {
+      padding: 14px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 15px;
-      padding: 18px 20px;
-      border-bottom: 1px solid #292933;
+      border-bottom: 1px solid #24242d;
     }
 
     .video-modal-header h2 {
-      font-size: 20px;
+      font-size: 17px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .close-video {
+    .close-btn {
       width: 38px;
       height: 38px;
-      border: 1px solid #3a3a45;
-      border-radius: 9px;
-      background: #17171f;
+      border: 0;
+      border-radius: 8px;
+      background: #1c1c25;
       color: #ffffff;
-      font-size: 22px;
-      line-height: 1;
+      font-size: 24px;
+      cursor: pointer;
+      flex-shrink: 0;
     }
 
-    .close-video:hover {
-      background: #ffffff;
-      color: #09090d;
+    .close-btn:hover {
+      background: #292933;
     }
 
     .video-player {
+      background: #000000;
       aspect-ratio: 16 / 9;
-      width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #050507;
-      color: #777784;
-      text-align: center;
-      padding: 30px;
     }
 
-    .video-player-content {
+    #realVideo {
       width: 100%;
-    }
-
-    .video-player-icon {
-      font-size: 52px;
-      margin-bottom: 15px;
-    }
-
-    .video-player-title {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .video-player-text {
-      color: #888895;
-      font-size: 14px;
+      height: 100%;
+      display: block;
+      background: #000000;
+      object-fit: contain;
     }
 
     .video-modal-footer {
-      padding: 16px 20px;
-      border-top: 1px solid #292933;
-      color: #888895;
+      padding: 12px 16px;
+      color: #777783;
       font-size: 13px;
+      border-top: 1px solid #24242d;
     }
 
-    /* =========================
-       SEARCH
-       ========================= */
-
-    .search-box {
-      display: flex;
-      gap: 10px;
-      max-width: 700px;
-    }
-
-    .search-box input {
-      flex: 1;
-      min-width: 0;
-      padding: 14px 15px;
-      border-radius: 10px;
-      border: 1px solid #30303a;
-      background: #111118;
-      color: #ffffff;
-      outline: none;
-    }
-
-    .search-box input:focus {
-      border-color: #666675;
-    }
-
-    .search-button {
-      padding: 14px 20px;
-      border: 1px solid #ffffff;
-      border-radius: 10px;
-      background: #ffffff;
-      color: #09090d;
-      font-weight: 700;
-    }
-
-    .search-message {
-      margin-top: 12px;
-      color: #888895;
-      font-size: 14px;
-    }
-
-    /* =========================
-       ADMIN PREVIEW
-       ========================= */
-
-    .admin-preview {
-      border: 1px solid #292933;
-      background: #0e0e14;
-      border-radius: 16px;
-      padding: 28px;
-    }
-
-    .admin-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-top: 20px;
-    }
-
-    .admin-item {
-      border: 1px solid #25252f;
-      background: #13131a;
-      padding: 17px;
-      border-radius: 10px;
-      color: #b5b5c0;
-    }
-
-    /* =========================
-       FOOTER
-       ========================= */
+    /* FOOTER */
 
     footer {
+      margin-top: 60px;
+      padding: 35px 20px;
       border-top: 1px solid #22222b;
-      padding: 30px 0;
-      margin-top: 30px;
-      color: #777784;
       text-align: center;
+      color: #70707b;
       font-size: 13px;
     }
 
-    /* =========================
-       MOBILE
-       ========================= */
+    /* RESPONSIVE */
 
-    @media (max-width: 800px) {
+    @media (max-width: 900px) {
+      .quick-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
 
+      .video-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 650px) {
       .header-inner {
-        padding: 14px 0;
         align-items: flex-start;
         flex-direction: column;
       }
 
-      .nav {
+      nav {
         width: 100%;
         justify-content: flex-start;
-        overflow-x: auto;
-        flex-wrap: nowrap;
-        padding-bottom: 3px;
-      }
-
-      .nav button {
-        flex: 0 0 auto;
       }
 
       .hero {
-        padding: 65px 0 55px;
+        padding-top: 55px;
       }
 
       .quick-grid,
-      .content-grid,
-      .admin-grid,
       .video-grid {
         grid-template-columns: 1fr;
       }
@@ -611,16 +499,8 @@
         flex-direction: column;
       }
 
-      .video-thumb {
-        height: 210px;
-      }
-
       .video-modal {
         padding: 10px;
-      }
-
-      .video-modal-box {
-        max-height: 96vh;
       }
     }
   </style>
@@ -628,16 +508,14 @@
 
 <body>
 
-  <!-- =========================
-       HEADER
-       ========================= -->
+  <!-- HEADER -->
 
   <header>
-    <div class="container header-inner">
+    <div class="header-inner">
 
       <div class="logo">XKiss</div>
 
-      <nav class="nav">
+      <nav>
         <button onclick="goTo('home')">Home</button>
         <button onclick="goTo('videos')">Videos</button>
         <button onclick="goTo('live')">Live</button>
@@ -651,43 +529,31 @@
   </header>
 
 
-  <!-- =========================
-       HOME
-       ========================= -->
+  <!-- HOME -->
 
   <main id="home">
 
-    <!-- HERO -->
-
     <section class="hero">
-      <div class="container">
 
-        <div class="badge">18+ ADULTS ONLY</div>
+      <div class="age-badge">18+ Adults Only</div>
 
-        <h1>Welcome to XKiss</h1>
+      <h1>Welcome to XKiss</h1>
 
-        <p>
-          A private adult-content video platform designed with
-          scalability, privacy and security in mind.
-        </p>
+      <p>
+        A private adult-content platform designed with scalability,
+        privacy and security in mind.
+      </p>
 
-        <div class="hero-actions">
+      <div class="hero-buttons">
+        <button class="btn btn-primary" onclick="goTo('videos')">
+          Explore Videos
+        </button>
 
-          <button
-            class="primary-btn"
-            onclick="goTo('videos')">
-            Explore Videos
-          </button>
-
-          <button
-            class="secondary-btn"
-            onclick="goTo('creators')">
-            Discover Creators
-          </button>
-
-        </div>
-
+        <button class="btn btn-secondary" onclick="goTo('creators')">
+          Discover Creators
+        </button>
       </div>
+
     </section>
 
 
@@ -698,87 +564,32 @@
       <div class="container">
 
         <div class="section-header">
-          <h2>Quick Access</h2>
-          <p>Move through the main XKiss platform areas.</p>
+          <div>
+            <h2>Quick Access</h2>
+            <p>Explore the main XKiss platform areas.</p>
+          </div>
         </div>
 
         <div class="quick-grid">
 
-          <div
-            class="quick-card"
-            onclick="goTo('videos')">
-
+          <div class="quick-card" onclick="goTo('videos')">
             <h3>Videos</h3>
-
-            <p>
-              Browse the video platform and discover content.
-            </p>
-
+            <p>Browse available video content.</p>
           </div>
 
-
-          <div
-            class="quick-card"
-            onclick="goTo('live')">
-
+          <div class="quick-card" onclick="goTo('live')">
             <h3>Live</h3>
-
-            <p>
-              Live streaming area for verified creators.
-            </p>
-
+            <p>Live creator experiences.</p>
           </div>
 
-
-          <div
-            class="quick-card"
-            onclick="goTo('creators')">
-
+          <div class="quick-card" onclick="goTo('creators')">
             <h3>Creators</h3>
-
-            <p>
-              Discover creators and their profiles.
-            </p>
-
+            <p>Discover creators and their profiles.</p>
           </div>
 
-
-          <div
-            class="quick-card"
-            onclick="goTo('categories')">
-
-            <h3>Categories</h3>
-
-            <p>
-              Organize and explore content by category.
-            </p>
-
-          </div>
-
-
-          <div
-            class="quick-card"
-            onclick="goTo('search')">
-
-            <h3>Search</h3>
-
-            <p>
-              Search the platform for videos and creators.
-            </p>
-
-          </div>
-
-
-          <div
-            class="quick-card"
-            onclick="goTo('account')">
-
+          <div class="quick-card" onclick="goTo('account')">
             <h3>My Account</h3>
-
-            <p>
-              User account, favorites and personal settings.
-            </p>
-
+            <p>Manage your XKiss account.</p>
           </div>
 
         </div>
@@ -788,476 +599,235 @@
     </section>
 
 
-    <!-- =========================
-         VIDEOS
-         ========================= -->
+    <!-- VIDEOS -->
 
-    <section
-      class="video-section"
-      id="videos">
+    <section class="section" id="videos">
 
       <div class="container">
 
         <div class="section-header">
-
-          <h2>Videos</h2>
-
-          <p>
-            Discover the latest and popular videos on XKiss.
-          </p>
-
+          <div>
+            <h2>Videos</h2>
+            <p>Featured content on XKiss.</p>
+          </div>
         </div>
 
-
-        <div class="video-toolbar">
-
-          <div class="video-tabs">
-
-            <button
-              class="video-tab active"
-              onclick="showVideoMessage('Latest Videos selected')">
-              Latest
-            </button>
-
-            <button
-              class="video-tab"
-              onclick="showVideoMessage('Popular Videos selected')">
-              Popular
-            </button>
-
-            <button
-              class="video-tab"
-              onclick="showVideoMessage('New Creators selected')">
-              New Creators
-            </button>
-
-          </div>
-
+        <div class="tabs">
+          <button class="tab active">Latest</button>
+          <button class="tab">Popular</button>
+          <button class="tab">New Creators</button>
         </div>
 
 
         <div class="video-grid">
 
+          <!-- VIDEO 1 -->
 
-          <!-- =========================
-               VIDEO 1
-               ========================= -->
+          <div class="video-card">
 
-          <article class="video-card">
+            <div class="video-thumb"
+                 onclick="watchVideo('Featured Video One')">
 
-            <div class="video-thumb">
+              <div class="play-icon">▶</div>
 
-              VIDEO THUMBNAIL
-
-              <span class="video-duration">
-                08:24
-              </span>
+              <div class="duration">08:24</div>
 
             </div>
 
-
             <div class="video-info">
 
-              <h3>
-                Featured Video One
-              </h3>
+              <h3>Featured Video One</h3>
 
               <div class="video-creator">
                 Creator One
               </div>
 
-              <div class="video-meta">
-
-                <span>
-                  12.4K views
-                </span>
-
-                <span>
-                  Today
-                </span>
-
+              <div class="video-views">
+                12.4K views
               </div>
 
-
-              <button
-                class="video-watch"
-                onclick="watchVideo('Featured Video One')">
-
+              <button class="watch-btn"
+                      onclick="watchVideo('Featured Video One')">
                 Watch
-
               </button>
 
             </div>
 
-          </article>
+          </div>
 
 
-          <!-- =========================
-               VIDEO 2
-               ========================= -->
+          <!-- VIDEO 2 -->
 
-          <article class="video-card">
+          <div class="video-card">
 
-            <div class="video-thumb">
+            <div class="video-thumb"
+                 onclick="watchVideo('Featured Video Two')">
 
-              VIDEO THUMBNAIL
+              <div class="play-icon">▶</div>
 
-              <span class="video-duration">
-                12:41
-              </span>
+              <div class="duration">12:41</div>
 
             </div>
 
-
             <div class="video-info">
 
-              <h3>
-                Featured Video Two
-              </h3>
+              <h3>Featured Video Two</h3>
 
               <div class="video-creator">
                 Creator Two
               </div>
 
-              <div class="video-meta">
-
-                <span>
-                  8.7K views
-                </span>
-
-                <span>
-                  Today
-                </span>
-
+              <div class="video-views">
+                8.7K views
               </div>
 
-
-              <button
-                class="video-watch"
-                onclick="watchVideo('Featured Video Two')">
-
+              <button class="watch-btn"
+                      onclick="watchVideo('Featured Video Two')">
                 Watch
-
               </button>
 
             </div>
 
-          </article>
+          </div>
 
 
-          <!-- =========================
-               VIDEO 3
-               ========================= -->
+          <!-- VIDEO 3 — TEST VIDEO -->
 
-          <article class="video-card">
+          <div class="video-card">
 
-            <div class="video-thumb">
+            <div class="video-thumb"
+                 onclick="watchVideo('Featured Video Three')">
 
-              VIDEO THUMBNAIL
+              <div class="play-icon">▶</div>
 
-              <span class="video-duration">
-                06:18
-              </span>
+              <div class="duration">00:04</div>
 
             </div>
 
-
             <div class="video-info">
 
-              <h3>
-                Featured Video Three
-              </h3>
+              <h3>Featured Video Three</h3>
 
               <div class="video-creator">
                 Creator Three
               </div>
 
-              <div class="video-meta">
-
-                <span>
-                  5.3K views
-                </span>
-
-                <span>
-                  Today
-                </span>
-
+              <div class="video-views">
+                5.3K views
               </div>
 
-
-              <button
-                class="video-watch"
-                onclick="watchVideo('Featured Video Three')">
-
+              <button class="watch-btn"
+                      onclick="watchVideo('Featured Video Three')">
                 Watch
-
               </button>
 
             </div>
 
-          </article>
+          </div>
 
 
-          <!-- =========================
-               VIDEO 4
-               ========================= -->
+          <!-- VIDEO 4 -->
 
-          <article class="video-card">
+          <div class="video-card">
 
-            <div class="video-thumb">
+            <div class="video-thumb"
+                 onclick="watchVideo('Featured Video Four')">
 
-              VIDEO THUMBNAIL
+              <div class="play-icon">▶</div>
 
-              <span class="video-duration">
-                09:32
-              </span>
+              <div class="duration">09:32</div>
 
             </div>
 
-
             <div class="video-info">
 
-              <h3>
-                Featured Video Four
-              </h3>
+              <h3>Featured Video Four</h3>
 
               <div class="video-creator">
                 Creator Four
               </div>
 
-              <div class="video-meta">
-
-                <span>
-                  4.8K views
-                </span>
-
-                <span>
-                  Yesterday
-                </span>
-
+              <div class="video-views">
+                4.8K views
               </div>
 
-
-              <button
-                class="video-watch"
-                onclick="watchVideo('Featured Video Four')">
-
+              <button class="watch-btn"
+                      onclick="watchVideo('Featured Video Four')">
                 Watch
-
               </button>
 
             </div>
 
-          </article>
+          </div>
 
 
-          <!-- =========================
-               VIDEO 5
-               ========================= -->
+          <!-- VIDEO 5 -->
 
-          <article class="video-card">
+          <div class="video-card">
 
-            <div class="video-thumb">
+            <div class="video-thumb"
+                 onclick="watchVideo('Featured Video Five')">
 
-              VIDEO THUMBNAIL
+              <div class="play-icon">▶</div>
 
-              <span class="video-duration">
-                15:07
-              </span>
+              <div class="duration">15:07</div>
 
             </div>
 
-
             <div class="video-info">
 
-              <h3>
-                Featured Video Five
-              </h3>
+              <h3>Featured Video Five</h3>
 
               <div class="video-creator">
                 Creator Five
               </div>
 
-              <div class="video-meta">
-
-                <span>
-                  3.9K views
-                </span>
-
-                <span>
-                  Yesterday
-                </span>
-
+              <div class="video-views">
+                3.9K views
               </div>
 
-
-              <button
-                class="video-watch"
-                onclick="watchVideo('Featured Video Five')">
-
+              <button class="watch-btn"
+                      onclick="watchVideo('Featured Video Five')">
                 Watch
-
               </button>
 
             </div>
 
-          </article>
+          </div>
 
 
-          <!-- =========================
-               VIDEO 6
-               ========================= -->
+          <!-- VIDEO 6 -->
 
-          <article class="video-card">
+          <div class="video-card">
 
-            <div class="video-thumb">
+            <div class="video-thumb"
+                 onclick="watchVideo('Featured Video Six')">
 
-              VIDEO THUMBNAIL
+              <div class="play-icon">▶</div>
 
-              <span class="video-duration">
-                10:45
-              </span>
+              <div class="duration">10:45</div>
 
             </div>
 
-
             <div class="video-info">
 
-              <h3>
-                Featured Video Six
-              </h3>
+              <h3>Featured Video Six</h3>
 
               <div class="video-creator">
                 Creator Six
               </div>
 
-              <div class="video-meta">
-
-                <span>
-                  2.7K views
-                </span>
-
-                <span>
-                  2 days ago
-                </span>
-
+              <div class="video-views">
+                2.7K views
               </div>
 
-
-              <button
-                class="video-watch"
-                onclick="watchVideo('Featured Video Six')">
-
+              <button class="watch-btn"
+                      onclick="watchVideo('Featured Video Six')">
                 Watch
-
               </button>
 
             </div>
 
-          </article>
-
-        </div>
-
-
-        <div
-          id="videoMessage"
-          class="video-message">
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =========================
-         LIVE
-         ========================= -->
-
-    <section
-      class="section"
-      id="live">
-
-      <div class="container">
-
-        <div class="section-header">
-
-          <h2>Live</h2>
-
-          <p>
-            Live streaming area for verified creators.
-          </p>
-
-        </div>
-
-
-        <div class="content-grid">
-
-          <div class="content-card">
-
-            <div>
-              <div class="number">
-                LIVE 01
-              </div>
-
-              <h3>
-                Live Streaming
-              </h3>
-
-              <p>
-                Real-time creator streaming area.
-              </p>
-            </div>
-
-            <span class="status">
-              Coming Soon
-            </span>
-
-          </div>
-
-
-          <div class="content-card">
-
-            <div>
-              <div class="number">
-                LIVE 02
-              </div>
-
-              <h3>
-                Verified Creators
-              </h3>
-
-              <p>
-                Verified creators will be able to start live sessions.
-              </p>
-            </div>
-
-            <span class="status">
-              Planned
-            </span>
-
-          </div>
-
-
-          <div class="content-card">
-
-            <div>
-              <div class="number">
-                LIVE 03
-              </div>
-
-              <h3>
-                Live Discovery
-              </h3>
-
-              <p>
-                Discover active live sessions.
-              </p>
-            </div>
-
-            <span class="status">
-              Planned
-            </span>
-
           </div>
 
         </div>
@@ -1267,95 +837,42 @@
     </section>
 
 
-    <!-- =========================
-         CREATORS
-         ========================= -->
+    <!-- LIVE -->
 
-    <section
-      class="section"
-      id="creators">
+    <section class="section" id="live">
 
       <div class="container">
 
         <div class="section-header">
-
-          <h2>Creators</h2>
-
-          <p>
-            Discover creators and their profiles.
-          </p>
-
+          <div>
+            <h2>Live</h2>
+            <p>Live streaming section foundation.</p>
+          </div>
         </div>
 
+        <div class="info-grid">
 
-        <div class="content-grid">
-
-          <div class="content-card">
-
-            <div>
-              <div class="number">
-                CREATOR 01
-              </div>
-
-              <h3>
-                Creator Profiles
-              </h3>
-
-              <p>
-                Individual creator profiles and published content.
-              </p>
-            </div>
-
-            <span class="status">
-              Foundation
-            </span>
-
+          <div class="info-card">
+            <h3>Live Streaming</h3>
+            <p>
+              The live streaming system will be connected
+              in a future platform stage.
+            </p>
           </div>
 
-
-          <div class="content-card">
-
-            <div>
-              <div class="number">
-                CREATOR 02
-              </div>
-
-              <h3>
-                Creator Dashboard
-              </h3>
-
-              <p>
-                Upload videos, manage content and view performance.
-              </p>
-            </div>
-
-            <span class="status">
-              Planned
-            </span>
-
+          <div class="info-card">
+            <h3>Creator Live</h3>
+            <p>
+              Creators will be able to manage live sessions
+              from their dashboard.
+            </p>
           </div>
 
-
-          <div class="content-card">
-
-            <div>
-              <div class="number">
-                CREATOR 03
-              </div>
-
-              <h3>
-                Verification
-              </h3>
-
-              <p>
-                Creator verification and safety controls.
-              </p>
-            </div>
-
-            <span class="status">
-              Planned
-            </span>
-
+          <div class="info-card">
+            <h3>Viewer Experience</h3>
+            <p>
+              Viewers will have a dedicated live viewing experience.
+            </p>
           </div>
 
         </div>
@@ -1365,95 +882,42 @@
     </section>
 
 
-    <!-- =========================
-         CATEGORIES
-         ========================= -->
+    <!-- CREATORS -->
 
-    <section
-      class="section"
-      id="categories">
+    <section class="section" id="creators">
 
       <div class="container">
 
         <div class="section-header">
-
-          <h2>Categories</h2>
-
-          <p>
-            Organize and explore content by category.
-          </p>
-
+          <div>
+            <h2>Creators</h2>
+            <p>Creator platform foundation.</p>
+          </div>
         </div>
 
+        <div class="info-grid">
 
-        <div class="content-grid">
-
-          <div class="content-card">
-
-            <div>
-              <div class="number">
-                CATEGORY 01
-              </div>
-
-              <h3>
-                Categories System
-              </h3>
-
-              <p>
-                A scalable structure for organizing platform content.
-              </p>
-            </div>
-
-            <span class="status">
-              Foundation
-            </span>
-
+          <div class="info-card">
+            <h3>Creator Profiles</h3>
+            <p>
+              Public creator profiles will be available here.
+            </p>
           </div>
 
-
-          <div class="content-card">
-
-            <div>
-              <div class="number">
-                CATEGORY 02
-              </div>
-
-              <h3>
-                Tags
-              </h3>
-
-              <p>
-                Content tags and metadata for discovery.
-              </p>
-            </div>
-
-            <span class="status">
-              Planned
-            </span>
-
+          <div class="info-card">
+            <h3>Creator Dashboard</h3>
+            <p>
+              Uploads, views, revenue and account management
+              will be connected here.
+            </p>
           </div>
 
-
-          <div class="content-card">
-
-            <div>
-              <div class="number">
-                CATEGORY 03
-              </div>
-
-              <h3>
-                Discovery
-              </h3>
-
-              <p>
-                Category-based browsing and recommendations.
-              </p>
-            </div>
-
-            <span class="status">
-              Planned
-            </span>
-
+          <div class="info-card">
+            <h3>Creator Monetization</h3>
+            <p>
+              Monetization and payout systems will be added
+              as the platform develops.
+            </p>
           </div>
 
         </div>
@@ -1463,44 +927,71 @@
     </section>
 
 
-    <!-- =========================
-         SEARCH
-         ========================= -->
+    <!-- CATEGORIES -->
 
-    <section
-      class="section"
-      id="search">
+    <section class="section" id="categories">
 
       <div class="container">
 
         <div class="section-header">
+          <div>
+            <h2>Categories</h2>
+            <p>Content discovery and category structure.</p>
+          </div>
+        </div>
 
-          <h2>Search</h2>
+        <div class="info-grid">
 
-          <p>
-            Search the platform for videos and creators.
-          </p>
+          <div class="info-card">
+            <h3>Popular</h3>
+            <p>Popular content categories.</p>
+          </div>
+
+          <div class="info-card">
+            <h3>Latest</h3>
+            <p>Recently published content.</p>
+          </div>
+
+          <div class="info-card">
+            <h3>Creators</h3>
+            <p>Browse content by creator.</p>
+          </div>
 
         </div>
 
+      </div>
+
+    </section>
+
+
+    <!-- SEARCH -->
+
+    <section class="section" id="search">
+
+      <div class="container">
+
+        <div class="section-header">
+          <div>
+            <h2>Search</h2>
+            <p>Search foundation for XKiss content.</p>
+          </div>
+        </div>
 
         <div class="search-box">
 
           <input
             id="searchInput"
             type="text"
-            placeholder="Search videos or creators...">
+            placeholder="Search XKiss..."
+          >
 
           <button
-            class="search-button"
+            class="btn btn-primary"
             onclick="performSearch()">
-
             Search
-
           </button>
 
         </div>
-
 
         <div
           id="searchMessage"
@@ -1512,95 +1003,40 @@
     </section>
 
 
-    <!-- =========================
-         ACCOUNT
-         ========================= -->
+    <!-- ACCOUNT -->
 
-    <section
-      class="section"
-      id="account">
+    <section class="section" id="account">
 
       <div class="container">
 
         <div class="section-header">
-
-          <h2>My Account</h2>
-
-          <p>
-            User account, favorites and personal settings.
-          </p>
-
+          <div>
+            <h2>My Account</h2>
+            <p>User account foundation.</p>
+          </div>
         </div>
 
+        <div class="info-grid">
 
-        <div class="content-grid">
-
-          <div class="content-card">
-
-            <div>
-              <div class="number">
-                ACCOUNT 01
-              </div>
-
-              <h3>
-                User Account
-              </h3>
-
-              <p>
-                Personal account and profile settings.
-              </p>
-            </div>
-
-            <span class="status">
-              Planned
-            </span>
-
+          <div class="info-card">
+            <h3>Login</h3>
+            <p>
+              User authentication will be connected here.
+            </p>
           </div>
 
-
-          <div class="content-card">
-
-            <div>
-              <div class="number">
-                ACCOUNT 02
-              </div>
-
-              <h3>
-                Favorites
-              </h3>
-
-              <p>
-                Save and manage favorite videos and creators.
-              </p>
-            </div>
-
-            <span class="status">
-              Planned
-            </span>
-
+          <div class="info-card">
+            <h3>Favorites</h3>
+            <p>
+              Users will be able to save favorite content.
+            </p>
           </div>
 
-
-          <div class="content-card">
-
-            <div>
-              <div class="number">
-                ACCOUNT 03
-              </div>
-
-              <h3>
-                Settings
-              </h3>
-
-              <p>
-                Privacy, security and account preferences.
-              </p>
-            </div>
-
-            <span class="status">
-              Planned
-            </span>
-
+          <div class="info-card">
+            <h3>Account Settings</h3>
+            <p>
+              Privacy and account settings will be managed here.
+            </p>
           </div>
 
         </div>
@@ -1610,55 +1046,42 @@
     </section>
 
 
-    <!-- =========================
-         ADMIN PREVIEW
-         ========================= -->
+    <!-- ADMIN -->
 
     <section class="section">
 
       <div class="container">
 
         <div class="section-header">
-
-          <h2>
-            Admin Preview
-          </h2>
-
-          <p>
-            XKiss administration and platform management foundation.
-          </p>
-
+          <div>
+            <h2>Admin Preview</h2>
+            <p>Platform administration foundation.</p>
+          </div>
         </div>
 
+        <div class="info-grid">
 
-        <div class="admin-preview">
+          <div class="info-card">
+            <h3>Admin Dashboard</h3>
+            <p>
+              Platform management tools will be connected here.
+            </p>
+          </div>
 
-          <div class="admin-grid">
+          <div class="info-card">
+            <h3>Safety & Verification</h3>
+            <p>
+              Verification, moderation and safety systems
+              will be developed here.
+            </p>
+          </div>
 
-            <div class="admin-item">
-              User Management
-            </div>
-
-            <div class="admin-item">
-              Creator Management
-            </div>
-
-            <div class="admin-item">
-              Video Moderation
-            </div>
-
-            <div class="admin-item">
-              Reports & Safety
-            </div>
-
-            <div class="admin-item">
-              Revenue Management
-            </div>
-
-            <div class="admin-item">
-              Platform Settings
-            </div>
-
+          <div class="info-card">
+            <h3>Super Admin</h3>
+            <p>
+              Advanced security and platform controls
+              will be developed here.
+            </p>
           </div>
 
         </div>
@@ -1670,32 +1093,26 @@
   </main>
 
 
-  <!-- =========================
-       VIDEO VIEWER
-       ========================= -->
+  <!-- REAL VIDEO MODAL -->
 
   <div
     id="videoModal"
     class="video-modal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="videoModalTitle">
+    aria-hidden="true">
 
-    <div class="video-modal-box">
+    <div class="video-modal-content">
 
       <div class="video-modal-header">
 
         <h2 id="videoModalTitle">
-          Video
+          XKiss Video
         </h2>
 
         <button
-          class="close-video"
+          class="close-btn"
           onclick="closeVideoViewer()"
           aria-label="Close video">
-
           ×
-
         </button>
 
       </div>
@@ -1703,36 +1120,25 @@
 
       <div class="video-player">
 
-        <div class="video-player-content">
+        <video
+          id="realVideo"
+          controls
+          playsinline
+          preload="metadata">
 
-          <div class="video-player-icon">
-            ▶
-          </div>
+          <source
+            src="20260923_230154.mp4"
+            type="video/mp4">
 
-          <div
-            id="videoPlayerTitle"
-            class="video-player-title">
+          Your browser does not support HTML5 video.
 
-            Video Player
-
-          </div>
-
-          <div class="video-player-text">
-
-            Test viewer is working.
-            Real video source will be connected later.
-
-          </div>
-
-        </div>
+        </video>
 
       </div>
 
 
       <div class="video-modal-footer">
-
-        XKiss video viewer — test mode.
-
+        XKiss video player — test video.
       </div>
 
     </div>
@@ -1740,30 +1146,16 @@
   </div>
 
 
-  <!-- =========================
-       FOOTER
-       ========================= -->
+  <!-- FOOTER -->
 
   <footer>
-
-    <div class="container">
-
-      © 2026 XKiss — 18+ Adults Only
-
-    </div>
-
+    © 2026 XKiss — Platform Foundation
   </footer>
 
 
-  <!-- =========================
-       JAVASCRIPT
-       ========================= -->
+  <!-- JAVASCRIPT -->
 
   <script>
-
-    /* =========================
-       NAVIGATION
-       ========================= */
 
     function goTo(sectionId) {
 
@@ -1781,58 +1173,31 @@
     }
 
 
-    /* =========================
-       VIDEO MESSAGE
-       ========================= */
-
-    function showVideoMessage(message) {
-
-      const messageBox =
-        document.getElementById("videoMessage");
-
-      if (messageBox) {
-
-        messageBox.textContent = message;
-
-      }
-
-    }
-
-
-    /* =========================
-       WATCH VIDEO
-       ========================= */
-
     function watchVideo(title) {
 
-      const modal =
-        document.getElementById("videoModal");
-
-      const modalTitle =
-        document.getElementById("videoModalTitle");
-
-      const playerTitle =
-        document.getElementById("videoPlayerTitle");
-
+      const modal = document.getElementById("videoModal");
+      const modalTitle = document.getElementById("videoModalTitle");
+      const video = document.getElementById("realVideo");
 
       if (modalTitle) {
-
         modalTitle.textContent = title;
-
       }
 
+      if (video) {
 
-      if (playerTitle) {
+        video.pause();
 
-        playerTitle.textContent =
-          title + " — Video Player";
+        video.currentTime = 0;
+
+        video.load();
 
       }
-
 
       if (modal) {
 
         modal.classList.add("active");
+
+        modal.setAttribute("aria-hidden", "false");
 
         document.body.classList.add("modal-open");
 
@@ -1841,32 +1206,31 @@
     }
 
 
-    /* =========================
-       CLOSE VIDEO
-       ========================= */
-
     function closeVideoViewer() {
 
-      const modal =
-        document.getElementById("videoModal");
+      const modal = document.getElementById("videoModal");
+      const video = document.getElementById("realVideo");
 
+      if (video) {
+
+        video.pause();
+
+        video.currentTime = 0;
+
+      }
 
       if (modal) {
 
         modal.classList.remove("active");
 
-      }
+        modal.setAttribute("aria-hidden", "true");
 
+      }
 
       document.body.classList.remove("modal-open");
 
     }
 
-
-    /* =========================
-       CLOSE MODAL WHEN CLICKING
-       OUTSIDE VIDEO BOX
-       ========================= */
 
     const videoModal =
       document.getElementById("videoModal");
@@ -1890,10 +1254,6 @@
     }
 
 
-    /* =========================
-       ESCAPE KEY
-       ========================= */
-
     document.addEventListener(
       "keydown",
       function(event) {
@@ -1908,10 +1268,6 @@
     );
 
 
-    /* =========================
-       SEARCH
-       ========================= */
-
     function performSearch() {
 
       const input =
@@ -1920,13 +1276,9 @@
       const message =
         document.getElementById("searchMessage");
 
-
       if (!input || !message) {
-
         return;
-
       }
-
 
       const query =
         input.value.trim();
@@ -1943,15 +1295,11 @@
 
 
       message.textContent =
-        "Search system is ready. Searching for: " +
-        query;
+        "Search system is ready. Searching for: "
+        + query;
 
     }
 
-
-    /* =========================
-       ENTER KEY SEARCH
-       ========================= */
 
     const searchInput =
       document.getElementById("searchInput");
