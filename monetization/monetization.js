@@ -81,6 +81,31 @@
     }
   }
 
+  async function loadActivationRules() {
+    try {
+      const response = await fetch(API_BASE + "/api/monetization/activation/rules", {
+        headers: { "Accept": "application/json" }
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data.ok || !data.rules) {
+        throw new Error("Activation rules unavailable.");
+      }
+
+      const rules = data.rules;
+      document.getElementById("activation-status").textContent =
+        rules.enabled ? "Ready" : "Not active";
+      document.getElementById("activation-message").textContent =
+        rules.enabled
+          ? "Creator activation requirements are enabled."
+          : "Activation flow is prepared but monetization is not active yet.";
+    } catch {
+      document.getElementById("activation-status").textContent = "Unavailable";
+      document.getElementById("activation-message").textContent =
+        "Creator activation rules could not be loaded.";
+    }
+  }
+
   async function loadMonetizationRules() {
     const message = document.getElementById("rules-message");
 
@@ -123,5 +148,6 @@
     loadMonetizationRules();
     loadEligibilityRules();
     loadPolicyRules();
+    loadActivationRules();
   });
 })();
