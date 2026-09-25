@@ -2,12 +2,11 @@
   "use strict";
 
   function init() {
-    const video = document.getElementById("video");
     const player = document.getElementById("player");
     const fullscreenBtn = document.getElementById("fullscreenBtn");
 
-    if (!video || !player) {
-      console.error("XKiss: Fullscreen elements not found.");
+    if (!player) {
+      console.error("XKiss: Fullscreen player element not found.");
       return;
     }
 
@@ -18,48 +17,30 @@
       );
     }
 
-    async function lockLandscape() {
-      try {
-        if (
-          screen.orientation &&
-          typeof screen.orientation.lock === "function"
-        ) {
-          await screen.orientation.lock("landscape");
-        }
-      } catch (error) {
-        console.log(
-          "XKiss: Landscape lock unavailable."
-        );
-      }
-    }
-
-    function unlockOrientation() {
-      try {
-        if (
-          screen.orientation &&
-          typeof screen.orientation.unlock === "function"
-        ) {
-          screen.orientation.unlock();
-        }
-      } catch (error) {}
-    }
-
     async function enterFullscreen() {
       try {
         if (player.requestFullscreen) {
           await player.requestFullscreen();
-        } else if (player.webkitRequestFullscreen) {
-          player.webkitRequestFullscreen();
-        } else {
-          return;
+          return true;
         }
 
-        await lockLandscape();
+        if (player.webkitRequestFullscreen) {
+          player.webkitRequestFullscreen();
+          return true;
+        }
+
+        console.warn(
+          "XKiss: Fullscreen API is not supported."
+        );
+
+        return false;
       } catch (error) {
         console.error(
           "XKiss fullscreen error:",
           error
         );
+
+        return false;
       }
     }
 
@@ -67,63 +48,90 @@
       try {
         if (document.exitFullscreen) {
           await document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
+          return true;
         }
+
+        if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+          return true;
+        }
+
+        return false;
       } catch (error) {
         console.error(
           "XKiss fullscreen exit error:",
           error
         );
-      }
 
-      unlockOrientation();
+        return false;
+      }
+    }
+
+    async function toggleFullscreen() {
+      if (isFullscreen()) {
+        await exitFullscreen();
+      } else {
+        await enterFullscreen();
+      }
     }
 
     if (fullscreenBtn) {
-      fullscreenBtn.addEventListener(
-        "click",
-        async e => {
-          e.stopPropagation();
+      fullscreenBtn.addEventListener("click", async e => {
+        e.preventDefault();
+        e.stopPropagation();
 
-          if (isFullscreen()) {
-            await exitFullscreen();
-          } else {
-            await enterFullscreen();
-          }
-        }
-      );
+        await toggleFullscreen();
+      });
     }
 
-    function fullscreenChanged() {
-      if (!isFullscreen()) {
-        unlockOrientation();
-      }
+    function updateFullscreenState() {
+      if (!fullscreenBtn) return;
+
+      fullscreenBtn.classList.toggle(
+        "active",
+        isFullscreen()
+      );
+
+      fullscreenBtn.setAttribute(
+        "aria-pressed",
+        isFullscreen() ? "true" : "false"
+      );
+
+      fullscreenBtn.title =
+        isFullscreen()
+          ? "Exit Fullscreen"
+          : "Fullscreen";
     }
 
     document.addEventListener(
       "fullscreenchange",
-      fullscreenChanged
+      updateFullscreenState
     );
 
     document.addEventListener(
       "webkitfullscreenchange",
-      fullscreenChanged
+      updateFullscreenState
     );
+
+    updateFullscreenState();
 
     window.XKissPlayerFullscreen = {
       isFullscreen,
       enterFullscreen,
       exitFullscreen,
-      lockLandscape,
-      unlockOrientation
+      toggleFullscreen
     };
 
-    console.log("XKiss Player Fullscreen loaded.");
+    console.log(
+      "XKiss Player Fullscreen loaded."
+    );
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
+    document.addEventListener(
+      "DOMContentLoaded",
+      init
+    );
   } else {
     init();
   }
