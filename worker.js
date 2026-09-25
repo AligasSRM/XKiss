@@ -8,7 +8,9 @@ import {
   MONETIZATION_RULES,
   CREATOR_ELIGIBILITY_RULES,
   evaluateCreatorEligibility,
-  calculateRevenue
+  calculateRevenue,
+  MONETIZATION_POLICY_RULES,
+  evaluateMonetizationPolicy
 } from "./monetization/monetization-rules.js";
 
 const CORS_HEADERS = {
@@ -76,6 +78,33 @@ export default {
         ok: true,
         service: "XKiss Creator Eligibility",
         rules: CREATOR_ELIGIBILITY_RULES
+      });
+    }
+
+    if (url.pathname === "/api/monetization/policy/rules" && request.method === "GET") {
+      return json({
+        ok: true,
+        service: "XKiss Monetization Policy",
+        rules: MONETIZATION_POLICY_RULES
+      });
+    }
+
+    if (url.pathname === "/api/monetization/policy/evaluate" && request.method === "POST") {
+      let body;
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          message: "Invalid policy evaluation data."
+        }, 400);
+      }
+
+      return json({
+        ok: true,
+        service: "XKiss Monetization Policy",
+        result: evaluateMonetizationPolicy(body)
       });
     }
 
