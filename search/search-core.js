@@ -174,6 +174,17 @@
     return apply();
   }
 
+  function syncFromUrl() {
+    readUrlState();
+    apply();
+
+    document.dispatchEvent(
+      new CustomEvent("xkiss:search-state-changed")
+    );
+
+    return getState();
+  }
+
   function getState() {
     return {
       allVideos: [...state.allVideos],
@@ -195,8 +206,11 @@
       getSearchShareUrl,
       setQuery,
       setCategory,
-      clear
+      clear,
+      syncFromUrl
     };
+
+    window.addEventListener("popstate", syncFromUrl);
 
     document.dispatchEvent(
       new CustomEvent("xkiss:search-ready")
