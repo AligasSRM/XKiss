@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>XKiss Video Player</title>
+
+  <link rel="stylesheet" href="css/player.css">
 </head>
 
 <body>
@@ -43,7 +46,9 @@
             src="https://aligassrm.github.io/XKiss/20260923_234200-3.mp4"
             type="video/mp4"
           >
+
           Your browser does not support HTML5 video.
+
         </video>
 
         <div id="xkissLogo">
@@ -56,21 +61,37 @@
 
     <section id="videoActions">
 
-      <button type="button">Views <span id="views">0</span></button>
+      <button type="button">
+        Views <span id="views">0</span>
+      </button>
 
-      <button type="button">Like</button>
+      <button type="button">
+        Like
+      </button>
 
-      <button type="button">Dislike</button>
+      <button type="button">
+        Dislike
+      </button>
 
-      <button type="button">Comments</button>
+      <button type="button">
+        Comments
+      </button>
 
-      <button type="button">Download</button>
+      <button type="button">
+        Download
+      </button>
 
-      <button type="button">Save / Favorite</button>
+      <button type="button">
+        Save / Favorite
+      </button>
 
-      <button type="button">Share</button>
+      <button type="button">
+        Share
+      </button>
 
-      <button type="button">Report</button>
+      <button type="button">
+        Report
+      </button>
 
     </section>
 
@@ -105,7 +126,8 @@
 
     const video = document.getElementById("video");
 
-    const viewsElement = document.getElementById("views");
+    const viewsElement =
+      document.getElementById("views");
 
     const currentQualityElement =
       document.getElementById("currentQuality");
@@ -115,18 +137,27 @@
     let views = 0;
 
     function addView() {
+
       views++;
+
       viewsElement.textContent = views;
+
     }
 
     video.addEventListener("play", function () {
+
       if (!video.dataset.viewed) {
+
         video.dataset.viewed = "true";
+
         addView();
+
       }
+
     });
 
     console.log("XKiss Player loaded.");
+
     console.log("Video ID:", videoId);
 
   </script>
