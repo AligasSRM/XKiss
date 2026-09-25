@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="theme-color" content="#07080b">
+<title>XKiss — Live</title>
+<link rel="stylesheet" href="live/live.css">
+</head>
+<body>
+<header class="live-header">
+  <nav class="live-nav">
+    <a class="brand" href="index.html" aria-label="XKiss Home"><span class="brand-x">X</span><span class="brand-kiss">kiss</span></a>
+    <div class="nav-links" aria-label="Primary navigation">
+      <a href="index.html">Home</a>
+      <a href="videos.html">Videos</a>
+      <a class="active" href="live.html">Live</a>
+      <a href="index.html#creators">Creators</a>
+      <a href="index.html#categories">Categories</a>
+      <a href="index.html#account">Account</a>
+    </div>
+    <a class="login" href="index.html#account">Login</a>
+  </nav>
+</header>
+
+<main class="live-page">
+  <section class="live-hero">
+    <div class="live-copy">
+      <span class="eyebrow"><span class="live-dot"></span> XKISS LIVE</span>
+      <h1>Live</h1>
+      <p>Discover live creators, active rooms and upcoming broadcasts in one dedicated XKiss Live area.</p>
+    </div>
+  </section>
+
+  <section class="live-status-section">
+    <div class="section-head">
+      <div>
+        <h2>Live Now</h2>
+        <p id="live-result-count">0 live rooms</p>
+      </div>
+      <span class="status-pill"><span class="status-dot"></span> Live system</span>
+    </div>
+    <div id="live-now-grid" class="live-grid" aria-live="polite"></div>
+    <div id="live-empty" class="empty-state" hidden>
+      <div class="empty-icon">●</div>
+      <h3>No live streams right now</h3>
+      <p>When a verified creator starts a broadcast, the live room will appear here.</p>
+    </div>
+  </section>
+
+  <section class="live-schedule-section">
+    <div class="section-head">
+      <div>
+        <h2>Upcoming</h2>
+        <p>Scheduled broadcasts will appear here when creators publish their live times.</p>
+      </div>
+    </div>
+    <div id="live-upcoming-grid" class="upcoming-grid"></div>
+  </section>
+
+  <section class="live-info-section">
+    <div class="info-card">
+      <span class="info-kicker">LIVE ARCHITECTURE</span>
+      <h2>Built for the next real-time layer</h2>
+      <p>The Live page is permanent. The visual room, discovery and schedule layer are separated so the real streaming service can be connected without rebuilding the page.</p>
+      <div class="info-points">
+        <div><strong>01</strong><span>Live rooms</span></div>
+        <div><strong>02</strong><span>Creator status</span></div>
+        <div><strong>03</strong><span>Upcoming broadcasts</span></div>
+        <div><strong>04</strong><span>Viewer entry</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="live-footer">
+  <div>XKiss — Live</div>
+  <a href="index.html">Back to Home</a>
+</footer>
+
+<script src="live/live-data.js"></script>
+<script src="live/live-core.js"></script>
+<script src="live/live-navigation.js"></script>
+</body>
+</html>
