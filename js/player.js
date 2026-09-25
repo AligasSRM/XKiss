@@ -1,6 +1,6 @@
 /* =========================================================
    XKiss Video Player
-   Connected to XKISS_VIDEOS
+   Connected to XKISS_VIDEOS V2
 
    Quality:
    340p / 460p / 720p / 1080p
@@ -14,6 +14,10 @@
    - Enter PiP
    - Exit PiP with the same button
    - Keep PiP independent from fullscreen logic
+
+   Data:
+   - Reads video information from video-data.js
+   - Supports XKiss V2 video data structure
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -65,7 +69,11 @@ document.addEventListener("DOMContentLoaded", () => {
      ======================================================= */
 
   if (!video || !player) {
-    console.error("XKiss: Required player elements not found.");
+
+    console.error(
+      "XKiss: Required player elements not found."
+    );
+
     return;
   }
 
@@ -74,7 +82,8 @@ document.addEventListener("DOMContentLoaded", () => {
      VIDEO ID
      ======================================================= */
 
-  const params = new URLSearchParams(window.location.search);
+  const params =
+    new URLSearchParams(window.location.search);
 
   const requestedVideoId =
     params.get("id") || "video-001";
@@ -88,17 +97,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (
     typeof XKISS_VIDEOS !== "undefined" &&
-    XKISS_VIDEOS[requestedVideoId]
+    typeof getXKissVideo === "function"
   ) {
 
-    videoData = XKISS_VIDEOS[requestedVideoId];
+    videoData =
+      getXKissVideo(requestedVideoId);
 
   } else if (
     typeof XKISS_VIDEOS !== "undefined" &&
-    XKISS_VIDEOS["video-001"]
+    XKISS_VIDEOS[requestedVideoId]
   ) {
 
-    videoData = XKISS_VIDEOS["video-001"];
+    videoData =
+      XKISS_VIDEOS[requestedVideoId];
+
+  }
+
+
+  /* =======================================================
+     FALLBACK TO TEST VIDEO
+     ======================================================= */
+
+  if (
+    !videoData &&
+    typeof XKISS_VIDEOS !== "undefined"
+  ) {
+
+    if (typeof getXKissVideo === "function") {
+
+      videoData =
+        getXKissVideo("video-001");
+
+    } else if (XKISS_VIDEOS["video-001"]) {
+
+      videoData =
+        XKISS_VIDEOS["video-001"];
+
+    }
 
   }
 
@@ -109,10 +144,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!videoData) {
 
-    console.error("XKiss: Video data not found.");
+    console.error(
+      "XKiss: Video data not found."
+    );
 
     if (videoTitle) {
-      videoTitle.textContent = "Video Not Found";
+
+      videoTitle.textContent =
+        "Video Not Found";
+
     }
 
     return;
@@ -124,23 +164,51 @@ document.addEventListener("DOMContentLoaded", () => {
      ======================================================= */
 
   if (videoTitle) {
+
     videoTitle.textContent =
       videoData.title || "XKiss Video";
+
   }
+
 
   if (videoDuration) {
+
     videoDuration.textContent =
       videoData.duration || "00:00";
+
   }
+
 
   if (creatorName) {
+
     creatorName.textContent =
       videoData.creator || "XKiss Creator";
+
   }
 
+
+  /* =======================================================
+     VIEWS
+     Supports V2:
+     statistics.views
+
+     Also supports old:
+     views
+     ======================================================= */
+
+  const videoViews =
+    videoData.statistics &&
+    Number.isFinite(
+      Number(videoData.statistics.views)
+    )
+      ? Number(videoData.statistics.views)
+      : Number(videoData.views || 0);
+
   if (views) {
+
     views.textContent =
-      Number(videoData.views || 0);
+      videoViews;
+
   }
 
 
@@ -162,12 +230,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const tagElement =
           document.createElement("span");
 
-        tagElement.textContent =
-          tag.startsWith("#")
-            ? tag
-            : "#" + tag;
+        const tagText =
+          String(tag);
 
-        videoTags.appendChild(tagElement);
+        tagElement.textContent =
+          tagText.startsWith("#")
+            ? tagText
+            : "#" + tagText;
+
+        videoTags.appendChild(
+          tagElement
+        );
 
       });
 
@@ -187,7 +260,31 @@ document.addEventListener("DOMContentLoaded", () => {
     "1080p"
   ];
 
+
+  /* =======================================================
+     DEFAULT QUALITY
+     V2:
+     videoData.quality.default
+     ======================================================= */
+
   let currentQualityValue = "720p";
+
+  if (
+    videoData.quality &&
+    QUALITY_OPTIONS.includes(
+      videoData.quality.default
+    )
+  ) {
+
+    currentQualityValue =
+      videoData.quality.default;
+
+  }
+
+
+  /* =======================================================
+     QUALITY SOURCES
+     ======================================================= */
 
   const QUALITY_SOURCES = {
 
@@ -207,6 +304,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =======================================================
+     FIND FIRST AVAILABLE QUALITY
+     ======================================================= */
+
+  if (!QUALITY_SOURCES[currentQualityValue]) {
+
+    const firstAvailableQuality =
+      QUALITY_OPTIONS.find(
+        quality =>
+          Boolean(
+            QUALITY_SOURCES[quality]
+          )
+      );
+
+    if (firstAvailableQuality) {
+
+      currentQualityValue =
+        firstAvailableQuality;
+
+    }
+
+  }
+
+
+  /* =======================================================
      LOAD VIDEO SOURCE
      ======================================================= */
 
@@ -215,12 +336,19 @@ document.addEventListener("DOMContentLoaded", () => {
     autoPlay = false
   ) {
 
-    if (!QUALITY_OPTIONS.includes(quality)) {
+    if (
+      !QUALITY_OPTIONS.includes(
+        quality
+      )
+    ) {
+
       return;
     }
 
+
     const source =
       QUALITY_SOURCES[quality];
+
 
     if (!source) {
 
@@ -232,33 +360,47 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+
     const wasPlaying =
       autoPlay || !video.paused;
+
 
     const currentPosition =
       video.currentTime || 0;
 
+
     currentQualityValue =
       quality;
 
+
     if (currentQuality) {
+
       currentQuality.textContent =
         quality;
+
     }
+
 
     if (qualityBtn) {
+
       qualityBtn.textContent =
         quality;
+
     }
 
+
     if (!videoSource) {
+
       return;
     }
+
 
     videoSource.src =
       source;
 
+
     video.load();
+
 
     video.addEventListener(
       "loadedmetadata",
@@ -269,9 +411,13 @@ document.addEventListener("DOMContentLoaded", () => {
           restorePosition
         );
 
+
         if (
-          Number.isFinite(currentPosition) &&
-          currentPosition < video.duration
+          Number.isFinite(
+            currentPosition
+          ) &&
+          currentPosition <
+            video.duration
         ) {
 
           video.currentTime =
@@ -279,9 +425,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }
 
+
         if (wasPlaying) {
 
-          video.play().catch(() => {});
+          video.play().catch(
+            () => {}
+          );
 
         }
 
@@ -307,23 +456,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function formatTime(seconds) {
 
-    if (!Number.isFinite(seconds)) {
+    if (
+      !Number.isFinite(seconds)
+    ) {
+
       return "00:00";
+
     }
+
 
     const totalSeconds =
       Math.floor(seconds);
 
+
     const minutes =
-      Math.floor(totalSeconds / 60);
+      Math.floor(
+        totalSeconds / 60
+      );
+
 
     const secs =
       totalSeconds % 60;
 
+
     return (
-      String(minutes).padStart(2, "0") +
+      String(minutes).padStart(
+        2,
+        "0"
+      ) +
       ":" +
-      String(secs).padStart(2, "0")
+      String(secs).padStart(
+        2,
+        "0"
+      )
     );
 
   }
@@ -337,7 +502,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (video.paused) {
 
-      video.play().catch(() => {});
+      video.play().catch(
+        () => {}
+      );
 
     } else {
 
@@ -377,11 +544,18 @@ document.addEventListener("DOMContentLoaded", () => {
     () => {
 
       if (playPauseBtn) {
-        playPauseBtn.textContent = "❚❚";
+
+        playPauseBtn.textContent =
+          "❚❚";
+
       }
 
+
       if (centerPlayBtn) {
-        centerPlayBtn.style.display = "none";
+
+        centerPlayBtn.style.display =
+          "none";
+
       }
 
     }
@@ -397,11 +571,18 @@ document.addEventListener("DOMContentLoaded", () => {
     () => {
 
       if (playPauseBtn) {
-        playPauseBtn.textContent = "▶";
+
+        playPauseBtn.textContent =
+          "▶";
+
       }
 
+
       if (centerPlayBtn) {
-        centerPlayBtn.style.display = "flex";
+
+        centerPlayBtn.style.display =
+          "flex";
+
       }
 
     }
@@ -417,11 +598,18 @@ document.addEventListener("DOMContentLoaded", () => {
     () => {
 
       if (playPauseBtn) {
-        playPauseBtn.textContent = "▶";
+
+        playPauseBtn.textContent =
+          "▶";
+
       }
 
+
       if (centerPlayBtn) {
-        centerPlayBtn.style.display = "flex";
+
+        centerPlayBtn.style.display =
+          "flex";
+
       }
 
     }
@@ -439,7 +627,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (durationEl) {
 
         durationEl.textContent =
-          formatTime(video.duration);
+          formatTime(
+            video.duration
+          );
 
       }
 
@@ -456,29 +646,43 @@ document.addEventListener("DOMContentLoaded", () => {
     () => {
 
       if (!video.duration) {
+
         return;
+
       }
+
 
       const percentage =
-        (video.currentTime /
-          video.duration) * 100;
+        (
+          video.currentTime /
+          video.duration
+        ) * 100;
+
 
       if (progress) {
+
         progress.value =
           percentage;
+
       }
+
 
       if (currentTimeEl) {
 
         currentTimeEl.textContent =
-          formatTime(video.currentTime);
+          formatTime(
+            video.currentTime
+          );
 
       }
+
 
       if (durationEl) {
 
         durationEl.textContent =
-          formatTime(video.duration);
+          formatTime(
+            video.duration
+          );
 
       }
 
@@ -497,11 +701,18 @@ document.addEventListener("DOMContentLoaded", () => {
       () => {
 
         if (!video.duration) {
+
           return;
+
         }
 
+
         video.currentTime =
-          (Number(progress.value) / 100) *
+          (
+            Number(
+              progress.value
+            ) / 100
+          ) *
           video.duration;
 
       }
@@ -521,10 +732,14 @@ document.addEventListener("DOMContentLoaded", () => {
       () => {
 
         video.volume =
-          Number(volume.value);
+          Number(
+            volume.value
+          );
+
 
         video.muted =
           video.volume === 0;
+
 
         updateMuteButton();
 
@@ -541,8 +756,11 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateMuteButton() {
 
     if (!muteBtn) {
+
       return;
+
     }
+
 
     if (
       video.muted ||
@@ -583,7 +801,10 @@ document.addEventListener("DOMContentLoaded", () => {
      QUALITY MENU
      ======================================================= */
 
-  if (qualityBtn && qualityMenu) {
+  if (
+    qualityBtn &&
+    qualityMenu
+  ) {
 
     qualityBtn.addEventListener(
       "click",
@@ -591,14 +812,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
         event.stopPropagation();
 
-        qualityMenu.classList.toggle("show");
+
+        qualityMenu.classList.toggle(
+          "show"
+        );
+
 
         if (speedMenu) {
-          speedMenu.classList.remove("show");
+
+          speedMenu.classList.remove(
+            "show"
+          );
+
         }
 
+
         if (settingsMenu) {
-          settingsMenu.classList.remove("show");
+
+          settingsMenu.classList.remove(
+            "show"
+          );
+
         }
 
       }
@@ -614,39 +848,96 @@ document.addEventListener("DOMContentLoaded", () => {
         "[data-quality]"
       );
 
-    qualityButtons.forEach(button => {
 
-      button.addEventListener(
-        "click",
-        () => {
+    qualityButtons.forEach(
+      button => {
 
-          const quality =
-            button.dataset.quality;
+        button.addEventListener(
+          "click",
+          () => {
 
-          loadVideoSource(
-            quality,
-            !video.paused
-          );
+            const quality =
+              button.dataset.quality;
 
-          qualityMenu.classList.remove(
-            "show"
-          );
 
-        }
-      );
+            loadVideoSource(
+              quality,
+              !video.paused
+            );
 
-    });
+
+            qualityMenu.classList.remove(
+              "show"
+            );
+
+          }
+        );
+
+      }
+    );
 
   }
+
+
+  /* =======================================================
+     SPEED SYSTEM
+     V2:
+     videoData.player.availableSpeeds
+     videoData.player.defaultSpeed
+     ======================================================= */
+
+  let currentSpeed = 1;
+
+
+  if (
+    videoData.player &&
+    Number.isFinite(
+      Number(
+        videoData.player.defaultSpeed
+      )
+    )
+  ) {
+
+    currentSpeed =
+      Number(
+        videoData.player.defaultSpeed
+      );
+
+  }
+
+
+  const AVAILABLE_SPEEDS =
+
+    videoData.player &&
+    Array.isArray(
+      videoData.player.availableSpeeds
+    )
+
+      ? videoData.player.availableSpeeds
+          .map(Number)
+          .filter(
+            speed =>
+              Number.isFinite(speed)
+          )
+
+      : [
+          0.5,
+          0.75,
+          1,
+          1.25,
+          1.5,
+          2
+        ];
 
 
   /* =======================================================
      SPEED
      ======================================================= */
 
-  let currentSpeed = 1;
-
-  if (speedBtn && speedMenu) {
+  if (
+    speedBtn &&
+    speedMenu
+  ) {
 
     speedBtn.addEventListener(
       "click",
@@ -654,14 +945,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
         event.stopPropagation();
 
-        speedMenu.classList.toggle("show");
+
+        speedMenu.classList.toggle(
+          "show"
+        );
+
 
         if (qualityMenu) {
-          qualityMenu.classList.remove("show");
+
+          qualityMenu.classList.remove(
+            "show"
+          );
+
         }
 
+
         if (settingsMenu) {
-          settingsMenu.classList.remove("show");
+
+          settingsMenu.classList.remove(
+            "show"
+          );
+
         }
 
       }
@@ -677,38 +981,71 @@ document.addEventListener("DOMContentLoaded", () => {
         "[data-speed]"
       );
 
-    speedButtons.forEach(button => {
 
-      button.addEventListener(
-        "click",
-        () => {
+    speedButtons.forEach(
+      button => {
 
-          const speed =
-            Number(button.dataset.speed);
-
-          if (!Number.isFinite(speed)) {
-            return;
-          }
-
-          currentSpeed =
-            speed;
-
-          video.playbackRate =
-            speed;
-
-          if (speedBtn) {
-            speedBtn.textContent =
-              speed + "x";
-          }
-
-          speedMenu.classList.remove(
-            "show"
+        const speed =
+          Number(
+            button.dataset.speed
           );
 
-        }
-      );
 
-    });
+        if (
+          AVAILABLE_SPEEDS.length > 0 &&
+          !AVAILABLE_SPEEDS.includes(
+            speed
+          )
+        ) {
+
+          button.style.display =
+            "none";
+
+          return;
+
+        }
+
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            if (
+              !Number.isFinite(
+                speed
+              )
+            ) {
+
+              return;
+
+            }
+
+
+            currentSpeed =
+              speed;
+
+
+            video.playbackRate =
+              speed;
+
+
+            if (speedBtn) {
+
+              speedBtn.textContent =
+                speed + "x";
+
+            }
+
+
+            speedMenu.classList.remove(
+              "show"
+            );
+
+          }
+        );
+
+      }
+    );
 
   }
 
@@ -717,7 +1054,10 @@ document.addEventListener("DOMContentLoaded", () => {
      SETTINGS
      ======================================================= */
 
-  if (settingsBtn && settingsMenu) {
+  if (
+    settingsBtn &&
+    settingsMenu
+  ) {
 
     settingsBtn.addEventListener(
       "click",
@@ -725,14 +1065,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
         event.stopPropagation();
 
-        settingsMenu.classList.toggle("show");
+
+        settingsMenu.classList.toggle(
+          "show"
+        );
+
 
         if (qualityMenu) {
-          qualityMenu.classList.remove("show");
+
+          qualityMenu.classList.remove(
+            "show"
+          );
+
         }
 
+
         if (speedMenu) {
-          speedMenu.classList.remove("show");
+
+          speedMenu.classList.remove(
+            "show"
+          );
+
         }
 
       }
@@ -751,9 +1104,26 @@ document.addEventListener("DOMContentLoaded", () => {
       "click",
       () => {
 
-        alert(
-          "CC is ready for future subtitle integration."
-        );
+        const captionsAvailable =
+          Boolean(
+            videoData.captions &&
+            videoData.captions.available
+          );
+
+
+        if (captionsAvailable) {
+
+          alert(
+            "Caption tracks are available for future integration."
+          );
+
+        } else {
+
+          alert(
+            "CC is ready for future subtitle integration."
+          );
+
+        }
 
       }
     );
@@ -773,14 +1143,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
         currentSpeed = 1;
 
-        video.playbackRate = 1;
+        video.playbackRate =
+          1;
+
 
         if (speedBtn) {
-          speedBtn.textContent = "1x";
+
+          speedBtn.textContent =
+            "1x";
+
         }
 
+
         if (settingsMenu) {
-          settingsMenu.classList.remove("show");
+
+          settingsMenu.classList.remove(
+            "show"
+          );
+
         }
 
       }
@@ -804,13 +1184,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
     if (
-      document.pictureInPictureElement === video
+      document.pictureInPictureElement ===
+      video
     ) {
 
       return;
 
     }
+
 
     try {
 
@@ -860,8 +1243,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         event.stopPropagation();
 
+
         if (
-          document.pictureInPictureElement === video
+          document.pictureInPictureElement ===
+          video
         ) {
 
           await exitPiP();
@@ -887,7 +1272,11 @@ document.addEventListener("DOMContentLoaded", () => {
     () => {
 
       if (pipBtn) {
-        pipBtn.classList.add("active");
+
+        pipBtn.classList.add(
+          "active"
+        );
+
       }
 
     }
@@ -899,7 +1288,11 @@ document.addEventListener("DOMContentLoaded", () => {
     () => {
 
       if (pipBtn) {
-        pipBtn.classList.remove("active");
+
+        pipBtn.classList.remove(
+          "active"
+        );
+
       }
 
     }
@@ -930,7 +1323,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (
         screen.orientation &&
-        typeof screen.orientation.lock === "function"
+        typeof screen.orientation.lock ===
+          "function"
       ) {
 
         await screen.orientation.lock(
@@ -965,7 +1359,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (
         screen.orientation &&
-        typeof screen.orientation.unlock === "function"
+        typeof screen.orientation.unlock ===
+          "function"
       ) {
 
         screen.orientation.unlock();
@@ -991,8 +1386,11 @@ document.addEventListener("DOMContentLoaded", () => {
   async function enterFullscreen() {
 
     if (!player) {
+
       return;
+
     }
+
 
     try {
 
@@ -1016,10 +1414,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       }
 
-      /*
-       * Fullscreen must be active before
-       * requesting landscape orientation.
-       */
 
       await lockLandscape();
 
@@ -1064,6 +1458,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
     unlockOrientation();
 
   }
@@ -1080,6 +1475,7 @@ document.addEventListener("DOMContentLoaded", () => {
       async event => {
 
         event.stopPropagation();
+
 
         if (isFullscreen()) {
 
@@ -1105,6 +1501,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const active =
       isFullscreen();
+
 
     if (!active) {
 
@@ -1136,15 +1533,29 @@ document.addEventListener("DOMContentLoaded", () => {
     () => {
 
       if (qualityMenu) {
-        qualityMenu.classList.remove("show");
+
+        qualityMenu.classList.remove(
+          "show"
+        );
+
       }
+
 
       if (speedMenu) {
-        speedMenu.classList.remove("show");
+
+        speedMenu.classList.remove(
+          "show"
+        );
+
       }
 
+
       if (settingsMenu) {
-        settingsMenu.classList.remove("show");
+
+        settingsMenu.classList.remove(
+          "show"
+        );
+
       }
 
     }
@@ -1159,22 +1570,27 @@ document.addEventListener("DOMContentLoaded", () => {
     qualityMenu,
     speedMenu,
     settingsMenu
-  ].forEach(menu => {
+  ].forEach(
+    menu => {
 
-    if (!menu) {
-      return;
-    }
+      if (!menu) {
 
-    menu.addEventListener(
-      "click",
-      event => {
-
-        event.stopPropagation();
+        return;
 
       }
-    );
 
-  });
+
+      menu.addEventListener(
+        "click",
+        event => {
+
+          event.stopPropagation();
+
+        }
+      );
+
+    }
+  );
 
 
   /* =======================================================
@@ -1182,22 +1598,44 @@ document.addEventListener("DOMContentLoaded", () => {
      ======================================================= */
 
   video.volume = 1;
+
   video.muted = false;
-  video.playbackRate = 1;
+
+  video.playbackRate =
+    currentSpeed;
+
 
   if (volume) {
-    volume.value = "1";
+
+    volume.value =
+      "1";
+
   }
+
 
   if (qualityBtn) {
+
     qualityBtn.textContent =
       currentQualityValue;
+
   }
 
+
   if (currentQuality) {
+
     currentQuality.textContent =
       currentQualityValue;
+
   }
+
+
+  if (speedBtn) {
+
+    speedBtn.textContent =
+      currentSpeed + "x";
+
+  }
+
 
   updateMuteButton();
 
