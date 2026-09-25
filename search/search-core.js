@@ -24,19 +24,21 @@
   }
 
   function getCategories() {
-    const categories = new Set(["All"]);
+    const configured =
+      window.XKissSearchCategories?.getDefinitions?.() || [];
+
+    const categories = configured.map(category => category.label);
+    const known = new Set(categories.map(category => category.toLowerCase()));
 
     state.allVideos.forEach(video => {
       const category = clean(video.category);
-      if (category) categories.add(category);
-
-      (Array.isArray(video.tags) ? video.tags : []).forEach(tag => {
-        const value = clean(tag);
-        if (value) categories.add(value);
-      });
+      if (category && !known.has(category.toLowerCase())) {
+        categories.push(category);
+        known.add(category.toLowerCase());
+      }
     });
 
-    return [...categories];
+    return categories.length ? categories : ["All"];
   }
 
   function matches(video) {
@@ -45,7 +47,9 @@
 
     if (selectedCategory && selectedCategory !== "all") {
       const category = clean(video.category).toLowerCase();
-      const tags = (video.tags || []).map(tag => clean(tag).toLowerCase());
+      const tags = (video.tags || []).map(tag =>
+        clean(tag).toLowerCase()
+      );
 
       if (
         category !== selectedCategory &&
