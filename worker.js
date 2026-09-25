@@ -1,7 +1,14 @@
+import {
+  createVideoKey,
+  isStorageReady,
+  listVideos,
+  storeVideo
+} from "./storage/r2-adapter.js";
+
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "https://aligassrm.github.io",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, X-XKiss-Upload-Key",
+  "Access-Control-Allow-Headers": "Content-Type, X-XKiss-Upload-Key, X-XKiss-File-Name",
   "Vary": "Origin"
 };
 
@@ -15,19 +22,10 @@ function json(data, status = 200) {
   });
 }
 
-function storageKey(fileName) {
-  const safeName = String(fileName || "video")
-    .replace(/[^a-zA-Z0-9._-]/g, "_")
-    .slice(-180);
-
-  const id = crypto.randomUUID();
-
-  return "videos/" + id + "-" + safeName;
-}
-
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    const storageReady = isStorageReady(env);
 
     if (request.method === "OPTIONS") {
       return new Response(null, {
@@ -35,8 +33,6 @@ export default {
         headers: CORS_HEADERS
       });
     }
-
-    const storageReady = Boolean(env.XKISS_VIDEOS);
 
     if (url.pathname === "/api/health") {
       return json({
@@ -86,7 +82,7 @@ export default {
         }, 400);
       }
 
-      const key = storageKey(body.fileName);
+      const key = createVideoKey(body.fileName);
 
       return json({
         ok: true,
@@ -151,26 +147,19 @@ export default {
         }, 400);
       }
 
-      const key = storageKey(fileName);
+      const key = createVideoKey(fileName);
 
       try {
-        await env.XKISS_VIDEOS.put(key, request.body, {
-          httpMetadata: {
-            contentType
-          },
-          customMetadata: {
-            originalFileName: String(fileName)
-          }
+        const stored = await storeVideo(env, key, request.body, {
+          fileName,
+          contentType
         });
 
         return json({
-          ok: true,
-          storageReady: true,
-          status: "stored",
-          key,
+          ...stored,
           message: "Video uploaded successfully."
         }, 201);
-      } catch (error) {
+      } catch {
         return json({
           ok: false,
           storageReady: true,
@@ -181,14 +170,23 @@ export default {
     }
 
     if (url.pathname === "/api/creator/videos" && request.method === "GET") {
-      return json({
-        ok: true,
-        storageReady,
-        videos: [],
-        message: storageReady
-          ? "Creator library is connected and currently empty."
-          : "Creator library is ready. Production storage is not activated yet."
-      });
+      try {
+        const result = await listVideos(env);
+
+        return json({
+          ...result,
+          message: storageReady
+            ? "Creator library is connected."
+            : "Creator library is ready. Production storage is not activated yet."
+        });
+      } catch {
+        return json({
+          ok: false,
+          storageReady,
+          videos: [],
+          message: "Creator storage could not be read."
+        }, 500);
+      }
     }
 
     return json({
