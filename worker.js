@@ -15,6 +15,11 @@ import {
   evaluateCreatorActivation
 } from "./monetization/monetization-rules.js";
 import {
+  isViewEventStoreReady,
+  storeViewEvent,
+  getViewEvent
+} from "./views-revenue/view-event-store.js";
+import {
   VIEWS_REVENUE_RULES,
   validateViewEvent,
   evaluateViewCount,
