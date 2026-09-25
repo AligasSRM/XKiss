@@ -20,17 +20,16 @@ export default {
     const url = new URL(request.url);
 
     if (request.method === "OPTIONS") {
-      return new Response(null, {
-        status: 204,
-        headers: CORS_HEADERS
-      });
+      return new Response(null, { status: 204, headers: CORS_HEADERS });
     }
+
+    const storageReady = Boolean(env.XKISS_VIDEOS);
 
     if (url.pathname === "/api/health") {
       return json({
         service: "XKiss Worker",
         status: "online",
-        storageReady: Boolean(env.XKISS_VIDEOS)
+        storageReady
       });
     }
 
@@ -38,15 +37,15 @@ export default {
       return json({
         ok: true,
         service: "XKiss Upload",
-        storageReady: Boolean(env.XKISS_VIDEOS),
-        message: env.XKISS_VIDEOS
+        storageReady,
+        message: storageReady
           ? "Production video storage is connected."
           : "Production video storage is not activated yet."
       });
     }
 
     if (url.pathname === "/api/upload/prepare" && request.method === "POST") {
-      if (!env.XKISS_VIDEOS) {
+      if (!storageReady) {
         return json({
           ok: false,
           storageReady: false,
@@ -58,10 +57,7 @@ export default {
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid upload metadata."
-        }, 400);
+        return json({ ok: false, message: "Invalid upload metadata." }, 400);
       }
 
       if (!body.fileName || !body.contentType || !body.title) {
@@ -77,6 +73,17 @@ export default {
         message: "Upload preparation is ready for the connected storage layer.",
         fileName: String(body.fileName),
         contentType: String(body.contentType)
+      });
+    }
+
+    if (url.pathname === "/api/creator/videos" && request.method === "GET") {
+      return json({
+        ok: true,
+        storageReady,
+        videos: [],
+        message: storageReady
+          ? "Creator library is connected and currently empty."
+          : "Creator library is ready. Production storage is not activated yet."
       });
     }
 
