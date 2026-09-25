@@ -25,6 +25,26 @@ document.addEventListener("xkiss:search-ready", () => {
       .replaceAll("'", "&#039;");
   }
 
+  function highlight(value, query) {
+    const text = String(value ?? "");
+    const cleanQuery = String(query ?? "").trim();
+
+    if (!cleanQuery) {
+      return escapeHtml(text);
+    }
+
+    const escapedQuery = cleanQuery.replace(/[.*+?^\$\{\}()|[\]\\]/g, "\\$&");
+    const matcher = new RegExp("(" + escapedQuery + ")", "ig");
+    const parts = text.split(matcher);
+
+    return parts.map(part => {
+      if (part.toLowerCase() === cleanQuery.toLowerCase()) {
+        return "<mark class=\"search-highlight\">" + escapeHtml(part) + "</mark>";
+      }
+      return escapeHtml(part);
+    }).join("");
+  }
+
   function getInitial(value) {
     const text = String(value || "X").trim();
     return text ? text.charAt(0).toUpperCase() : "X";
@@ -60,7 +80,7 @@ document.addEventListener("xkiss:search-ready", () => {
 
       const views = Number(video.statistics?.views ?? video.views ?? 0);
 
-      return "<article class=\"result-card\"><div class=\"result-thumb\"><div class=\"thumb-brand\"><span class=\"thumb-x\">X</span><span class=\"thumb-kiss\">kiss</span></div><span class=\"quality\">" + escapeHtml(quality) + "</span></div><div class=\"result-info\"><h3>" + escapeHtml(video.title) + "</h3><div class=\"creator\"><span class=\"avatar\">" + getInitial(video.creator) + "</span><span>" + escapeHtml(video.creator || "XKiss Creator") + "</span></div><p>" + escapeHtml(video.duration || "—") + " · " + views.toLocaleString() + " views</p><a class=\"watch\" href=\"player.html?id=" + encodeURIComponent(video.id) + "\">Watch Now</a></div></article>";
+      return "<article class=\"result-card\"><div class=\"result-thumb\"><div class=\"thumb-brand\"><span class=\"thumb-x\">X</span><span class=\"thumb-kiss\">kiss</span></div><span class=\"quality\">" + escapeHtml(quality) + "</span></div><div class=\"result-info\"><h3>" + highlight(video.title, query) + "</h3><div class=\"creator\"><span class=\"avatar\">" + getInitial(video.creator) + "</span><span>" + highlight(video.creator || "XKiss Creator", query) + "</span></div><p>" + escapeHtml(video.duration || "—") + " · " + views.toLocaleString() + " views</p><a class=\"watch\" href=\"player.html?id=" + encodeURIComponent(video.id) + "\">Watch Now</a></div></article>";
     }).join("");
 
     const hasFilter = Boolean(query.trim()) || category.toLowerCase() !== "all";
@@ -117,6 +137,16 @@ document.addEventListener("xkiss:search-ready", () => {
   input.addEventListener("input", () => {
     API.setQuery(input.value);
     renderResults();
+  });
+
+  input.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      API.clear();
+      syncInput();
+      renderCategories();
+      renderResults();
+      input.focus();
+    }
   });
 
   clearButton.addEventListener("click", () => {
