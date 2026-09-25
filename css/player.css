@@ -1,0 +1,162 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #080808;
+  color: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  min-height: 100vh;
+}
+
+main {
+  width: min(1100px, 100%);
+  margin: 0 auto;
+  padding: 20px 14px 50px;
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: clamp(22px, 5vw, 34px);
+}
+
+h2 {
+  margin-top: 30px;
+  font-size: 22px;
+}
+
+#videoDuration,
+#creatorName {
+  color: #bdbdbd;
+  font-size: 14px;
+}
+
+#videoTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+#videoTags span {
+  padding: 6px 10px;
+  border-radius: 20px;
+  background: #181818;
+  color: #d5d5d5;
+  font-size: 13px;
+}
+
+#videoQuality {
+  margin-bottom: 12px;
+  color: #bdbdbd;
+  font-size: 14px;
+}
+
+#currentQuality {
+  color: #ffffff;
+  font-weight: bold;
+}
+
+#player {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000000;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.55);
+}
+
+#video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  background: #000000;
+}
+
+#xkissLogo {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  z-index: 5;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+}
+
+.rainbow-x {
+  background: linear-gradient(
+    90deg,
+    #ff0000,
+    #ff8c00,
+    #ffee00,
+    #00d26a,
+    #00aaff,
+    #6a35ff,
+    #ff00a8
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.white-kiss {
+  color: #ffffff;
+}
+
+#videoActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+#videoActions button {
+  border: 1px solid #333333;
+  border-radius: 8px;
+  background: #151515;
+  color: #ffffff;
+  padding: 10px 13px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+#videoActions button:hover {
+  background: #242424;
+}
+
+main > section:not(#player):not(#videoActions) {
+  border-top: 1px solid #252525;
+  margin-top: 24px;
+  padding-top: 8px;
+}
+
+main > section p {
+  color: #a9a9a9;
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  main {
+    padding: 14px 10px 40px;
+  }
+
+  #xkissLogo {
+    top: 10px;
+    right: 12px;
+    font-size: 20px;
+  }
+
+  #videoActions button {
+    flex: 1 1 calc(50% - 8px);
+  }
+}
