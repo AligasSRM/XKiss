@@ -53,6 +53,34 @@
     }
   }
 
+  async function loadPolicyRules() {
+    try {
+      const response = await fetch(API_BASE + "/api/monetization/policy/rules", {
+        headers: { "Accept": "application/json" }
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data.ok || !data.rules) {
+        throw new Error("Policy rules unavailable.");
+      }
+
+      const rules = data.rules;
+      document.getElementById("policy-acceptance").textContent =
+        rules.policyAcceptanceRequired ? "Required" : "Not required";
+      document.getElementById("policy-verification").textContent =
+        rules.verificationRequired ? "Required" : "Not required";
+      document.getElementById("policy-fraud").textContent =
+        rules.fraudReview ? "Enabled" : "Disabled";
+      document.getElementById("policy-audit").textContent =
+        rules.auditTrailRequired ? "Required" : "Not required";
+      document.getElementById("policy-message").textContent =
+        "Policy controls are prepared and remain server-side.";
+    } catch {
+      document.getElementById("policy-message").textContent =
+        "Monetization policy controls could not be loaded.";
+    }
+  }
+
   async function loadMonetizationRules() {
     const message = document.getElementById("rules-message");
 
@@ -94,5 +122,6 @@
     checkSystem();
     loadMonetizationRules();
     loadEligibilityRules();
+    loadPolicyRules();
   });
 })();
