@@ -27,6 +27,7 @@ import { evaluatePendingSettlement } from "./wallet/wallet-settlement.js";
 import { evaluateWalletReversal } from "./wallet/wallet-reversals.js";
 import { evaluatePayoutEligibility } from "./wallet/payout-eligibility.js";
 import { createPayoutRequest, transitionPayoutStatus } from "./wallet/payout-lifecycle.js";
+import { createPayoutAuditEvent, buildPayoutHistory } from "./wallet/payout-audit.js";
 import {
   VIEWS_REVENUE_RULES,
   validateViewEvent,
@@ -121,6 +122,44 @@ export default {
         ok: true,
         service: "XKiss View Qualification Pipeline",
         result: evaluateViewPipeline(body)
+      });
+    }
+
+    if (url.pathname === "/api/wallet/payout/audit" && request.method === "POST") {
+      let body;
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          message: "Invalid payout audit data."
+        }, 400);
+      }
+
+      return json({
+        ok: true,
+        service: "XKiss Payout Audit",
+        result: createPayoutAuditEvent(body)
+      });
+    }
+
+    if (url.pathname === "/api/wallet/payout/history" && request.method === "POST") {
+      let body;
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          message: "Invalid payout history data."
+        }, 400);
+      }
+
+      return json({
+        ok: true,
+        service: "XKiss Payout History",
+        result: buildPayoutHistory(body.events)
       });
     }
 
