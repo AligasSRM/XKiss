@@ -10,7 +10,9 @@ import {
   evaluateCreatorEligibility,
   calculateRevenue,
   MONETIZATION_POLICY_RULES,
-  evaluateMonetizationPolicy
+  evaluateMonetizationPolicy,
+  CREATOR_ACTIVATION_RULES,
+  evaluateCreatorActivation
 } from "./monetization/monetization-rules.js";
 
 const CORS_HEADERS = {
@@ -78,6 +80,33 @@ export default {
         ok: true,
         service: "XKiss Creator Eligibility",
         rules: CREATOR_ELIGIBILITY_RULES
+      });
+    }
+
+    if (url.pathname === "/api/monetization/activation/rules" && request.method === "GET") {
+      return json({
+        ok: true,
+        service: "XKiss Creator Monetization Activation",
+        rules: CREATOR_ACTIVATION_RULES
+      });
+    }
+
+    if (url.pathname === "/api/monetization/activation/evaluate" && request.method === "POST") {
+      let body;
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          message: "Invalid activation data."
+        }, 400);
+      }
+
+      return json({
+        ok: true,
+        service: "XKiss Creator Monetization Activation",
+        result: evaluateCreatorActivation(body)
       });
     }
 
