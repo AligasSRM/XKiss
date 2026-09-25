@@ -15,11 +15,13 @@
     return id;
   }
 
-  function createViewEvent(videoId) {
+  function createViewEvent(videoId, creatorId) {
     return {
       eventId: crypto.randomUUID(),
       eventType: "view",
       videoId: String(videoId || ""),
+      creatorId: String(creatorId || ""),
+      playbackSignal: "playing",
       viewerSessionId: getViewerSessionId(),
       occurredAt: new Date().toISOString()
     };
