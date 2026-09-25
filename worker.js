@@ -25,6 +25,7 @@ import { isWalletLedgerReady, storeWalletEntry, getWalletEntry } from "./wallet/
 import { evaluateRevenueToWallet } from "./wallet/revenue-to-wallet.js";
 import { evaluatePendingSettlement } from "./wallet/wallet-settlement.js";
 import { evaluateWalletReversal } from "./wallet/wallet-reversals.js";
+import { evaluatePayoutEligibility } from "./wallet/payout-eligibility.js";
 import {
   VIEWS_REVENUE_RULES,
   validateViewEvent,
@@ -119,6 +120,25 @@ export default {
         ok: true,
         service: "XKiss View Qualification Pipeline",
         result: evaluateViewPipeline(body)
+      });
+    }
+
+    if (url.pathname === "/api/wallet/payout-eligibility" && request.method === "POST") {
+      let body;
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          message: "Invalid payout eligibility data."
+        }, 400);
+      }
+
+      return json({
+        ok: true,
+        service: "XKiss Payout Eligibility",
+        result: evaluatePayoutEligibility(body)
       });
     }
 
