@@ -229,3 +229,78 @@ export function evaluateMonetizationPolicy(input = {}) {
     reason: "Current monetization policy checks are satisfied."
   };
 }
+
+
+export const CREATOR_ACTIVATION_RULES = {
+  version: "1.0-draft",
+  enabled: false,
+  activationRequires: [
+    "creator_eligibility",
+    "monetization_policy",
+    "verification",
+    "account_security"
+  ],
+  states: [
+    "pending",
+    "eligible",
+    "enabled",
+    "suspended",
+    "disabled"
+  ]
+};
+
+export function evaluateCreatorActivation(input = {}) {
+  if (!CREATOR_ACTIVATION_RULES.enabled) {
+    return {
+      status: "pending",
+      enabled: false,
+      reason: "Creator monetization activation is not enabled yet."
+    };
+  }
+
+  if (input.suspended) {
+    return {
+      status: "suspended",
+      enabled: false,
+      reason: "Creator monetization is suspended."
+    };
+  }
+
+  if (!input.eligible) {
+    return {
+      status: "pending",
+      enabled: false,
+      reason: "Creator eligibility must be satisfied first."
+    };
+  }
+
+  if (!input.policyAllowed) {
+    return {
+      status: "pending",
+      enabled: false,
+      reason: "Monetization policy checks must be satisfied first."
+    };
+  }
+
+  if (!input.verified) {
+    return {
+      status: "pending",
+      enabled: false,
+      reason: "Creator verification is required."
+    };
+  }
+
+  if (!input.accountSecurityReady) {
+    return {
+      status: "pending",
+      enabled: false,
+      reason: "Required account security checks are not complete."
+    };
+  }
+
+  return {
+    status: "enabled",
+    enabled: true,
+    reason: "Creator monetization is enabled."
+  };
+}
