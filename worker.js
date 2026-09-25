@@ -87,6 +87,45 @@ export default {
       });
     }
 
+    if (url.pathname === "/api/views/event/store" && request.method === "POST") {
+      if (!isViewEventStoreReady(env)) {
+        return json({
+          ok: false,
+          storageReady: false,
+          message: "Durable view event storage is not connected yet. The event was not stored."
+        }, 503);
+      }
+
+      let body;
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          message: "Invalid view event data."
+        }, 400);
+      }
+
+      const validation = validateViewEvent(body);
+
+      if (!validation.valid) {
+        return json({
+          ok: true,
+          service: "XKiss Durable View Event Store",
+          result: validation
+        });
+      }
+
+      const result = await storeViewEvent(env, body);
+
+      return json({
+        ok: true,
+        service: "XKiss Durable View Event Store",
+        result
+      });
+    }
+
     if (url.pathname === "/api/views/event/validate" && request.method === "POST") {
       let body;
 
