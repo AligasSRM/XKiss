@@ -21,6 +21,7 @@ import {
 } from "./views-revenue/view-event-store.js";
 import { evaluateViewPipeline } from "./views-revenue/view-pipeline.js";
 import { evaluateViewCountDecision } from "./views-revenue/view-count-decision.js";
+import { isWalletLedgerReady, storeWalletEntry, getWalletEntry } from "./wallet/wallet-ledger-store.js";
 import {
   VIEWS_REVENUE_RULES,
   validateViewEvent,
@@ -115,6 +116,77 @@ export default {
         ok: true,
         service: "XKiss View Qualification Pipeline",
         result: evaluateViewPipeline(body)
+      });
+    }
+
+    if (url.pathname === "/api/wallet/ledger/status" && request.method === "GET") {
+      return json({
+        ok: true,
+        service: "XKiss Wallet Ledger",
+        storageReady: isWalletLedgerReady(env),
+        storage: "XKISS_WALLET_LEDGER",
+        message: isWalletLedgerReady(env)
+          ? "Wallet ledger storage is connected."
+          : "Wallet ledger storage is prepared but not connected yet."
+      });
+    }
+
+    if (url.pathname === "/api/wallet/ledger/store" && request.method === "POST") {
+      if (!isWalletLedgerReady(env)) {
+        return json({
+          ok: false,
+          storageReady: false,
+          recorded: false,
+          message: "Wallet ledger storage is not connected yet. The entry was not recorded."
+        }, 503);
+      }
+
+      let body;
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          message: "Invalid wallet ledger data."
+        }, 400);
+      }
+
+      const result = await storeWalletEntry(env, body);
+
+      return json({
+        ok: true,
+        service: "XKiss Wallet Ledger",
+        result
+      });
+    }
+
+    if (url.pathname === "/api/wallet/ledger/get" && request.method === "POST") {
+      if (!isWalletLedgerReady(env)) {
+        return json({
+          ok: false,
+          storageReady: false,
+          message: "Wallet ledger storage is not connected yet."
+        }, 503);
+      }
+
+      let body;
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          message: "Invalid wallet ledger lookup data."
+        }, 400);
+      }
+
+      const result = await getWalletEntry(env, body);
+
+      return json({
+        ok: true,
+        service: "XKiss Wallet Ledger",
+        result
       });
     }
 
