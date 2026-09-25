@@ -55,7 +55,9 @@ document.addEventListener("xkiss:search-ready", () => {
         video.sources?.["720p"] ? "720p" :
         video.sources?.["460p"] ? "460p" :
         video.sources?.["340p"] ? "340p" : "—");
+
       const views = Number(video.statistics?.views ?? video.views ?? 0);
+
       return "<article class=\"result-card\"><div class=\"result-thumb\"><div class=\"thumb-brand\"><span class=\"thumb-x\">X</span><span class=\"thumb-kiss\">kiss</span></div><span class=\"quality\">" + escapeHtml(quality) + "</span></div><div class=\"result-info\"><h3>" + escapeHtml(video.title) + "</h3><div class=\"creator\"><span class=\"avatar\">" + getInitial(video.creator) + "</span><span>" + escapeHtml(video.creator || "XKiss Creator") + "</span></div><p>" + escapeHtml(video.duration || "—") + " · " + views.toLocaleString() + " views</p><a class=\"watch\" href=\"player.html?id=" + encodeURIComponent(video.id) + "\">Watch Now</a></div></article>";
     }).join("");
 
@@ -81,6 +83,7 @@ document.addEventListener("xkiss:search-ready", () => {
     input.focus();
   });
 
+  syncInput();
   renderCategories();
   renderResults();
 });
