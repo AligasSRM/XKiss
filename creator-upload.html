@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="theme-color" content="#07080b">
+<title>XKiss — Creator Upload</title>
+<link rel="stylesheet" href="upload/upload.css">
+</head>
+<body>
+<header class="upload-header">
+  <nav class="upload-nav">
+    <a class="brand" href="index.html" aria-label="XKiss Home"><span class="brand-x">X</span><span class="brand-kiss">kiss</span></a>
+    <div class="nav-links" aria-label="Primary navigation">
+      <a href="index.html">Home</a>
+      <a href="videos.html">Videos</a>
+      <a href="live.html">Live</a>
+      <a class="active" href="creator-upload.html">Upload</a>
+      <a href="index.html#account">Account</a>
+    </div>
+    <a class="login" href="index.html#account">Login</a>
+  </nav>
+</header>
+
+<main class="upload-page">
+  <section class="upload-hero">
+    <span class="eyebrow">XKISS CREATOR</span>
+    <h1>Upload Video</h1>
+    <p>Prepare a creator video for secure XKiss storage, metadata and publishing.</p>
+  </section>
+
+  <section class="upload-section">
+    <div class="upload-card">
+      <div class="section-head">
+        <div>
+          <h2>Video file</h2>
+          <p id="upload-status">Choose a video file to begin.</p>
+        </div>
+        <span id="storage-status" class="status-pill">Checking storage…</span>
+      </div>
+
+      <label class="file-drop" id="file-drop">
+        <input id="video-file" type="file" accept="video/*">
+        <span class="file-icon">↑</span>
+        <strong>Select video</strong>
+        <span>MP4, WebM and other browser-supported video files</span>
+        <span id="file-name" class="file-name">No file selected</span>
+      </label>
+
+      <div class="upload-grid">
+        <label>
+          <span>Title</span>
+          <input id="video-title" type="text" maxlength="120" placeholder="Video title">
+        </label>
+
+        <label>
+          <span>Category</span>
+          <select id="video-category">
+            <option value="">Select category</option>
+            <option>Entertainment</option>
+            <option>Music</option>
+            <option>Lifestyle</option>
+            <option>Fitness</option>
+            <option>Education</option>
+            <option>Other</option>
+          </select>
+        </label>
+
+        <label class="full">
+          <span>Description</span>
+          <textarea id="video-description" maxlength="2000" rows="5" placeholder="Describe your video"></textarea>
+        </label>
+
+        <label>
+          <span>Download</span>
+          <select id="download-policy">
+            <option value="disabled">No Download</option>
+            <option value="free">Free Download</option>
+            <option value="paid">Paid Download</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Visibility</span>
+          <select id="video-visibility">
+            <option value="private">Private</option>
+            <option value="unlisted">Unlisted</option>
+            <option value="public">Public</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="upload-actions">
+        <button id="prepare-upload" class="primary" type="button">Prepare Upload</button>
+        <button id="reset-upload" class="secondary" type="button">Reset</button>
+      </div>
+
+      <div id="upload-result" class="upload-result" hidden></div>
+
+      <div class="architecture-note">
+        <strong>Storage architecture</strong>
+        <span>The upload layer is connected to the XKiss Worker. Cloud storage is intentionally not activated yet; when R2 is enabled, the same upload flow will use the production storage binding.</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="upload-footer">
+  <div>XKiss — Creator Upload</div>
+  <a href="index.html">Back to Home</a>
+</footer>
+
+<script src="upload/upload-api.js"></script>
+<script src="upload/upload-core.js"></script>
+<script src="upload/upload-navigation.js"></script>
+</body>
+</html>
