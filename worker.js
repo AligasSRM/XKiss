@@ -4,6 +4,7 @@ import {
   listVideos,
   storeVideo
 } from "./storage/r2-adapter.js";
+import { MONETIZATION_RULES } from "./monetization/monetization-rules.js";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "https://aligassrm.github.io",
@@ -40,6 +41,28 @@ export default {
         status: "online",
         storageReady,
         uploadEndpoint: true
+      });
+    }
+
+    if (url.pathname === "/api/monetization/status" && request.method === "GET") {
+      return json({
+        ok: true,
+        service: "XKiss Monetization",
+        enabled: MONETIZATION_RULES.enabled,
+        status: MONETIZATION_RULES.status,
+        version: MONETIZATION_RULES.version,
+        model: MONETIZATION_RULES.model,
+        message: MONETIZATION_RULES.enabled
+          ? "Monetization is active."
+          : "Monetization rules are prepared but not active."
+      });
+    }
+
+    if (url.pathname === "/api/monetization/rules" && request.method === "GET") {
+      return json({
+        ok: true,
+        service: "XKiss Monetization Rules",
+        rules: MONETIZATION_RULES
       });
     }
 
@@ -102,7 +125,7 @@ export default {
         return json({
           ok: false,
           storageReady: false,
-          message: "Production storage is not activated yet. The video was not uploaded."
+          message: "Production video storage is not activated yet. The video was not uploaded."
         }, 503);
       }
 
