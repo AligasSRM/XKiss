@@ -32,6 +32,41 @@
     </div>
   </section>
 
+  <section class="recorder-section" aria-label="XKiss Recorder">
+    <div class="section-head">
+      <div>
+        <h2>Recorder</h2>
+        <p id="recorder-status">Ready to record from your camera and microphone.</p>
+      </div>
+      <span id="recorder-indicator" class="recorder-indicator"><span></span> Ready</span>
+    </div>
+
+    <div class="recorder-card">
+      <div class="recorder-preview-wrap">
+        <video id="recorder-preview" class="recorder-preview" autoplay muted playsinline></video>
+        <div id="recorder-placeholder" class="recorder-placeholder">
+          <div class="recorder-icon">●</div>
+          <strong>Camera preview</strong>
+          <span>Press Start Recording and allow camera/microphone access.</span>
+        </div>
+        <div id="recorder-timer" class="recorder-timer">00:00</div>
+      </div>
+
+      <div class="recorder-controls">
+        <button id="recorder-start" class="record-btn" type="button">
+          <span class="record-circle"></span>
+          <span>Start Recording</span>
+        </button>
+        <button id="recorder-stop" class="control-btn" type="button" disabled>Stop</button>
+        <button id="recorder-download" class="control-btn" type="button" disabled>Download Recording</button>
+      </div>
+
+      <div class="recorder-note">
+        Recordings are created directly in the browser and downloaded to your device. No recording is uploaded anywhere by this recorder.
+      </div>
+    </div>
+  </section>
+
   <section class="live-status-section">
     <div class="section-head">
       <div>
@@ -62,11 +97,11 @@
     <div class="info-card">
       <span class="info-kicker">LIVE ARCHITECTURE</span>
       <h2>Built for the next real-time layer</h2>
-      <p>The Live page is permanent. The visual room, discovery and schedule layer are separated so the real streaming service can be connected without rebuilding the page.</p>
+      <p>The Live page is permanent. The recorder, room discovery and schedule layer are separated so the real streaming service can be connected without rebuilding the page.</p>
       <div class="info-points">
-        <div><strong>01</strong><span>Live rooms</span></div>
-        <div><strong>02</strong><span>Creator status</span></div>
-        <div><strong>03</strong><span>Upcoming broadcasts</span></div>
+        <div><strong>01</strong><span>Recorder</span></div>
+        <div><strong>02</strong><span>Live rooms</span></div>
+        <div><strong>03</strong><span>Creator status</span></div>
         <div><strong>04</strong><span>Viewer entry</span></div>
       </div>
     </div>
@@ -81,5 +116,6 @@
 <script src="live/live-data.js"></script>
 <script src="live/live-core.js"></script>
 <script src="live/live-navigation.js"></script>
+<script src="live/live-recorder.js"></script>
 </body>
 </html>
