@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="theme-color" content="#07080b">
+<title>XKiss — Videos</title>
+<link rel="stylesheet" href="videos/videos.css">
+</head>
+<body>
+<header class="videos-header">
+  <nav class="videos-nav">
+    <a class="brand" href="index.html" aria-label="XKiss Home"><span class="brand-x">X</span><span class="brand-kiss">kiss</span></a>
+    <div class="nav-links" aria-label="Primary navigation">
+      <a href="index.html">Home</a>
+      <a class="active" href="videos.html">Videos</a>
+      <a href="index.html#creators">Creators</a>
+      <a href="index.html#categories">Categories</a>
+      <a href="index.html#account">Account</a>
+    </div>
+    <a class="login" href="index.html#account">Login</a>
+  </nav>
+</header>
+
+<main class="videos-page">
+  <section class="videos-hero">
+    <div>
+      <span class="eyebrow">XKISS VIDEO PLATFORM</span>
+      <h1>Videos</h1>
+      <p>Browse published videos and open any video in the independent XKiss player.</p>
+    </div>
+  </section>
+
+  <section class="video-tools" aria-label="Video tools">
+    <div class="search-wrap">
+      <label for="video-search" class="sr-only">Search videos</label>
+      <input id="video-search" type="search" autocomplete="off" placeholder="Search videos..." aria-label="Search videos">
+    </div>
+    <div id="video-filters" class="filters" aria-label="Video categories"></div>
+  </section>
+
+  <section class="results-head">
+    <div>
+      <h2>All Videos</h2>
+      <p id="video-result-count">0 videos</p>
+    </div>
+    <label class="sort-wrap">
+      <span>Sort</span>
+      <select id="video-sort" aria-label="Sort videos">
+        <option value="latest">Latest</option>
+        <option value="title">Title</option>
+        <option value="creator">Creator</option>
+      </select>
+    </label>
+  </section>
+
+  <section id="videos-grid" class="videos-grid" aria-live="polite"></section>
+
+  <div id="videos-empty" class="empty-state" hidden>
+    <div class="empty-icon">X</div>
+    <h3>No videos found</h3>
+    <p>Try another search or category.</p>
+    <button id="clear-filters" type="button">Clear filters</button>
+  </div>
+</main>
+
+<footer class="videos-footer">
+  <div>XKiss — Videos</div>
+  <a href="index.html">Back to Home</a>
+</footer>
+
+<script src="js/video-data.js"></script>
+<script src="videos/videos-core.js"></script>
+<script src="videos/videos-filters.js"></script>
+<script src="videos/videos-navigation.js"></script>
+<script src="videos/videos-render.js"></script>
+</body>
+</html>
