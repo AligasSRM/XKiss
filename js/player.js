@@ -1,10 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const video = document.getElementById("video");
-  const videoSource = document.getElementById("videoSource");
   const player = document.getElementById("player");
 
-  const qualityBtn = document.getElementById("qualityBtn");
-  const qualityMenu = document.getElementById("qualityMenu");
   const speedBtn = document.getElementById("speedBtn");
   const speedMenu = document.getElementById("speedMenu");
   const settingsBtn = document.getElementById("settingsBtn");
@@ -18,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const videoDuration = document.getElementById("videoDuration");
   const creatorName = document.getElementById("creatorName");
   const videoTags = document.getElementById("videoTags");
-  const currentQuality = document.getElementById("currentQuality");
   const views = document.getElementById("views");
 
   if (!video || !player) {
@@ -31,6 +27,11 @@ document.addEventListener("DOMContentLoaded", () => {
   controlsScript.src = "js/player/player-controls.js";
   document.body.appendChild(controlsScript);
 
+  /* Load modular player quality */
+  const qualityScript = document.createElement("script");
+  qualityScript.src = "js/player/player-quality.js";
+  document.body.appendChild(qualityScript);
+
   /* Video ID */
   const params = new URLSearchParams(location.search);
   const requestedId = params.get("id") || "video-001";
@@ -39,7 +40,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let videoData = null;
 
   if (typeof getXKissVideo === "function") {
-    videoData = getXKissVideo(requestedId) || getXKissVideo("video-001");
+    videoData =
+      getXKissVideo(requestedId) ||
+      getXKissVideo("video-001");
   } else if (typeof XKISS_VIDEOS !== "undefined") {
     videoData =
       XKISS_VIDEOS[requestedId] ||
@@ -47,18 +50,23 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (!videoData) {
-    if (videoTitle) videoTitle.textContent = "Video Not Found";
+    if (videoTitle) {
+      videoTitle.textContent = "Video Not Found";
+    }
+
     console.error("XKiss: Video data not found.");
     return;
   }
 
   /* Basic information */
   if (videoTitle) {
-    videoTitle.textContent = videoData.title || "XKiss Video";
+    videoTitle.textContent =
+      videoData.title || "XKiss Video";
   }
 
   if (videoDuration) {
-    videoDuration.textContent = videoData.duration || "00:00";
+    videoDuration.textContent =
+      videoData.duration || "00:00";
   }
 
   if (creatorName) {
@@ -83,86 +91,16 @@ document.addEventListener("DOMContentLoaded", () => {
       videoData.tags.forEach(tag => {
         const el = document.createElement("span");
         const text = String(tag);
-        el.textContent = text.startsWith("#") ? text : "#" + text;
+
+        el.textContent =
+          text.startsWith("#")
+            ? text
+            : "#" + text;
+
         videoTags.appendChild(el);
       });
     }
   }
-
-  /* Quality */
-  const QUALITY = ["340p", "460p", "720p", "1080p"];
-
-  const sources = {
-    "340p": videoData.sources?.["340p"] || "",
-    "460p": videoData.sources?.["460p"] || "",
-    "720p": videoData.sources?.["720p"] || "",
-    "1080p": videoData.sources?.["1080p"] || ""
-  };
-
-  let currentQualityValue =
-    QUALITY.includes(videoData.quality?.default)
-      ? videoData.quality.default
-      : "720p";
-
-  if (!sources[currentQualityValue]) {
-    const first = QUALITY.find(q => sources[q]);
-    if (first) currentQualityValue = first;
-  }
-
-  function loadQuality(quality, autoPlay = false) {
-    if (!QUALITY.includes(quality)) return;
-
-    const source = sources[quality];
-
-    if (!source) {
-      alert(quality + " is not configured yet.");
-      return;
-    }
-
-    const playing = autoPlay || !video.paused;
-    const position = video.currentTime || 0;
-
-    currentQualityValue = quality;
-
-    if (qualityBtn) qualityBtn.textContent = quality;
-    if (currentQuality) currentQuality.textContent = quality;
-    if (!videoSource) return;
-
-    videoSource.src = source;
-    video.load();
-
-    video.addEventListener("loadedmetadata", function restore() {
-      video.removeEventListener("loadedmetadata", restore);
-
-      if (
-        Number.isFinite(position) &&
-        position < video.duration
-      ) {
-        video.currentTime = position;
-      }
-
-      if (playing) video.play().catch(() => {});
-    });
-  }
-
-  loadQuality(currentQualityValue);
-
-  /* Quality menu */
-  if (qualityBtn && qualityMenu) {
-    qualityBtn.addEventListener("click", e => {
-      e.stopPropagation();
-      qualityMenu.classList.toggle("show");
-      speedMenu?.classList.remove("show");
-      settingsMenu?.classList.remove("show");
-    });
-  }
-
-  qualityMenu?.querySelectorAll("[data-quality]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      loadQuality(btn.dataset.quality, !video.paused);
-      qualityMenu.classList.remove("show");
-    });
-  });
 
   /* Speed */
   let currentSpeed =
@@ -172,14 +110,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const speeds =
     Array.isArray(videoData.player?.availableSpeeds)
-      ? videoData.player.availableSpeeds.map(Number).filter(Number.isFinite)
+      ? videoData.player.availableSpeeds
+          .map(Number)
+          .filter(Number.isFinite)
       : [0.5, 0.75, 1, 1.25, 1.5, 2];
 
   if (speedBtn && speedMenu) {
     speedBtn.addEventListener("click", e => {
       e.stopPropagation();
+
       speedMenu.classList.toggle("show");
-      qualityMenu?.classList.remove("show");
+
+      document
+        .getElementById("qualityMenu")
+        ?.classList.remove("show");
+
       settingsMenu?.classList.remove("show");
     });
   }
@@ -198,7 +143,10 @@ document.addEventListener("DOMContentLoaded", () => {
       currentSpeed = speed;
       video.playbackRate = speed;
 
-      if (speedBtn) speedBtn.textContent = speed + "x";
+      if (speedBtn) {
+        speedBtn.textContent = speed + "x";
+      }
+
       speedMenu.classList.remove("show");
     });
   });
@@ -207,8 +155,13 @@ document.addEventListener("DOMContentLoaded", () => {
   if (settingsBtn && settingsMenu) {
     settingsBtn.addEventListener("click", e => {
       e.stopPropagation();
+
       settingsMenu.classList.toggle("show");
-      qualityMenu?.classList.remove("show");
+
+      document
+        .getElementById("qualityMenu")
+        ?.classList.remove("show");
+
       speedMenu?.classList.remove("show");
     });
   }
@@ -227,16 +180,21 @@ document.addEventListener("DOMContentLoaded", () => {
     currentSpeed = 1;
     video.playbackRate = 1;
 
-    if (speedBtn) speedBtn.textContent = "1x";
+    if (speedBtn) {
+      speedBtn.textContent = "1x";
+    }
+
     settingsMenu?.classList.remove("show");
   });
 
-  /* PiP */
+  /* Picture in Picture */
   pipBtn?.addEventListener("click", async e => {
     e.stopPropagation();
 
-    if (!document.pictureInPictureEnabled ||
-        video.disablePictureInPicture) {
+    if (
+      !document.pictureInPictureEnabled ||
+      video.disablePictureInPicture
+    ) {
       return;
     }
 
@@ -251,13 +209,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  video.addEventListener("enterpictureinpicture", () => {
-    pipBtn?.classList.add("active");
-  });
+  video.addEventListener(
+    "enterpictureinpicture",
+    () => {
+      pipBtn?.classList.add("active");
+    }
+  );
 
-  video.addEventListener("leavepictureinpicture", () => {
-    pipBtn?.classList.remove("active");
-  });
+  video.addEventListener(
+    "leavepictureinpicture",
+    () => {
+      pipBtn?.classList.remove("active");
+    }
+  );
 
   /* Fullscreen */
   function isFullscreen() {
@@ -276,7 +240,9 @@ document.addEventListener("DOMContentLoaded", () => {
         await screen.orientation.lock("landscape");
       }
     } catch (error) {
-      console.log("XKiss: Landscape lock unavailable.");
+      console.log(
+        "XKiss: Landscape lock unavailable."
+      );
     }
   }
 
@@ -303,7 +269,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       await lockLandscape();
     } catch (error) {
-      console.error("XKiss fullscreen error:", error);
+      console.error(
+        "XKiss fullscreen error:",
+        error
+      );
     }
   }
 
@@ -315,24 +284,32 @@ document.addEventListener("DOMContentLoaded", () => {
         document.webkitExitFullscreen();
       }
     } catch (error) {
-      console.error("XKiss fullscreen exit error:", error);
+      console.error(
+        "XKiss fullscreen exit error:",
+        error
+      );
     }
 
     unlockOrientation();
   }
 
-  fullscreenBtn?.addEventListener("click", async e => {
-    e.stopPropagation();
+  fullscreenBtn?.addEventListener(
+    "click",
+    async e => {
+      e.stopPropagation();
 
-    if (isFullscreen()) {
-      await exitFullscreen();
-    } else {
-      await enterFullscreen();
+      if (isFullscreen()) {
+        await exitFullscreen();
+      } else {
+        await enterFullscreen();
+      }
     }
-  });
+  );
 
   function fullscreenChanged() {
-    if (!isFullscreen()) unlockOrientation();
+    if (!isFullscreen()) {
+      unlockOrientation();
+    }
   }
 
   document.addEventListener(
@@ -347,13 +324,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* Close menus */
   document.addEventListener("click", () => {
-    qualityMenu?.classList.remove("show");
+    document
+      .getElementById("qualityMenu")
+      ?.classList.remove("show");
+
     speedMenu?.classList.remove("show");
     settingsMenu?.classList.remove("show");
   });
 
-  [qualityMenu, speedMenu, settingsMenu].forEach(menu => {
-    menu?.addEventListener("click", e => e.stopPropagation());
+  [
+    document.getElementById("qualityMenu"),
+    speedMenu,
+    settingsMenu
+  ].forEach(menu => {
+    menu?.addEventListener("click", e => {
+      e.stopPropagation();
+    });
   });
 
   /* Initial state */
@@ -361,9 +347,10 @@ document.addEventListener("DOMContentLoaded", () => {
   video.muted = false;
   video.playbackRate = currentSpeed;
 
-  if (qualityBtn) qualityBtn.textContent = currentQualityValue;
-  if (currentQuality) currentQuality.textContent = currentQualityValue;
-  if (speedBtn) speedBtn.textContent = currentSpeed + "x";
+  if (speedBtn) {
+    speedBtn.textContent =
+      currentSpeed + "x";
+  }
 
   console.log(
     "XKiss Player loaded:",
