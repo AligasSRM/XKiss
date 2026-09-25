@@ -56,3 +56,27 @@ a{text-decoration:none;color:inherit}
 .live-footer{max-width:1320px;margin:0 auto;padding:28px 22px 38px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;color:#666b78;font-size:11px}.live-footer a{color:#aaaeba}
 @media(max-width:900px){.live-grid,.upcoming-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nav-links{gap:12px}.info-points{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:620px){.live-nav{padding:10px 14px}.brand{font-size:27px}.nav-links{display:none}.live-page{padding:16px 14px 55px}.live-hero{min-height:270px;padding:30px 24px;border-radius:22px}.live-hero h1{letter-spacing:-2.5px}.section-head{align-items:start;flex-direction:column}.live-grid,.upcoming-grid{grid-template-columns:1fr}.live-room{height:220px}.info-card{padding:24px}.info-card h2{font-size:26px}.info-points{grid-template-columns:1fr}.live-footer{padding:24px 14px;flex-direction:column}}
+
+.recorder-section{margin-top:48px}
+.recorder-indicator{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:30px;padding:8px 12px;color:#aaaeba;background:rgba(255,255,255,.035);font-size:11px;font-weight:800}
+.recorder-indicator span{width:8px;height:8px;border-radius:50%;background:#777}
+.recorder-indicator.recording{color:#ff9ab2;border-color:rgba(255,55,95,.3);background:rgba(255,55,95,.07)}
+.recorder-indicator.recording span{background:var(--red);box-shadow:0 0 0 4px rgba(255,55,95,.12)}
+.recorder-card{border:1px solid var(--line);border-radius:22px;padding:18px;background:linear-gradient(135deg,#151821,#0d0f14);box-shadow:var(--shadow)}
+.recorder-preview-wrap{position:relative;overflow:hidden;min-height:300px;border-radius:16px;background:radial-gradient(circle,rgba(191,90,242,.18),transparent 35%),#08090c;border:1px solid var(--line)}
+.recorder-preview{width:100%;height:100%;min-height:300px;display:block;object-fit:cover;background:#08090c}
+.recorder-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:#c9cbd3;text-align:center;padding:20px}
+.recorder-placeholder.hidden{display:none}.recorder-placeholder span{color:var(--muted);font-size:12px}
+.recorder-icon{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,var(--pink),var(--purple));font-size:20px}
+.recorder-timer{position:absolute;right:12px;bottom:12px;padding:7px 9px;border-radius:7px;background:rgba(0,0,0,.65);font-size:12px;font-variant-numeric:tabular-nums}
+.recorder-controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.record-btn,.control-btn{min-height:44px;padding:10px 15px;border-radius:10px;color:#fff;font-weight:800;border:1px solid var(--line);background:rgba(255,255,255,.05)}
+.record-btn{display:flex;align-items:center;gap:9px;border:0;background:linear-gradient(135deg,var(--pink),var(--purple))}
+.record-circle{width:12px;height:12px;border-radius:50%;background:#fff}
+.record-btn.recording{background:#7c102d}.record-btn.recording .record-circle{border-radius:3px}
+.recorder-note{margin-top:11px;color:#777b88;font-size:11px}
+@media(max-width:620px){
+ .recorder-preview-wrap,.recorder-preview{min-height:220px}
+ .recorder-controls{display:grid;grid-template-columns:1fr 1fr}
+ .record-btn,.control-btn:last-child{grid-column:1/-1}
+}
