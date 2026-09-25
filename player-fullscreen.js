@@ -1,138 +1,54 @@
-(function () {
-  "use strict";
+(function(){ "use strict";
 
-  function init() {
-    const player = document.getElementById("player");
-    const fullscreenBtn = document.getElementById("fullscreenBtn");
+function init(){
+  const p=document.getElementById("player");
+  const b=document.getElementById("fullscreenBtn");
 
-    if (!player) {
-      console.error("XKiss: Fullscreen player element not found.");
-      return;
-    }
-
-    function isFullscreen() {
-      return Boolean(
-        document.fullscreenElement ||
-        document.webkitFullscreenElement
-      );
-    }
-
-    async function enterFullscreen() {
-      try {
-        if (player.requestFullscreen) {
-          await player.requestFullscreen();
-          return true;
-        }
-
-        if (player.webkitRequestFullscreen) {
-          player.webkitRequestFullscreen();
-          return true;
-        }
-
-        console.warn(
-          "XKiss: Fullscreen API is not supported."
-        );
-
-        return false;
-      } catch (error) {
-        console.error(
-          "XKiss fullscreen error:",
-          error
-        );
-
-        return false;
-      }
-    }
-
-    async function exitFullscreen() {
-      try {
-        if (document.exitFullscreen) {
-          await document.exitFullscreen();
-          return true;
-        }
-
-        if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-          return true;
-        }
-
-        return false;
-      } catch (error) {
-        console.error(
-          "XKiss fullscreen exit error:",
-          error
-        );
-
-        return false;
-      }
-    }
-
-    async function toggleFullscreen() {
-      if (isFullscreen()) {
-        await exitFullscreen();
-      } else {
-        await enterFullscreen();
-      }
-    }
-
-    if (fullscreenBtn) {
-      fullscreenBtn.addEventListener("click", async e => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        await toggleFullscreen();
-      });
-    }
-
-    function updateFullscreenState() {
-      if (!fullscreenBtn) return;
-
-      fullscreenBtn.classList.toggle(
-        "active",
-        isFullscreen()
-      );
-
-      fullscreenBtn.setAttribute(
-        "aria-pressed",
-        isFullscreen() ? "true" : "false"
-      );
-
-      fullscreenBtn.title =
-        isFullscreen()
-          ? "Exit Fullscreen"
-          : "Fullscreen";
-    }
-
-    document.addEventListener(
-      "fullscreenchange",
-      updateFullscreenState
-    );
-
-    document.addEventListener(
-      "webkitfullscreenchange",
-      updateFullscreenState
-    );
-
-    updateFullscreenState();
-
-    window.XKissPlayerFullscreen = {
-      isFullscreen,
-      enterFullscreen,
-      exitFullscreen,
-      toggleFullscreen
-    };
-
-    console.log(
-      "XKiss Player Fullscreen loaded."
-    );
+  if(!p||!b){
+    console.error("XKiss: Fullscreen elements not found.");
+    return;
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener(
-      "DOMContentLoaded",
-      init
-    );
-  } else {
-    init();
+  const full=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);
+
+  async function enter(){
+    try{
+      if(p.requestFullscreen){await p.requestFullscreen();return;}
+      if(p.webkitRequestFullscreen){p.webkitRequestFullscreen();return;}
+      console.warn("XKiss: Fullscreen unavailable.");
+    }catch(e){console.error("XKiss fullscreen error:",e);}
   }
+
+  async function exit(){
+    try{
+      if(document.exitFullscreen){await document.exitFullscreen();return;}
+      if(document.webkitExitFullscreen){document.webkitExitFullscreen();}
+    }catch(e){console.error("XKiss fullscreen exit error:",e);}
+  }
+
+  b.addEventListener("click",async e=>{
+    e.preventDefault();
+    e.stopPropagation();
+    full()?await exit():await enter();
+  });
+
+  function update(){
+    const active=full();
+    b.classList.toggle("active",active);
+    b.setAttribute("aria-pressed",active?"true":"false");
+    b.title=active?"Exit Fullscreen":"Fullscreen";
+  }
+
+  document.addEventListener("fullscreenchange",update);
+  document.addEventListener("webkitfullscreenchange",update);
+  update();
+
+  window.XKissPlayerFullscreen={isFullscreen:full,enterFullscreen:enter,exitFullscreen:exit};
+  console.log("XKiss Player Fullscreen loaded.");
+}
+
+document.readyState==="loading"
+  ?document.addEventListener("DOMContentLoaded",init)
+  :init();
+
 })();
