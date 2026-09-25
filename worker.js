@@ -14,6 +14,11 @@ import {
   CREATOR_ACTIVATION_RULES,
   evaluateCreatorActivation
 } from "./monetization/monetization-rules.js";
+import {
+  VIEWS_REVENUE_RULES,
+  validateViewEvent,
+  validateRevenueEvent
+} from "./views-revenue/views-revenue-rules.js";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "https://aligassrm.github.io",
@@ -50,6 +55,53 @@ export default {
         status: "online",
         storageReady,
         uploadEndpoint: true
+      });
+    }
+
+    if (url.pathname === "/api/views/status" && request.method === "GET") {
+      return json({
+        ok: true,
+        service: "XKiss Views & Revenue",
+        rules: VIEWS_REVENUE_RULES,
+        message: "Views and revenue event architecture is prepared. Durable event storage is not active yet."
+      });
+    }
+
+    if (url.pathname === "/api/views/event/validate" && request.method === "POST") {
+      let body;
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          message: "Invalid view event data."
+        }, 400);
+      }
+
+      return json({
+        ok: true,
+        service: "XKiss View Event Validator",
+        result: validateViewEvent(body)
+      });
+    }
+
+    if (url.pathname === "/api/revenue/event/validate" && request.method === "POST") {
+      let body;
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          message: "Invalid revenue event data."
+        }, 400);
+      }
+
+      return json({
+        ok: true,
+        service: "XKiss Revenue Event Validator",
+        result: validateRevenueEvent(body)
       });
     }
 
