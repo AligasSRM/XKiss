@@ -8,6 +8,8 @@ const XKISS_VIDEOS = {
 
     creator: "XKiss Creator",
 
+    creatorId: "creator-001",
+
     duration: "00:04",
 
     tags: [
