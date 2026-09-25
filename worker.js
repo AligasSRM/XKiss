@@ -28,6 +28,7 @@ import { evaluateWalletReversal } from "./wallet/wallet-reversals.js";
 import { evaluatePayoutEligibility } from "./wallet/payout-eligibility.js";
 import { createPayoutRequest, transitionPayoutStatus } from "./wallet/payout-lifecycle.js";
 import { createPayoutAuditEvent, buildPayoutHistory } from "./wallet/payout-audit.js";
+import { evaluatePayoutAuthorization } from "./wallet/payout-security.js";
 import {
   VIEWS_REVENUE_RULES,
   validateViewEvent,
@@ -122,6 +123,25 @@ export default {
         ok: true,
         service: "XKiss View Qualification Pipeline",
         result: evaluateViewPipeline(body)
+      });
+    }
+
+    if (url.pathname === "/api/wallet/payout/authorize" && request.method === "POST") {
+      let body;
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          message: "Invalid payout authorization data."
+        }, 400);
+      }
+
+      return json({
+        ok: true,
+        service: "XKiss Payout Authorization",
+        result: evaluatePayoutAuthorization(body)
       });
     }
 
