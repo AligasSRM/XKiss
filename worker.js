@@ -8,7 +8,7 @@ import {
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "https://aligassrm.github.io",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, X-XKiss-Upload-Key, X-XKiss-File-Name",
+  "Access-Control-Allow-Headers": "Content-Type, X-XKiss-Upload-Key, X-XKiss-File-Name, X-XKiss-Title, X-XKiss-Description, X-XKiss-Category, X-XKiss-Download-Policy, X-XKiss-Visibility",
   "Vary": "Origin"
 };
 
@@ -152,7 +152,12 @@ export default {
       try {
         const stored = await storeVideo(env, key, request.body, {
           fileName,
-          contentType
+          contentType,
+          title: request.headers.get("X-XKiss-Title") || "",
+          description: request.headers.get("X-XKiss-Description") || "",
+          category: request.headers.get("X-XKiss-Category") || "",
+          downloadPolicy: request.headers.get("X-XKiss-Download-Policy") || "disabled",
+          visibility: request.headers.get("X-XKiss-Visibility") || "private"
         });
 
         return json({
