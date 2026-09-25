@@ -4,7 +4,11 @@ import {
   listVideos,
   storeVideo
 } from "./storage/r2-adapter.js";
-import { MONETIZATION_RULES } from "./monetization/monetization-rules.js";
+import {
+  MONETIZATION_RULES,
+  CREATOR_ELIGIBILITY_RULES,
+  evaluateCreatorEligibility
+} from "./monetization/monetization-rules.js";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "https://aligassrm.github.io",
@@ -63,6 +67,33 @@ export default {
         ok: true,
         service: "XKiss Monetization Rules",
         rules: MONETIZATION_RULES
+      });
+    }
+
+    if (url.pathname === "/api/monetization/eligibility/rules" && request.method === "GET") {
+      return json({
+        ok: true,
+        service: "XKiss Creator Eligibility",
+        rules: CREATOR_ELIGIBILITY_RULES
+      });
+    }
+
+    if (url.pathname === "/api/monetization/eligibility/evaluate" && request.method === "POST") {
+      let body;
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          message: "Invalid eligibility data."
+        }, 400);
+      }
+
+      return json({
+        ok: true,
+        service: "XKiss Creator Eligibility",
+        result: evaluateCreatorEligibility(body)
       });
     }
 
