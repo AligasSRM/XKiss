@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XKiss — Safety & Verification Test</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #09090b;
+      --card: #151519;
+      --line: #29292f;
+      --text: #f5f5f5;
+      --muted: #a1a1aa;
+      --ok: #4ade80;
+      --warn: #facc15;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    main { max-width: 760px; margin: 0 auto; }
+    h1 { margin: 0 0 8px; font-size: 26px; }
+    .intro { color: var(--muted); line-height: 1.5; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .row:last-child { border-bottom: 0; }
+    .label { font-weight: 700; }
+    .value { color: var(--muted); text-align: right; }
+    .ok { color: var(--ok); }
+    .warn { color: var(--warn); }
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 10px;
+      padding: 13px;
+      margin-top: 10px;
+      background: #f5f5f5;
+      color: #09090b;
+      font-weight: 700;
+      font-size: 15px;
+    }
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: var(--muted);
+      line-height: 1.45;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>XKiss — Safety & Verification</h1>
+    <p class="intro">Section 13 test page. This page checks the prepared safety modules without activating real verification, moderation, storage, or enforcement.</p>
+
+    <section class="card">
+      <div class="row"><span class="label">Overall status</span><span id="overall" class="value">Checking…</span></div>
+      <div class="row"><span class="label">Age verification</span><span id="age" class="value">Checking…</span></div>
+      <div class="row"><span class="label">Creator verification</span><span id="creator" class="value">Checking…</span></div>
+      <div class="row"><span class="label">Content safety</span><span id="content" class="value">Checking…</span></div>
+      <div class="row"><span class="label">User reporting</span><span id="reporting" class="value">Checking…</span></div>
+      <div class="row"><span class="label">Moderation</span><span id="moderation" class="value">Checking…</span></div>
+      <div class="row"><span class="label">Audit trail</span><span id="audit" class="value">Checking…</span></div>
+      <div class="row"><span class="label">Privacy</span><span id="privacy" class="value">Checking…</span></div>
+      <div class="row"><span class="label">Account safety</span><span id="account" class="value">Checking…</span></div>
+    </section>
+
+    <section class="card">
+      <button id="ageTest">Test age gate: 17</button>
+      <button id="ageTest18">Test age gate: 18</button>
+      <button id="reportTest">Test user report validation</button>
+      <button id="moderationTest">Test moderation validation</button>
+      <button id="privacyTest">Test sensitive-data protection</button>
+    </section>
+
+    <section class="card">
+      <pre id="result">Test results will appear here.</pre>
+    </section>
+  </main>
+
+  <script type="module">
+    import { getSafetyVerificationOverview, evaluateSafetyAccess } from "./safety/safety-integration.js";
+    import { evaluateAgeGate } from "./safety/safety-rules.js";
+    import { createReport } from "./safety/user-reporting.js";
+    import { evaluateModerationAction } from "./safety/moderation-workflow.js";
+    import { evaluateDataStorage } from "./safety/privacy-data.js";
+
+    const result = document.getElementById("result");
+
+    function show(value) {
+      result.textContent = JSON.stringify(value, null, 2);
+    }
+
+    function statusText(value) {
+      if (!value) return "Unknown";
+      return value.status || "Prepared";
+    }
+
+    function render() {
+      const overview = getSafetyVerificationOverview();
+      document.getElementById("overall").textContent = overview.status;
+      document.getElementById("overall").className = "value warn";
+
+      const map = {
+        age: overview.modules.ageVerification,
+        creator: overview.modules.creatorVerification,
+        content: overview.modules.contentSafety,
+        reporting: overview.modules.reporting,
+        moderation: overview.modules.moderation,
+        audit: overview.modules.audit,
+        privacy: overview.modules.privacy,
+        account: overview.modules.accountSafety
+      };
+
+      for (const [id, module] of Object.entries(map)) {
+        document.getElementById(id).textContent = statusText(module);
+        document.getElementById(id).className = "value warn";
+      }
+    }
+
+    document.getElementById("ageTest").addEventListener("click", () => {
+      show(evaluateAgeGate({ age: 17 }));
+    });
+
+    document.getElementById("ageTest18").addEventListener("click", () => {
+      show(evaluateAgeGate({ age: 18 }));
+    });
+
+    document.getElementById("reportTest").addEventListener("click", () => {
+      show(createReport({
+        reporterId: "test-user",
+        targetId: "video-001",
+        targetType: "video",
+        reason: "spam"
+      }));
+    });
+
+    document.getElementById("moderationTest").addEventListener("click", () => {
+      show(evaluateModerationAction({
+        state: "queued",
+        action: "review"
+      }));
+    });
+
+    document.getElementById("privacyTest").addEventListener("click", () => {
+      show(evaluateDataStorage({
+        dataCategory: "identity_documents",
+        storageLayer: "frontend"
+      }));
+    });
+
+    render();
+  </script>
+</body>
+</html>
