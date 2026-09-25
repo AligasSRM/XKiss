@@ -31,20 +31,22 @@ h2 {
   font-size: 22px;
 }
 
-#videoDuration,
-#creatorName {
+.video-meta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
   color: #bdbdbd;
   font-size: 14px;
 }
 
-#videoTags {
+.video-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin: 14px 0;
 }
 
-#videoTags span {
+.video-tags span {
   padding: 6px 10px;
   border-radius: 20px;
   background: #181818;
@@ -52,7 +54,7 @@ h2 {
   font-size: 13px;
 }
 
-#videoQuality {
+.video-quality {
   margin-bottom: 12px;
   color: #bdbdbd;
   font-size: 14px;
@@ -63,17 +65,25 @@ h2 {
   font-weight: bold;
 }
 
-#player {
+/* =========================================================
+   XKiss Player
+   ========================================================= */
+
+.player-section {
+  width: 100%;
+}
+
+.xkiss-player {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
   background: #000000;
   overflow: hidden;
   border-radius: 10px;
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.65);
 }
 
-#video {
+.xkiss-player video {
   width: 100%;
   height: 100%;
   display: block;
@@ -81,15 +91,23 @@ h2 {
   background: #000000;
 }
 
-#xkissLogo {
+/* =========================================================
+   XKiss Logo
+   ========================================================= */
+
+.xkiss-logo {
   position: absolute;
-  top: 16px;
-  right: 18px;
-  z-index: 5;
-  font-size: 24px;
+  top: 14px;
+  right: 16px;
+  z-index: 20;
+
+  font-size: 25px;
   font-weight: 900;
   letter-spacing: -1px;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.9);
+
   pointer-events: none;
 }
 
@@ -104,6 +122,7 @@ h2 {
     #6a35ff,
     #ff00a8
   );
+
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -113,50 +132,399 @@ h2 {
   color: #ffffff;
 }
 
-#videoActions {
+/* =========================================================
+   Center Play Button
+   ========================================================= */
+
+.xkiss-center-play {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  width: 82px;
+  height: 82px;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: #e00000;
+  color: #ffffff;
+
+  font-size: 36px;
+  line-height: 82px;
+
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 14px;
+  align-items: center;
+  justify-content: center;
+
+  padding-left: 6px;
+
+  cursor: pointer;
+
+  z-index: 30;
+
+  box-shadow:
+    0 5px 25px rgba(0, 0, 0, 0.65);
+
+  -webkit-tap-highlight-color: transparent;
 }
 
-#videoActions button {
-  border: 1px solid #333333;
-  border-radius: 8px;
-  background: #151515;
-  color: #ffffff;
-  padding: 10px 13px;
-  font-size: 14px;
+.xkiss-center-play:active {
+  transform: translate(-50%, -50%) scale(0.94);
+}
+
+/* =========================================================
+   Player Controls
+   ========================================================= */
+
+.xkiss-controls {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  z-index: 25;
+
+  padding: 8px 10px 10px;
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.95),
+      rgba(0, 0, 0, 0.72),
+      rgba(0, 0, 0, 0)
+    );
+}
+
+/* =========================================================
+   Progress
+   ========================================================= */
+
+.xkiss-progress-area {
+  width: 100%;
+  padding: 5px 0 7px;
+}
+
+.xkiss-progress {
+  width: 100%;
+  height: 5px;
+
+  margin: 0;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  background: rgba(255, 255, 255, 0.35);
+
+  border-radius: 10px;
+
   cursor: pointer;
 }
 
-#videoActions button:hover {
-  background: #242424;
+.xkiss-progress::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: 13px;
+  height: 13px;
+
+  border-radius: 50%;
+
+  background: #e00000;
+
+  cursor: pointer;
 }
 
-main > section:not(#player):not(#videoActions) {
+.xkiss-progress::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: #e00000;
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   Control Row
+   ========================================================= */
+
+.xkiss-control-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  width: 100%;
+}
+
+.xkiss-button {
+  width: 38px;
+  height: 36px;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 6px;
+
+  background: rgba(20, 20, 20, 0.88);
+
+  color: #ffffff;
+
+  font-size: 17px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.xkiss-button:active {
+  background: rgba(80, 80, 80, 0.95);
+}
+
+.xkiss-spacer {
+  flex: 1;
+}
+
+/* =========================================================
+   Volume
+   ========================================================= */
+
+.xkiss-volume {
+  width: 70px;
+  height: 5px;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  background: rgba(255, 255, 255, 0.35);
+
+  border-radius: 10px;
+}
+
+.xkiss-volume::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: 12px;
+  height: 12px;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+}
+
+.xkiss-volume::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: #ffffff;
+}
+
+/* =========================================================
+   Time
+   ========================================================= */
+
+.xkiss-time {
+  color: #ffffff;
+
+  font-size: 12px;
+
+  white-space: nowrap;
+
+  padding: 0 3px;
+}
+
+/* =========================================================
+   Menus
+   ========================================================= */
+
+.xkiss-menu {
+  position: absolute;
+
+  right: 10px;
+  bottom: 58px;
+
+  z-index: 50;
+
+  min-width: 145px;
+
+  padding: 8px;
+
+  background: rgba(12, 12, 12, 0.97);
+
+  border: 1px solid #333333;
+
+  border-radius: 9px;
+
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.7);
+
+  display: none;
+}
+
+.xkiss-menu.show {
+  display: block;
+}
+
+.xkiss-menu-title {
+  padding: 7px 9px 9px;
+
+  color: #aaaaaa;
+
+  font-size: 12px;
+
+  border-bottom: 1px solid #292929;
+
+  margin-bottom: 4px;
+}
+
+.xkiss-menu button {
+  width: 100%;
+
+  border: 0;
+
+  border-radius: 6px;
+
+  background: transparent;
+
+  color: #ffffff;
+
+  padding: 10px;
+
+  text-align: left;
+
+  font-size: 14px;
+
+  cursor: pointer;
+}
+
+.xkiss-menu button:hover,
+.xkiss-menu button:active {
+  background: #262626;
+}
+
+/* =========================================================
+   Video Actions
+   ========================================================= */
+
+.video-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  margin-top: 14px;
+}
+
+.video-actions button {
+  border: 1px solid #333333;
+  border-radius: 8px;
+
+  background: #151515;
+  color: #ffffff;
+
+  padding: 10px 13px;
+
+  font-size: 14px;
+
+  cursor: pointer;
+}
+
+.video-actions button:active {
+  background: #252525;
+}
+
+/* =========================================================
+   Content Sections
+   ========================================================= */
+
+.content-section {
   border-top: 1px solid #252525;
+
   margin-top: 24px;
   padding-top: 8px;
 }
 
-main > section p {
+.content-section p {
   color: #a9a9a9;
   line-height: 1.6;
 }
 
+/* =========================================================
+   Mobile
+   ========================================================= */
+
 @media (max-width: 600px) {
+
   main {
     padding: 14px 10px 40px;
   }
 
-  #xkissLogo {
-    top: 10px;
-    right: 12px;
+  .xkiss-logo {
+    top: 9px;
+    right: 11px;
     font-size: 20px;
   }
 
-  #videoActions button {
+  .xkiss-center-play {
+    width: 68px;
+    height: 68px;
+
+    font-size: 29px;
+  }
+
+  .xkiss-control-row {
+    gap: 4px;
+  }
+
+  .xkiss-button {
+    width: 34px;
+    height: 34px;
+    font-size: 15px;
+  }
+
+  .xkiss-volume {
+    width: 55px;
+  }
+
+  .xkiss-time {
+    font-size: 10px;
+  }
+
+  .video-actions button {
     flex: 1 1 calc(50% - 8px);
   }
 }
+
+/* =========================================================
+   Very Small Screens
+   ========================================================= */
+
+@media (max-width: 390px) {
+
+  .xkiss-volume {
+    display: none;
+  }
+
+  .xkiss-time {
+    font-size: 9px;
+  }
+
+  .xkiss-button {
+    width: 32px;
+    height: 32px;
+  }
+
+  }
