@@ -1,5 +1,5 @@
 export const VIEWS_REVENUE_RULES = {
-  version: "1.2-draft",
+  version: "1.3-draft",
   status: "prepared",
   persistence: "not_connected",
   counting: "server_side",
@@ -7,6 +7,8 @@ export const VIEWS_REVENUE_RULES = {
   duplicateProtection: true,
   duplicateKey: "videoId + viewerSessionId + eventId",
   botReview: true,
+  invalidTrafficHandling: "exclude_from_count",
+  suspiciousTrafficHandling: "hold_for_review",
   creatorAttributionRequired: true,
   videoAttributionRequired: true,
   realActivityRequired: true,
@@ -17,11 +19,29 @@ export const VIEWS_REVENUE_RULES = {
     minimumWatchPercent: null,
     rule: "count only after a configured watch threshold is met"
   },
+  botSignals: [
+    "missing_required_fields",
+    "invalid_event_type",
+    "invalid_playback_signal",
+    "invalid_watch_values",
+    "invalid_creator_attribution",
+    "invalid_video_attribution"
+  ],
   storageLayer: "future_durable_event_store"
 };
 
 function clean(value) {
   return String(value || "").trim();
+}
+
+function invalidTraffic(reason) {
+  return {
+    status: "invalid_traffic",
+    eligible: false,
+    counted: false,
+    action: "exclude_from_count",
+    reason
+  };
 }
 
 export function createViewDeduplicationKey(input = {}) {
@@ -34,36 +54,70 @@ export function createViewDeduplicationKey(input = {}) {
 
 export function validateViewEvent(input = {}) {
   if (!input.videoId) {
-    return { valid: false, status: "invalid", reason: "videoId is required." };
+    return { valid: false, ...invalidTraffic("videoId is required.") };
   }
 
   if (!input.creatorId) {
-    return { valid: false, status: "invalid", reason: "creatorId is required for attribution." };
+    return { valid: false, ...invalidTraffic("creatorId is required for attribution.") };
   }
 
   if (!input.viewerSessionId) {
-    return { valid: false, status: "invalid", reason: "viewerSessionId is required." };
+    return { valid: false, ...invalidTraffic("viewerSessionId is required.") };
   }
 
   if (!input.eventId) {
-    return { valid: false, status: "invalid", reason: "eventId is required." };
+    return { valid: false, ...invalidTraffic("eventId is required.") };
   }
 
   if (input.eventType && input.eventType !== "view") {
-    return { valid: false, status: "invalid", reason: "Only view events are accepted by this validator." };
+    return { valid: false, ...invalidTraffic("Only view events are accepted by this validator.") };
   }
 
   if (input.playbackSignal && input.playbackSignal !== "playing") {
-    return { valid: false, status: "invalid", reason: "A valid view must originate from the playing signal." };
+    return { valid: false, ...invalidTraffic("A valid view must originate from the playing signal.") };
   }
 
   return {
     valid: true,
     status: "validated",
+    eligible: true,
     counted: false,
     duplicateKey: createViewDeduplicationKey(input),
     countDecision: "pending_qualified_view_rule",
-    reason: "View event is structurally valid, but a qualified-view threshold is not configured yet."
+    reason: "View event passed the structural traffic checks."
+  };
+}
+
+export function evaluateTrafficQuality(input = {}) {
+  const validation = validateViewEvent(input);
+
+  if (!validation.valid) {
+    return validation;
+  }
+
+  const watchSeconds = Number(input.watchSeconds);
+  const watchPercent = Number(input.watchPercent);
+
+  if (
+    input.watchSeconds !== undefined &&
+    (!Number.isFinite(watchSeconds) || watchSeconds < 0)
+  ) {
+    return invalidTraffic("watchSeconds is invalid.");
+  }
+
+  if (
+    input.watchPercent !== undefined &&
+    (!Number.isFinite(watchPercent) || watchPercent < 0 || watchPercent > 100)
+  ) {
+    return invalidTraffic("watchPercent is invalid.");
+  }
+
+  return {
+    status: "traffic_validated",
+    eligible: true,
+    counted: false,
+    review: "passed_structural_checks",
+    reason: "No deterministic bot signal was detected by the current rule set. Final counting still requires qualified-view and durable uniqueness checks."
   };
 }
 
@@ -87,14 +141,8 @@ export function evaluateQualifiedView(input = {}) {
     };
   }
 
-  if (!Number.isFinite(watchPercent) || watchPercent < 0) {
-    return {
-      valid: true,
-      status: "not_qualified",
-      qualified: false,
-      counted: false,
-      reason: "watchPercent is required to evaluate a qualified view."
-    };
+  if (!Number.isFinite(watchPercent) || watchPercent < 0 || watchPercent > 100) {
+    return invalidTraffic("watchPercent is invalid.");
   }
 
   return {
@@ -121,7 +169,7 @@ export function evaluateViewCount(input = {}) {
     counted: false,
     duplicateKey: validation.duplicateKey,
     countDecision: "pending_qualified_view_rule",
-    reason: "The event passed structural rules. A qualified-view threshold and durable uniqueness check must pass before counting."
+    reason: "The event passed structural traffic rules. Qualified-view and durable uniqueness checks must pass before counting."
   };
 }
 
