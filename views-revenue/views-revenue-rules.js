@@ -1,16 +1,30 @@
 export const VIEWS_REVENUE_RULES = {
-  version: "1.0-draft",
+  version: "1.1-draft",
   status: "prepared",
   persistence: "not_connected",
   counting: "server_side",
   revenueEvents: "server_side",
   duplicateProtection: true,
+  duplicateKey: "videoId + viewerSessionId + eventId",
   botReview: true,
   creatorAttributionRequired: true,
   videoAttributionRequired: true,
   realActivityRequired: true,
+  minimumPlaybackSignal: "playing",
   storageLayer: "future_durable_event_store"
 };
+
+function clean(value) {
+  return String(value || "").trim();
+}
+
+export function createViewDeduplicationKey(input = {}) {
+  return [
+    clean(input.videoId),
+    clean(input.viewerSessionId),
+    clean(input.eventId)
+  ].join(":");
+}
 
 export function validateViewEvent(input = {}) {
   if (!input.videoId) {
@@ -29,11 +43,34 @@ export function validateViewEvent(input = {}) {
     return { valid: false, status: "invalid", reason: "Only view events are accepted by this validator." };
   }
 
+  if (input.playbackSignal && input.playbackSignal !== "playing") {
+    return { valid: false, status: "invalid", reason: "A valid view must originate from the playing signal." };
+  }
+
   return {
     valid: true,
     status: "validated",
     counted: false,
-    reason: "View event is structurally valid. Durable counting is not active yet."
+    duplicateKey: createViewDeduplicationKey(input),
+    countDecision: "pending_storage",
+    reason: "View event is valid. Durable duplicate checking and counting are not active yet."
+  };
+}
+
+export function evaluateViewCount(input = {}) {
+  const validation = validateViewEvent(input);
+
+  if (!validation.valid) {
+    return validation;
+  }
+
+  return {
+    valid: true,
+    status: "ready_for_counting",
+    counted: false,
+    duplicateKey: validation.duplicateKey,
+    countDecision: "pending_storage",
+    reason: "The event passed structural rules. A durable event store must confirm uniqueness before the view is counted."
   };
 }
 
