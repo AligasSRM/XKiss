@@ -26,6 +26,7 @@ import { evaluateRevenueToWallet } from "./wallet/revenue-to-wallet.js";
 import { evaluatePendingSettlement } from "./wallet/wallet-settlement.js";
 import { evaluateWalletReversal } from "./wallet/wallet-reversals.js";
 import { evaluatePayoutEligibility } from "./wallet/payout-eligibility.js";
+import { createPayoutRequest, transitionPayoutStatus } from "./wallet/payout-lifecycle.js";
 import {
   VIEWS_REVENUE_RULES,
   validateViewEvent,
@@ -120,6 +121,44 @@ export default {
         ok: true,
         service: "XKiss View Qualification Pipeline",
         result: evaluateViewPipeline(body)
+      });
+    }
+
+    if (url.pathname === "/api/wallet/payout/request" && request.method === "POST") {
+      let body;
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          message: "Invalid payout request data."
+        }, 400);
+      }
+
+      return json({
+        ok: true,
+        service: "XKiss Payout Request",
+        result: createPayoutRequest(body)
+      });
+    }
+
+    if (url.pathname === "/api/wallet/payout/status" && request.method === "POST") {
+      let body;
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          message: "Invalid payout status data."
+        }, 400);
+      }
+
+      return json({
+        ok: true,
+        service: "XKiss Payout Status",
+        result: transitionPayoutStatus(body)
       });
     }
 
