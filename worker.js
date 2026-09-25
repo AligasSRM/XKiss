@@ -7,7 +7,8 @@ import {
 import {
   MONETIZATION_RULES,
   CREATOR_ELIGIBILITY_RULES,
-  evaluateCreatorEligibility
+  evaluateCreatorEligibility,
+  calculateRevenue
 } from "./monetization/monetization-rules.js";
 
 const CORS_HEADERS = {
@@ -75,6 +76,25 @@ export default {
         ok: true,
         service: "XKiss Creator Eligibility",
         rules: CREATOR_ELIGIBILITY_RULES
+      });
+    }
+
+    if (url.pathname === "/api/monetization/revenue/calculate" && request.method === "POST") {
+      let body;
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          message: "Invalid revenue calculation data."
+        }, 400);
+      }
+
+      return json({
+        ok: true,
+        service: "XKiss Revenue Calculation",
+        result: calculateRevenue(body)
       });
     }
 
