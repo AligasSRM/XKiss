@@ -72,6 +72,12 @@ document.addEventListener("xkiss:search-ready", () => {
     input.value = API.getState().query;
   }
 
+  function refreshFromUrl() {
+    syncInput();
+    renderCategories();
+    renderResults();
+  }
+
   function showShareStatus(message) {
     shareStatus.textContent = message;
     window.clearTimeout(showShareStatus.timer);
@@ -122,6 +128,8 @@ document.addEventListener("xkiss:search-ready", () => {
   });
 
   shareButton.addEventListener("click", shareSearch);
+
+  document.addEventListener("xkiss:search-state-changed", refreshFromUrl);
 
   syncInput();
   renderCategories();
