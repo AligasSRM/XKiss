@@ -40,6 +40,7 @@ button{cursor:pointer}
 .search-results-head p{color:var(--muted);font-size:12px;margin-top:4px}
 .search-actions{display:flex;gap:8px}
 .clear-btn{border:1px solid var(--line);border-radius:9px;padding:9px 14px;background:rgba(255,255,255,.05);color:#fff}
+.clear-btn:focus-visible,.category-btn:focus-visible{outline:2px solid rgba(191,90,242,.8);outline-offset:2px}
 .share-status{min-height:18px;color:#a9acb8;font-size:12px;margin:-8px 0 12px}
 .results-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 .result-card{overflow:hidden;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.012));transition:transform .18s ease,border-color .18s ease}
@@ -54,6 +55,7 @@ button{cursor:pointer}
 .creator{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:700}
 .avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--pink),var(--purple));font-weight:900;flex:0 0 32px}
 .result-info p{margin-top:11px;color:#777b88;font-size:11px}
+.search-highlight{background:rgba(255,45,117,.28);color:#fff;border-radius:3px;padding:0 2px}
 .watch{display:block;text-align:center;margin-top:13px;padding:10px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.05);font-weight:800}
 .watch:hover,.watch:focus-visible{background:linear-gradient(135deg,var(--pink),var(--purple));outline:none}
 .empty-state{margin-top:22px;padding:60px 20px;text-align:center;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.025)}
