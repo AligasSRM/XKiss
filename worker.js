@@ -18,6 +18,7 @@ import {
   VIEWS_REVENUE_RULES,
   validateViewEvent,
   evaluateViewCount,
+  evaluateQualifiedView,
   validateRevenueEvent
 } from "./views-revenue/views-revenue-rules.js";
 
@@ -103,6 +104,25 @@ export default {
         ok: true,
         service: "XKiss View Count Check",
         result: evaluateViewCount(body)
+      });
+    }
+
+    if (url.pathname === "/api/views/event/qualified-check" && request.method === "POST") {
+      let body;
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          message: "Invalid qualified view data."
+        }, 400);
+      }
+
+      return json({
+        ok: true,
+        service: "XKiss Qualified View Check",
+        result: evaluateQualifiedView(body)
       });
     }
 
