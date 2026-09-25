@@ -1,5 +1,5 @@
 export const VIEWS_REVENUE_RULES = {
-  version: "1.1-draft",
+  version: "1.2-draft",
   status: "prepared",
   persistence: "not_connected",
   counting: "server_side",
@@ -11,6 +11,12 @@ export const VIEWS_REVENUE_RULES = {
   videoAttributionRequired: true,
   realActivityRequired: true,
   minimumPlaybackSignal: "playing",
+  qualifiedView: {
+    status: "not_configured",
+    minimumWatchSeconds: null,
+    minimumWatchPercent: null,
+    rule: "count only after a configured watch threshold is met"
+  },
   storageLayer: "future_durable_event_store"
 };
 
@@ -56,8 +62,49 @@ export function validateViewEvent(input = {}) {
     status: "validated",
     counted: false,
     duplicateKey: createViewDeduplicationKey(input),
-    countDecision: "pending_storage",
-    reason: "View event is valid. Durable duplicate checking and counting are not active yet."
+    countDecision: "pending_qualified_view_rule",
+    reason: "View event is structurally valid, but a qualified-view threshold is not configured yet."
+  };
+}
+
+export function evaluateQualifiedView(input = {}) {
+  const validation = validateViewEvent(input);
+
+  if (!validation.valid) {
+    return validation;
+  }
+
+  const watchSeconds = Number(input.watchSeconds);
+  const watchPercent = Number(input.watchPercent);
+
+  if (!Number.isFinite(watchSeconds) || watchSeconds < 0) {
+    return {
+      valid: true,
+      status: "not_qualified",
+      qualified: false,
+      counted: false,
+      reason: "watchSeconds is required to evaluate a qualified view."
+    };
+  }
+
+  if (!Number.isFinite(watchPercent) || watchPercent < 0) {
+    return {
+      valid: true,
+      status: "not_qualified",
+      qualified: false,
+      counted: false,
+      reason: "watchPercent is required to evaluate a qualified view."
+    };
+  }
+
+  return {
+    valid: true,
+    status: "threshold_pending",
+    qualified: false,
+    counted: false,
+    watchSeconds,
+    watchPercent,
+    reason: "Watch activity was received, but the platform has not configured the final qualified-view threshold."
   };
 }
 
@@ -73,8 +120,8 @@ export function evaluateViewCount(input = {}) {
     status: "ready_for_counting",
     counted: false,
     duplicateKey: validation.duplicateKey,
-    countDecision: "pending_storage",
-    reason: "The event passed structural rules. A durable event store must confirm uniqueness before the view is counted."
+    countDecision: "pending_qualified_view_rule",
+    reason: "The event passed structural rules. A qualified-view threshold and durable uniqueness check must pass before counting."
   };
 }
 
