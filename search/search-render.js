@@ -29,11 +29,9 @@ document.addEventListener("xkiss:search-ready", () => {
     const text = String(value ?? "");
     const cleanQuery = String(query ?? "").trim();
 
-    if (!cleanQuery) {
-      return escapeHtml(text);
-    }
+    if (!cleanQuery) return escapeHtml(text);
 
-    const escapedQuery = cleanQuery.replace(/[.*+?^\$\{\}()|[\]\\]/g, "\\$&");
+    const escapedQuery = cleanQuery.replace(/[.*+?^$\{\}()|[\]\\]/g, "\\$&");
     const matcher = new RegExp("(" + escapedQuery + ")", "ig");
     const parts = text.split(matcher);
 
@@ -55,7 +53,9 @@ document.addEventListener("xkiss:search-ready", () => {
 
     categoryList.innerHTML = API.getCategories().map(category => {
       const selected = category.toLowerCase() === active.toLowerCase() ? " active" : "";
-      return "<button class=\"category-btn" + selected + "\" type=\"button\" data-category=\"" + escapeHtml(category) + "\">" + escapeHtml(category) + "</button>";
+      const pressed = selected ? "true" : "false";
+
+      return "<button class=\"category-btn" + selected + "\" type=\"button\" aria-pressed=\"" + pressed + "\" data-category=\"" + escapeHtml(category) + "\">" + escapeHtml(category) + "</button>";
     }).join("");
 
     categoryList.querySelectorAll("[data-category]").forEach(button => {
@@ -134,6 +134,14 @@ document.addEventListener("xkiss:search-ready", () => {
     }
   }
 
+  function clearSearch() {
+    API.clear();
+    syncInput();
+    renderCategories();
+    renderResults();
+    input.focus();
+  }
+
   input.addEventListener("input", () => {
     API.setQuery(input.value);
     renderResults();
@@ -141,24 +149,12 @@ document.addEventListener("xkiss:search-ready", () => {
 
   input.addEventListener("keydown", event => {
     if (event.key === "Escape") {
-      API.clear();
-      syncInput();
-      renderCategories();
-      renderResults();
-      input.focus();
+      clearSearch();
     }
   });
 
-  clearButton.addEventListener("click", () => {
-    API.clear();
-    syncInput();
-    renderCategories();
-    renderResults();
-    input.focus();
-  });
-
+  clearButton.addEventListener("click", clearSearch);
   shareButton.addEventListener("click", shareSearch);
-
   document.addEventListener("xkiss:search-state-changed", refreshFromUrl);
 
   syncInput();
