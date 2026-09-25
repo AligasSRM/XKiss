@@ -1,25 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>XKiss Video Player</title>
 
-  <link rel="stylesheet" href="css/player.css">
+  <link
+    rel="stylesheet"
+    href="css/player.css"
+  >
+
 </head>
 
 <body>
 
   <main>
 
-    <h1 id="videoTitle">XKiss Test Video</h1>
+    <!-- =====================================================
+         Video Information
+         ===================================================== -->
+
+    <h1 id="videoTitle">
+      XKiss Test Video
+    </h1>
 
     <div class="video-meta">
 
-      <span id="videoDuration">00:04</span>
+      <span id="videoDuration">
+        00:04
+      </span>
 
-      <span>•</span>
+      <span>
+        •
+      </span>
 
       <span id="creatorName">
         XKiss Creator
@@ -27,30 +47,43 @@
 
     </div>
 
-    <div id="videoTags" class="video-tags">
+    <div
+      id="videoTags"
+      class="video-tags"
+    >
 
       <span>#XKiss</span>
+
       <span>#Video</span>
+
       <span>#Test</span>
 
     </div>
 
-    <div id="videoQuality" class="video-quality">
+    <div
+      id="videoQuality"
+      class="video-quality"
+    >
 
       Quality:
+
       <span id="currentQuality">
         720p
       </span>
 
     </div>
 
+
     <!-- =====================================================
-         XKiss New Video Player
+         XKiss New Independent Video Player
          ===================================================== -->
 
     <section class="player-section">
 
-      <div id="player" class="xkiss-player">
+      <div
+        id="player"
+        class="xkiss-player"
+      >
 
         <video
           id="video"
@@ -59,7 +92,8 @@
         >
 
           <source
-            src="https://aligassrm.github.io/XKiss/20260923_234200-3.mp4"
+            id="videoSource"
+            src=""
             type="video/mp4"
           >
 
@@ -67,7 +101,12 @@
 
         </video>
 
-        <!-- XKiss Logo -->
+
+        <!-- =================================================
+             XKiss Logo
+             X = Rainbow
+             kiss = White
+             ================================================= -->
 
         <div
           id="xkissLogo"
@@ -75,13 +114,280 @@
           aria-label="XKiss"
         >
 
-          <span class="rainbow-x">X</span><span class="white-kiss">kiss</span>
+          <span class="rainbow-x">
+            X
+          </span>
+
+          <span class="white-kiss">
+            kiss
+          </span>
 
         </div>
+
+
+        <!-- =================================================
+             Custom Player Controls
+             ================================================= -->
+
+        <div
+          id="playerControls"
+          class="player-controls"
+        >
+
+          <!-- Play / Pause -->
+
+          <button
+            id="playPauseBtn"
+            type="button"
+            aria-label="Play or Pause"
+          >
+            ▶
+          </button>
+
+
+          <!-- Progress -->
+
+          <input
+            id="progress"
+            type="range"
+            min="0"
+            max="100"
+            value="0"
+            step="0.1"
+            aria-label="Video progress"
+          >
+
+
+          <!-- Current Time -->
+
+          <span id="currentTime">
+            00:00
+          </span>
+
+          <span>
+            /
+          </span>
+
+          <span id="duration">
+            00:00
+          </span>
+
+
+          <!-- Volume -->
+
+          <button
+            id="muteBtn"
+            type="button"
+            aria-label="Mute"
+          >
+            🔊
+          </button>
+
+          <input
+            id="volume"
+            type="range"
+            min="0"
+            max="1"
+            value="1"
+            step="0.01"
+            aria-label="Volume"
+          >
+
+
+          <!-- Quality -->
+
+          <button
+            id="qualityBtn"
+            type="button"
+            aria-label="Video quality"
+          >
+            720p
+          </button>
+
+
+          <!-- Speed -->
+
+          <button
+            id="speedBtn"
+            type="button"
+            aria-label="Playback speed"
+          >
+            1x
+          </button>
+
+
+          <!-- Settings -->
+
+          <button
+            id="settingsBtn"
+            type="button"
+            aria-label="Settings"
+          >
+            ⚙️
+          </button>
+
+
+          <!-- Picture in Picture -->
+
+          <button
+            id="pipBtn"
+            type="button"
+            aria-label="Picture in Picture"
+          >
+            PiP
+          </button>
+
+
+          <!-- Fullscreen -->
+
+          <button
+            id="fullscreenBtn"
+            type="button"
+            aria-label="Fullscreen"
+          >
+            ⛶
+          </button>
+
+        </div>
+
+
+        <!-- =================================================
+             Quality Menu
+             ================================================= -->
+
+        <div
+          id="qualityMenu"
+          class="player-menu quality-menu"
+        >
+
+          <button
+            type="button"
+            data-quality="340p"
+          >
+            340p
+          </button>
+
+          <button
+            type="button"
+            data-quality="460p"
+          >
+            460p
+          </button>
+
+          <button
+            type="button"
+            data-quality="720p"
+          >
+            720p
+          </button>
+
+          <button
+            type="button"
+            data-quality="1080p"
+          >
+            1080p
+          </button>
+
+        </div>
+
+
+        <!-- =================================================
+             Speed Menu
+             ================================================= -->
+
+        <div
+          id="speedMenu"
+          class="player-menu speed-menu"
+        >
+
+          <button
+            type="button"
+            data-speed="0.5"
+          >
+            0.5x
+          </button>
+
+          <button
+            type="button"
+            data-speed="0.75"
+          >
+            0.75x
+          </button>
+
+          <button
+            type="button"
+            data-speed="1"
+          >
+            1x
+          </button>
+
+          <button
+            type="button"
+            data-speed="1.25"
+          >
+            1.25x
+          </button>
+
+          <button
+            type="button"
+            data-speed="1.5"
+          >
+            1.5x
+          </button>
+
+          <button
+            type="button"
+            data-speed="2"
+          >
+            2x
+          </button>
+
+        </div>
+
+
+        <!-- =================================================
+             Settings Menu
+             ================================================= -->
+
+        <div
+          id="settingsMenu"
+          class="player-menu settings-menu"
+        >
+
+          <button
+            id="ccBtn"
+            type="button"
+          >
+            CC
+          </button>
+
+          <button
+            id="resetSpeedBtn"
+            type="button"
+          >
+            Reset Speed
+          </button>
+
+        </div>
+
+
+        <!-- =================================================
+             Large Center Play Button
+             ================================================= -->
+
+        <button
+          id="centerPlayBtn"
+          class="center-play-button"
+          type="button"
+          aria-label="Play video"
+        >
+          ▶
+        </button>
 
       </div>
 
     </section>
+
 
     <!-- =====================================================
          Video Actions
@@ -93,8 +399,13 @@
     >
 
       <button type="button">
+
         Views
-        <span id="views">0</span>
+
+        <span id="views">
+          0
+        </span>
+
       </button>
 
       <button type="button">
@@ -127,13 +438,16 @@
 
     </section>
 
+
     <!-- =====================================================
          Related Videos
          ===================================================== -->
 
     <section class="content-section">
 
-      <h2>Related Videos</h2>
+      <h2>
+        Related Videos
+      </h2>
 
       <p>
         Related videos will appear here.
@@ -141,13 +455,16 @@
 
     </section>
 
+
     <!-- =====================================================
          From Creator
          ===================================================== -->
 
     <section class="content-section">
 
-      <h2>From Creator</h2>
+      <h2>
+        From Creator
+      </h2>
 
       <p>
         More videos from this creator will appear here.
@@ -155,13 +472,16 @@
 
     </section>
 
+
     <!-- =====================================================
          Creator Information
          ===================================================== -->
 
     <section class="content-section">
 
-      <h2>Creator Information</h2>
+      <h2>
+        Creator Information
+      </h2>
 
       <p>
         Creator information will appear here.
@@ -169,13 +489,16 @@
 
     </section>
 
+
     <!-- =====================================================
          Comments
          ===================================================== -->
 
     <section class="content-section">
 
-      <h2>Comments</h2>
+      <h2>
+        Comments
+      </h2>
 
       <p>
         Comments will appear here.
@@ -183,13 +506,16 @@
 
     </section>
 
+
     <!-- =====================================================
          About / Video Information
          ===================================================== -->
 
     <section class="content-section">
 
-      <h2>About / Video Information</h2>
+      <h2>
+        About / Video Information
+      </h2>
 
       <p>
         Video information will appear here.
@@ -199,6 +525,15 @@
 
   </main>
 
+
+  <!-- =======================================================
+       XKiss Video Data
+       Must load BEFORE player.js
+       ======================================================= -->
+
+  <script src="js/video-data.js"></script>
+
+
   <!-- =======================================================
        XKiss Player JavaScript
        ======================================================= -->
@@ -206,4 +541,5 @@
   <script src="js/player.js"></script>
 
 </body>
-</html>
+
+          </html>
