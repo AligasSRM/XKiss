@@ -1,0 +1,111 @@
+document.addEventListener("xkiss:search-ready", () => {
+  "use strict";
+
+  const API = window.XKissSearch;
+  const input = document.getElementById("search-input");
+  const categoryList = document.getElementById("category-list");
+  const resultsGrid = document.getElementById("results-grid");
+  const resultCount = document.getElementById("result-count");
+  const emptyState = document.getElementById("empty-state");
+  const clearButton = document.getElementById("clear-search");
+
+  if (!API || !input || !categoryList || !resultsGrid || !resultCount || !emptyState || !clearButton) {
+    console.error("XKiss Search: UI could not initialize.");
+    return;
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function getInitial(value) {
+    const text = String(value || "X").trim();
+    return text ? text.charAt(0).toUpperCase() : "X";
+  }
+
+  function renderCategories() {
+    const active = API.getState().category;
+
+    categoryList.innerHTML = API.getCategories().map(category => {
+      const selected = category === active ? " active" : "";
+
+      return `
+        <button class="category-btn${selected}" type="button" data-category="${escapeHtml(category)}">
+          ${escapeHtml(category)}
+        </button>
+      `;
+    }).join("");
+
+    categoryList.querySelectorAll("[data-category]").forEach(button => {
+      button.addEventListener("click", () => {
+        API.setCategory(button.dataset.category);
+        renderCategories();
+        renderResults();
+      });
+    });
+  }
+
+  function renderResults() {
+    const { results } = API.getState();
+
+    resultsGrid.innerHTML = results.map(video => {
+      const quality =
+        video.quality?.default ||
+        (video.sources?.["1080p"] ? "1080p" :
+        video.sources?.["720p"] ? "720p" :
+        video.sources?.["460p"] ? "460p" :
+        video.sources?.["340p"] ? "340p" : "—");
+
+      const views = Number(video.statistics?.views ?? video.views ?? 0);
+
+      return `
+        <article class="result-card">
+          <div class="result-thumb">
+            <div class="thumb-brand">
+              <span class="thumb-x">X</span><span class="thumb-kiss">kiss</span>
+            </div>
+            <span class="quality">${escapeHtml(quality)}</span>
+          </div>
+          <div class="result-info">
+            <h3>${escapeHtml(video.title)}</h3>
+            <div class="creator">
+              <span class="avatar">${getInitial(video.creator)}</span>
+              <span>${escapeHtml(video.creator || "XKiss Creator")}</span>
+            </div>
+            <p>${escapeHtml(video.duration || "—")} · ${views.toLocaleString()} views</p>
+            <a class="watch" href="player.html?id=${encodeURIComponent(video.id)}">Watch Now</a>
+          </div>
+        </article>
+      `;
+    }).join("");
+
+    resultCount.textContent =
+      `${results.length} ${results.length === 1 ? "video" : "videos"}`;
+
+    emptyState.hidden = results.length !== 0;
+  }
+
+  function syncInput() {
+    input.value = API.getState().query;
+  }
+
+  input.addEventListener("input", () => {
+    API.setQuery(input.value);
+    renderResults();
+  });
+
+  clearButton.addEventListener("click", () => {
+    API.clear();
+    syncInput();
+    renderCategories();
+    renderResults();
+  });
+
+  renderCategories();
+  renderResults();
+});
