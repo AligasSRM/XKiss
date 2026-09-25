@@ -925,35 +925,161 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =======================================================
-     FULLSCREEN
+     FULLSCREEN + LANDSCAPE
      ======================================================= */
+
+  async function lockLandscape() {
+
+    try {
+
+      if (
+        screen.orientation &&
+        typeof screen.orientation.lock === "function"
+      ) {
+
+        await screen.orientation.lock("landscape");
+
+      }
+
+    } catch (error) {
+
+      console.log(
+        "XKiss: Landscape orientation lock is not available on this device/browser.",
+        error
+      );
+
+    }
+
+  }
+
+
+  async function unlockOrientation() {
+
+    try {
+
+      if (
+        screen.orientation &&
+        typeof screen.orientation.unlock === "function"
+      ) {
+
+        screen.orientation.unlock();
+
+      }
+
+    } catch (error) {
+
+      console.log(
+        "XKiss: Orientation unlock is not available.",
+        error
+      );
+
+    }
+
+  }
+
+
+  async function enterFullscreen() {
+
+    if (!player) {
+      return;
+    }
+
+
+    try {
+
+      if (player.requestFullscreen) {
+
+        await player.requestFullscreen();
+
+      } else if (
+        player.webkitRequestFullscreen
+      ) {
+
+        player.webkitRequestFullscreen();
+
+      } else {
+
+        console.log(
+          "XKiss: Fullscreen is not supported by this browser."
+        );
+
+        return;
+
+      }
+
+
+      /*
+       * Important:
+       * Orientation lock normally works only after
+       * fullscreen has been successfully entered.
+       */
+
+      await lockLandscape();
+
+    } catch (error) {
+
+      console.error(
+        "XKiss fullscreen error:",
+        error
+      );
+
+    }
+
+  }
+
+
+  async function exitFullscreen() {
+
+    try {
+
+      if (document.exitFullscreen) {
+
+        await document.exitFullscreen();
+
+      } else if (
+        document.webkitExitFullscreen
+      ) {
+
+        document.webkitExitFullscreen();
+
+      }
+
+    } catch (error) {
+
+      console.error(
+        "XKiss fullscreen exit error:",
+        error
+      );
+
+    }
+
+
+    await unlockOrientation();
+
+  }
+
 
   if (fullscreenBtn) {
 
     fullscreenBtn.addEventListener(
       "click",
-      async () => {
+      async (event) => {
 
-        try {
+        event.stopPropagation();
 
-          if (
-            document.fullscreenElement
-          ) {
 
-            await document.exitFullscreen();
+        const isFullscreen =
+          document.fullscreenElement ||
+          document.webkitFullscreenElement;
 
-          } else if (player) {
 
-            await player.requestFullscreen();
+        if (isFullscreen) {
 
-          }
+          await exitFullscreen();
 
-        } catch (error) {
+        } else {
 
-          console.error(
-            "XKiss fullscreen error:",
-            error
-          );
+          await enterFullscreen();
 
         }
 
@@ -961,6 +1087,38 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
   }
+
+
+  /* =======================================================
+     FULLSCREEN STATE CHANGE
+     ======================================================= */
+
+  function handleFullscreenChange() {
+
+    const isFullscreen =
+      document.fullscreenElement ||
+      document.webkitFullscreenElement;
+
+
+    if (!isFullscreen) {
+
+      unlockOrientation();
+
+    }
+
+  }
+
+
+  document.addEventListener(
+    "fullscreenchange",
+    handleFullscreenChange
+  );
+
+
+  document.addEventListener(
+    "webkitfullscreenchange",
+    handleFullscreenChange
+  );
 
 
   /* =======================================================
