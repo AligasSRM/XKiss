@@ -1,58 +1,16 @@
-/* =========================================================
-   XKiss Video Player
-   Connected to XKISS_VIDEOS V2
-
-   Quality:
-   340p / 460p / 720p / 1080p
-
-   Fullscreen:
-   - Fullscreen player container
-   - Request landscape on mobile when supported
-   - Restore normal orientation after exit
-
-   PiP:
-   - Enter PiP
-   - Exit PiP with the same button
-   - Keep PiP independent from fullscreen logic
-
-   Data:
-   - Reads video information from video-data.js
-   - Supports XKiss V2 video data structure
-   ========================================================= */
-
 document.addEventListener("DOMContentLoaded", () => {
-
-  /* =======================================================
-     ELEMENTS
-     ======================================================= */
-
   const video = document.getElementById("video");
   const videoSource = document.getElementById("videoSource");
   const player = document.getElementById("player");
 
-  const playPauseBtn = document.getElementById("playPauseBtn");
-  const centerPlayBtn = document.getElementById("centerPlayBtn");
-
-  const progress = document.getElementById("progress");
-
-  const currentTimeEl = document.getElementById("currentTime");
-  const durationEl = document.getElementById("duration");
-
-  const muteBtn = document.getElementById("muteBtn");
-  const volume = document.getElementById("volume");
-
   const qualityBtn = document.getElementById("qualityBtn");
   const qualityMenu = document.getElementById("qualityMenu");
-
   const speedBtn = document.getElementById("speedBtn");
   const speedMenu = document.getElementById("speedMenu");
-
   const settingsBtn = document.getElementById("settingsBtn");
   const settingsMenu = document.getElementById("settingsMenu");
-
   const pipBtn = document.getElementById("pipBtn");
   const fullscreenBtn = document.getElementById("fullscreenBtn");
-
   const ccBtn = document.getElementById("ccBtn");
   const resetSpeedBtn = document.getElementById("resetSpeedBtn");
 
@@ -63,1591 +21,353 @@ document.addEventListener("DOMContentLoaded", () => {
   const currentQuality = document.getElementById("currentQuality");
   const views = document.getElementById("views");
 
-
-  /* =======================================================
-     BASIC SAFETY
-     ======================================================= */
-
   if (!video || !player) {
-
-    console.error(
-      "XKiss: Required player elements not found."
-    );
-
+    console.error("XKiss: Player elements not found.");
     return;
   }
 
+  /* Load modular player controls */
+  const controlsScript = document.createElement("script");
+  controlsScript.src = "js/player/player-controls.js";
+  document.body.appendChild(controlsScript);
 
-  /* =======================================================
-     VIDEO ID
-     ======================================================= */
+  /* Video ID */
+  const params = new URLSearchParams(location.search);
+  const requestedId = params.get("id") || "video-001";
 
-  const params =
-    new URLSearchParams(window.location.search);
-
-  const requestedVideoId =
-    params.get("id") || "video-001";
-
-
-  /* =======================================================
-     VIDEO DATA
-     ======================================================= */
-
+  /* Video data */
   let videoData = null;
 
-  if (
-    typeof XKISS_VIDEOS !== "undefined" &&
-    typeof getXKissVideo === "function"
-  ) {
-
+  if (typeof getXKissVideo === "function") {
+    videoData = getXKissVideo(requestedId) || getXKissVideo("video-001");
+  } else if (typeof XKISS_VIDEOS !== "undefined") {
     videoData =
-      getXKissVideo(requestedVideoId);
-
-  } else if (
-    typeof XKISS_VIDEOS !== "undefined" &&
-    XKISS_VIDEOS[requestedVideoId]
-  ) {
-
-    videoData =
-      XKISS_VIDEOS[requestedVideoId];
-
+      XKISS_VIDEOS[requestedId] ||
+      XKISS_VIDEOS["video-001"];
   }
-
-
-  /* =======================================================
-     FALLBACK TO TEST VIDEO
-     ======================================================= */
-
-  if (
-    !videoData &&
-    typeof XKISS_VIDEOS !== "undefined"
-  ) {
-
-    if (typeof getXKissVideo === "function") {
-
-      videoData =
-        getXKissVideo("video-001");
-
-    } else if (XKISS_VIDEOS["video-001"]) {
-
-      videoData =
-        XKISS_VIDEOS["video-001"];
-
-    }
-
-  }
-
-
-  /* =======================================================
-     SAFETY CHECK
-     ======================================================= */
 
   if (!videoData) {
-
-    console.error(
-      "XKiss: Video data not found."
-    );
-
-    if (videoTitle) {
-
-      videoTitle.textContent =
-        "Video Not Found";
-
-    }
-
+    if (videoTitle) videoTitle.textContent = "Video Not Found";
+    console.error("XKiss: Video data not found.");
     return;
   }
 
-
-  /* =======================================================
-     VIDEO INFORMATION
-     ======================================================= */
-
+  /* Basic information */
   if (videoTitle) {
-
-    videoTitle.textContent =
-      videoData.title || "XKiss Video";
-
+    videoTitle.textContent = videoData.title || "XKiss Video";
   }
-
 
   if (videoDuration) {
-
-    videoDuration.textContent =
-      videoData.duration || "00:00";
-
+    videoDuration.textContent = videoData.duration || "00:00";
   }
-
 
   if (creatorName) {
-
     creatorName.textContent =
       videoData.creator || "XKiss Creator";
-
   }
-
-
-  /* =======================================================
-     VIEWS
-     Supports V2:
-     statistics.views
-
-     Also supports old:
-     views
-     ======================================================= */
-
-  const videoViews =
-    videoData.statistics &&
-    Number.isFinite(
-      Number(videoData.statistics.views)
-    )
-      ? Number(videoData.statistics.views)
-      : Number(videoData.views || 0);
 
   if (views) {
+    const count =
+      Number.isFinite(Number(videoData.statistics?.views))
+        ? Number(videoData.statistics.views)
+        : Number(videoData.views || 0);
 
-    views.textContent =
-      videoViews;
-
+    views.textContent = count;
   }
 
-
-  /* =======================================================
-     TAGS
-     ======================================================= */
-
+  /* Tags */
   if (videoTags) {
-
     videoTags.innerHTML = "";
 
-    if (
-      Array.isArray(videoData.tags) &&
-      videoData.tags.length > 0
-    ) {
-
+    if (Array.isArray(videoData.tags)) {
       videoData.tags.forEach(tag => {
-
-        const tagElement =
-          document.createElement("span");
-
-        const tagText =
-          String(tag);
-
-        tagElement.textContent =
-          tagText.startsWith("#")
-            ? tagText
-            : "#" + tagText;
-
-        videoTags.appendChild(
-          tagElement
-        );
-
+        const el = document.createElement("span");
+        const text = String(tag);
+        el.textContent = text.startsWith("#") ? text : "#" + text;
+        videoTags.appendChild(el);
       });
-
     }
-
   }
 
+  /* Quality */
+  const QUALITY = ["340p", "460p", "720p", "1080p"];
 
-  /* =======================================================
-     QUALITY SYSTEM
-     ======================================================= */
-
-  const QUALITY_OPTIONS = [
-    "340p",
-    "460p",
-    "720p",
-    "1080p"
-  ];
-
-
-  /* =======================================================
-     DEFAULT QUALITY
-     V2:
-     videoData.quality.default
-     ======================================================= */
-
-  let currentQualityValue = "720p";
-
-  if (
-    videoData.quality &&
-    QUALITY_OPTIONS.includes(
-      videoData.quality.default
-    )
-  ) {
-
-    currentQualityValue =
-      videoData.quality.default;
-
-  }
-
-
-  /* =======================================================
-     QUALITY SOURCES
-     ======================================================= */
-
-  const QUALITY_SOURCES = {
-
-    "340p":
-      videoData.sources?.["340p"] || "",
-
-    "460p":
-      videoData.sources?.["460p"] || "",
-
-    "720p":
-      videoData.sources?.["720p"] || "",
-
-    "1080p":
-      videoData.sources?.["1080p"] || ""
-
+  const sources = {
+    "340p": videoData.sources?.["340p"] || "",
+    "460p": videoData.sources?.["460p"] || "",
+    "720p": videoData.sources?.["720p"] || "",
+    "1080p": videoData.sources?.["1080p"] || ""
   };
 
+  let currentQualityValue =
+    QUALITY.includes(videoData.quality?.default)
+      ? videoData.quality.default
+      : "720p";
 
-  /* =======================================================
-     FIND FIRST AVAILABLE QUALITY
-     ======================================================= */
-
-  if (!QUALITY_SOURCES[currentQualityValue]) {
-
-    const firstAvailableQuality =
-      QUALITY_OPTIONS.find(
-        quality =>
-          Boolean(
-            QUALITY_SOURCES[quality]
-          )
-      );
-
-    if (firstAvailableQuality) {
-
-      currentQualityValue =
-        firstAvailableQuality;
-
-    }
-
+  if (!sources[currentQualityValue]) {
+    const first = QUALITY.find(q => sources[q]);
+    if (first) currentQualityValue = first;
   }
 
+  function loadQuality(quality, autoPlay = false) {
+    if (!QUALITY.includes(quality)) return;
 
-  /* =======================================================
-     LOAD VIDEO SOURCE
-     ======================================================= */
-
-  function loadVideoSource(
-    quality,
-    autoPlay = false
-  ) {
-
-    if (
-      !QUALITY_OPTIONS.includes(
-        quality
-      )
-    ) {
-
-      return;
-    }
-
-
-    const source =
-      QUALITY_SOURCES[quality];
-
+    const source = sources[quality];
 
     if (!source) {
-
-      alert(
-        quality +
-        " is not configured yet."
-      );
-
+      alert(quality + " is not configured yet.");
       return;
     }
 
+    const playing = autoPlay || !video.paused;
+    const position = video.currentTime || 0;
 
-    const wasPlaying =
-      autoPlay || !video.paused;
+    currentQualityValue = quality;
 
+    if (qualityBtn) qualityBtn.textContent = quality;
+    if (currentQuality) currentQuality.textContent = quality;
+    if (!videoSource) return;
 
-    const currentPosition =
-      video.currentTime || 0;
-
-
-    currentQualityValue =
-      quality;
-
-
-    if (currentQuality) {
-
-      currentQuality.textContent =
-        quality;
-
-    }
-
-
-    if (qualityBtn) {
-
-      qualityBtn.textContent =
-        quality;
-
-    }
-
-
-    if (!videoSource) {
-
-      return;
-    }
-
-
-    videoSource.src =
-      source;
-
-
+    videoSource.src = source;
     video.load();
 
+    video.addEventListener("loadedmetadata", function restore() {
+      video.removeEventListener("loadedmetadata", restore);
 
-    video.addEventListener(
-      "loadedmetadata",
-      function restorePosition() {
-
-        video.removeEventListener(
-          "loadedmetadata",
-          restorePosition
-        );
-
-
-        if (
-          Number.isFinite(
-            currentPosition
-          ) &&
-          currentPosition <
-            video.duration
-        ) {
-
-          video.currentTime =
-            currentPosition;
-
-        }
-
-
-        if (wasPlaying) {
-
-          video.play().catch(
-            () => {}
-          );
-
-        }
-
+      if (
+        Number.isFinite(position) &&
+        position < video.duration
+      ) {
+        video.currentTime = position;
       }
-    );
 
+      if (playing) video.play().catch(() => {});
+    });
   }
 
+  loadQuality(currentQualityValue);
 
-  /* =======================================================
-     INITIAL VIDEO
-     ======================================================= */
-
-  loadVideoSource(
-    currentQualityValue,
-    false
-  );
-
-
-  /* =======================================================
-     TIME FORMAT
-     ======================================================= */
-
-  function formatTime(seconds) {
-
-    if (
-      !Number.isFinite(seconds)
-    ) {
-
-      return "00:00";
-
-    }
-
-
-    const totalSeconds =
-      Math.floor(seconds);
-
-
-    const minutes =
-      Math.floor(
-        totalSeconds / 60
-      );
-
-
-    const secs =
-      totalSeconds % 60;
-
-
-    return (
-      String(minutes).padStart(
-        2,
-        "0"
-      ) +
-      ":" +
-      String(secs).padStart(
-        2,
-        "0"
-      )
-    );
-
+  /* Quality menu */
+  if (qualityBtn && qualityMenu) {
+    qualityBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      qualityMenu.classList.toggle("show");
+      speedMenu?.classList.remove("show");
+      settingsMenu?.classList.remove("show");
+    });
   }
 
+  qualityMenu?.querySelectorAll("[data-quality]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      loadQuality(btn.dataset.quality, !video.paused);
+      qualityMenu.classList.remove("show");
+    });
+  });
 
-  /* =======================================================
-     PLAY / PAUSE
-     ======================================================= */
+  /* Speed */
+  let currentSpeed =
+    Number.isFinite(Number(videoData.player?.defaultSpeed))
+      ? Number(videoData.player.defaultSpeed)
+      : 1;
 
-  function togglePlay() {
+  const speeds =
+    Array.isArray(videoData.player?.availableSpeeds)
+      ? videoData.player.availableSpeeds.map(Number).filter(Number.isFinite)
+      : [0.5, 0.75, 1, 1.25, 1.5, 2];
 
-    if (video.paused) {
-
-      video.play().catch(
-        () => {}
-      );
-
-    } else {
-
-      video.pause();
-
-    }
-
+  if (speedBtn && speedMenu) {
+    speedBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      speedMenu.classList.toggle("show");
+      qualityMenu?.classList.remove("show");
+      settingsMenu?.classList.remove("show");
+    });
   }
 
-
-  if (playPauseBtn) {
-
-    playPauseBtn.addEventListener(
-      "click",
-      togglePlay
-    );
-
-  }
-
-
-  if (centerPlayBtn) {
-
-    centerPlayBtn.addEventListener(
-      "click",
-      togglePlay
-    );
-
-  }
-
-
-  /* =======================================================
-     PLAY EVENT
-     ======================================================= */
-
-  video.addEventListener(
-    "play",
-    () => {
-
-      if (playPauseBtn) {
-
-        playPauseBtn.textContent =
-          "❚❚";
-
-      }
-
-
-      if (centerPlayBtn) {
-
-        centerPlayBtn.style.display =
-          "none";
-
-      }
-
-    }
-  );
-
-
-  /* =======================================================
-     PAUSE EVENT
-     ======================================================= */
-
-  video.addEventListener(
-    "pause",
-    () => {
-
-      if (playPauseBtn) {
-
-        playPauseBtn.textContent =
-          "▶";
-
-      }
-
-
-      if (centerPlayBtn) {
-
-        centerPlayBtn.style.display =
-          "flex";
-
-      }
-
-    }
-  );
-
-
-  /* =======================================================
-     ENDED
-     ======================================================= */
-
-  video.addEventListener(
-    "ended",
-    () => {
-
-      if (playPauseBtn) {
-
-        playPauseBtn.textContent =
-          "▶";
-
-      }
-
-
-      if (centerPlayBtn) {
-
-        centerPlayBtn.style.display =
-          "flex";
-
-      }
-
-    }
-  );
-
-
-  /* =======================================================
-     DURATION
-     ======================================================= */
-
-  video.addEventListener(
-    "loadedmetadata",
-    () => {
-
-      if (durationEl) {
-
-        durationEl.textContent =
-          formatTime(
-            video.duration
-          );
-
-      }
-
-    }
-  );
-
-
-  /* =======================================================
-     PROGRESS UPDATE
-     ======================================================= */
-
-  video.addEventListener(
-    "timeupdate",
-    () => {
-
-      if (!video.duration) {
-
-        return;
-
-      }
-
-
-      const percentage =
-        (
-          video.currentTime /
-          video.duration
-        ) * 100;
-
-
-      if (progress) {
-
-        progress.value =
-          percentage;
-
-      }
-
-
-      if (currentTimeEl) {
-
-        currentTimeEl.textContent =
-          formatTime(
-            video.currentTime
-          );
-
-      }
-
-
-      if (durationEl) {
-
-        durationEl.textContent =
-          formatTime(
-            video.duration
-          );
-
-      }
-
-    }
-  );
-
-
-  /* =======================================================
-     PROGRESS SEEK
-     ======================================================= */
-
-  if (progress) {
-
-    progress.addEventListener(
-      "input",
-      () => {
-
-        if (!video.duration) {
-
-          return;
-
-        }
-
-
-        video.currentTime =
-          (
-            Number(
-              progress.value
-            ) / 100
-          ) *
-          video.duration;
-
-      }
-    );
-
-  }
-
-
-  /* =======================================================
-     VOLUME
-     ======================================================= */
-
-  if (volume) {
-
-    volume.addEventListener(
-      "input",
-      () => {
-
-        video.volume =
-          Number(
-            volume.value
-          );
-
-
-        video.muted =
-          video.volume === 0;
-
-
-        updateMuteButton();
-
-      }
-    );
-
-  }
-
-
-  /* =======================================================
-     MUTE
-     ======================================================= */
-
-  function updateMuteButton() {
-
-    if (!muteBtn) {
-
+  speedMenu?.querySelectorAll("[data-speed]").forEach(btn => {
+    const speed = Number(btn.dataset.speed);
+
+    if (!speeds.includes(speed)) {
+      btn.style.display = "none";
       return;
-
     }
 
+    btn.addEventListener("click", () => {
+      if (!Number.isFinite(speed)) return;
 
-    if (
-      video.muted ||
-      video.volume === 0
-    ) {
+      currentSpeed = speed;
+      video.playbackRate = speed;
 
-      muteBtn.textContent =
-        "🔇";
+      if (speedBtn) speedBtn.textContent = speed + "x";
+      speedMenu.classList.remove("show");
+    });
+  });
 
-    } else {
-
-      muteBtn.textContent =
-        "🔊";
-
-    }
-
+  /* Settings */
+  if (settingsBtn && settingsMenu) {
+    settingsBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      settingsMenu.classList.toggle("show");
+      qualityMenu?.classList.remove("show");
+      speedMenu?.classList.remove("show");
+    });
   }
 
-
-  if (muteBtn) {
-
-    muteBtn.addEventListener(
-      "click",
-      () => {
-
-        video.muted =
-          !video.muted;
-
-        updateMuteButton();
-
-      }
+  /* CC */
+  ccBtn?.addEventListener("click", () => {
+    alert(
+      videoData.captions?.available
+        ? "Caption tracks are available for future integration."
+        : "CC is ready for future subtitle integration."
     );
-
-  }
-
-
-  /* =======================================================
-     QUALITY MENU
-     ======================================================= */
-
-  if (
-    qualityBtn &&
-    qualityMenu
-  ) {
-
-    qualityBtn.addEventListener(
-      "click",
-      event => {
-
-        event.stopPropagation();
-
-
-        qualityMenu.classList.toggle(
-          "show"
-        );
-
-
-        if (speedMenu) {
-
-          speedMenu.classList.remove(
-            "show"
-          );
-
-        }
-
-
-        if (settingsMenu) {
-
-          settingsMenu.classList.remove(
-            "show"
-          );
-
-        }
-
-      }
-    );
-
-  }
-
-
-  if (qualityMenu) {
-
-    const qualityButtons =
-      qualityMenu.querySelectorAll(
-        "[data-quality]"
-      );
-
-
-    qualityButtons.forEach(
-      button => {
-
-        button.addEventListener(
-          "click",
-          () => {
-
-            const quality =
-              button.dataset.quality;
-
-
-            loadVideoSource(
-              quality,
-              !video.paused
-            );
-
-
-            qualityMenu.classList.remove(
-              "show"
-            );
-
-          }
-        );
-
-      }
-    );
-
-  }
-
-
-  /* =======================================================
-     SPEED SYSTEM
-     V2:
-     videoData.player.availableSpeeds
-     videoData.player.defaultSpeed
-     ======================================================= */
-
-  let currentSpeed = 1;
-
-
-  if (
-    videoData.player &&
-    Number.isFinite(
-      Number(
-        videoData.player.defaultSpeed
-      )
-    )
-  ) {
-
-    currentSpeed =
-      Number(
-        videoData.player.defaultSpeed
-      );
-
-  }
-
-
-  const AVAILABLE_SPEEDS =
-
-    videoData.player &&
-    Array.isArray(
-      videoData.player.availableSpeeds
-    )
-
-      ? videoData.player.availableSpeeds
-          .map(Number)
-          .filter(
-            speed =>
-              Number.isFinite(speed)
-          )
-
-      : [
-          0.5,
-          0.75,
-          1,
-          1.25,
-          1.5,
-          2
-        ];
-
-
-  /* =======================================================
-     SPEED
-     ======================================================= */
-
-  if (
-    speedBtn &&
-    speedMenu
-  ) {
-
-    speedBtn.addEventListener(
-      "click",
-      event => {
-
-        event.stopPropagation();
-
-
-        speedMenu.classList.toggle(
-          "show"
-        );
-
-
-        if (qualityMenu) {
-
-          qualityMenu.classList.remove(
-            "show"
-          );
-
-        }
-
-
-        if (settingsMenu) {
-
-          settingsMenu.classList.remove(
-            "show"
-          );
-
-        }
-
-      }
-    );
-
-  }
-
-
-  if (speedMenu) {
-
-    const speedButtons =
-      speedMenu.querySelectorAll(
-        "[data-speed]"
-      );
-
-
-    speedButtons.forEach(
-      button => {
-
-        const speed =
-          Number(
-            button.dataset.speed
-          );
-
-
-        if (
-          AVAILABLE_SPEEDS.length > 0 &&
-          !AVAILABLE_SPEEDS.includes(
-            speed
-          )
-        ) {
-
-          button.style.display =
-            "none";
-
-          return;
-
-        }
-
-
-        button.addEventListener(
-          "click",
-          () => {
-
-            if (
-              !Number.isFinite(
-                speed
-              )
-            ) {
-
-              return;
-
-            }
-
-
-            currentSpeed =
-              speed;
-
-
-            video.playbackRate =
-              speed;
-
-
-            if (speedBtn) {
-
-              speedBtn.textContent =
-                speed + "x";
-
-            }
-
-
-            speedMenu.classList.remove(
-              "show"
-            );
-
-          }
-        );
-
-      }
-    );
-
-  }
-
-
-  /* =======================================================
-     SETTINGS
-     ======================================================= */
-
-  if (
-    settingsBtn &&
-    settingsMenu
-  ) {
-
-    settingsBtn.addEventListener(
-      "click",
-      event => {
-
-        event.stopPropagation();
-
-
-        settingsMenu.classList.toggle(
-          "show"
-        );
-
-
-        if (qualityMenu) {
-
-          qualityMenu.classList.remove(
-            "show"
-          );
-
-        }
-
-
-        if (speedMenu) {
-
-          speedMenu.classList.remove(
-            "show"
-          );
-
-        }
-
-      }
-    );
-
-  }
-
-
-  /* =======================================================
-     CC
-     ======================================================= */
-
-  if (ccBtn) {
-
-    ccBtn.addEventListener(
-      "click",
-      () => {
-
-        const captionsAvailable =
-          Boolean(
-            videoData.captions &&
-            videoData.captions.available
-          );
-
-
-        if (captionsAvailable) {
-
-          alert(
-            "Caption tracks are available for future integration."
-          );
-
-        } else {
-
-          alert(
-            "CC is ready for future subtitle integration."
-          );
-
-        }
-
-      }
-    );
-
-  }
-
-
-  /* =======================================================
-     RESET SPEED
-     ======================================================= */
-
-  if (resetSpeedBtn) {
-
-    resetSpeedBtn.addEventListener(
-      "click",
-      () => {
-
-        currentSpeed = 1;
-
-        video.playbackRate =
-          1;
-
-
-        if (speedBtn) {
-
-          speedBtn.textContent =
-            "1x";
-
-        }
-
-
-        if (settingsMenu) {
-
-          settingsMenu.classList.remove(
-            "show"
-          );
-
-        }
-
-      }
-    );
-
-  }
-
-
-  /* =======================================================
-     PICTURE IN PICTURE
-     ======================================================= */
-
-  async function enterPiP() {
-
-    if (
-      !document.pictureInPictureEnabled ||
-      video.disablePictureInPicture
-    ) {
-
+  });
+
+  /* Reset speed */
+  resetSpeedBtn?.addEventListener("click", () => {
+    currentSpeed = 1;
+    video.playbackRate = 1;
+
+    if (speedBtn) speedBtn.textContent = "1x";
+    settingsMenu?.classList.remove("show");
+  });
+
+  /* PiP */
+  pipBtn?.addEventListener("click", async e => {
+    e.stopPropagation();
+
+    if (!document.pictureInPictureEnabled ||
+        video.disablePictureInPicture) {
       return;
-
     }
-
-
-    if (
-      document.pictureInPictureElement ===
-      video
-    ) {
-
-      return;
-
-    }
-
 
     try {
-
-      await video.requestPictureInPicture();
-
-    } catch (error) {
-
-      console.error(
-        "XKiss PiP enter error:",
-        error
-      );
-
-    }
-
-  }
-
-
-  async function exitPiP() {
-
-    if (
-      document.pictureInPictureElement
-    ) {
-
-      try {
-
+      if (document.pictureInPictureElement === video) {
         await document.exitPictureInPicture();
-
-      } catch (error) {
-
-        console.error(
-          "XKiss PiP exit error:",
-          error
-        );
-
+      } else {
+        await video.requestPictureInPicture();
       }
-
+    } catch (error) {
+      console.error("XKiss PiP error:", error);
     }
+  });
 
-  }
+  video.addEventListener("enterpictureinpicture", () => {
+    pipBtn?.classList.add("active");
+  });
 
+  video.addEventListener("leavepictureinpicture", () => {
+    pipBtn?.classList.remove("active");
+  });
 
-  if (pipBtn) {
-
-    pipBtn.addEventListener(
-      "click",
-      async event => {
-
-        event.stopPropagation();
-
-
-        if (
-          document.pictureInPictureElement ===
-          video
-        ) {
-
-          await exitPiP();
-
-        } else {
-
-          await enterPiP();
-
-        }
-
-      }
-    );
-
-  }
-
-
-  /* =======================================================
-     PiP STATE
-     ======================================================= */
-
-  video.addEventListener(
-    "enterpictureinpicture",
-    () => {
-
-      if (pipBtn) {
-
-        pipBtn.classList.add(
-          "active"
-        );
-
-      }
-
-    }
-  );
-
-
-  video.addEventListener(
-    "leavepictureinpicture",
-    () => {
-
-      if (pipBtn) {
-
-        pipBtn.classList.remove(
-          "active"
-        );
-
-      }
-
-    }
-  );
-
-
-  /* =======================================================
-     FULLSCREEN SUPPORT
-     ======================================================= */
-
+  /* Fullscreen */
   function isFullscreen() {
-
     return Boolean(
       document.fullscreenElement ||
       document.webkitFullscreenElement
     );
-
   }
-
-
-  /* =======================================================
-     LANDSCAPE LOCK
-     ======================================================= */
 
   async function lockLandscape() {
-
     try {
-
       if (
         screen.orientation &&
-        typeof screen.orientation.lock ===
-          "function"
+        typeof screen.orientation.lock === "function"
       ) {
-
-        await screen.orientation.lock(
-          "landscape"
-        );
-
-        return true;
-
+        await screen.orientation.lock("landscape");
       }
-
     } catch (error) {
-
-      console.log(
-        "XKiss: Landscape lock unavailable:",
-        error
-      );
-
+      console.log("XKiss: Landscape lock unavailable.");
     }
-
-    return false;
-
   }
-
-
-  /* =======================================================
-     ORIENTATION UNLOCK
-     ======================================================= */
 
   function unlockOrientation() {
-
     try {
-
       if (
         screen.orientation &&
-        typeof screen.orientation.unlock ===
-          "function"
+        typeof screen.orientation.unlock === "function"
       ) {
-
         screen.orientation.unlock();
-
       }
-
-    } catch (error) {
-
-      console.log(
-        "XKiss: Orientation unlock unavailable:",
-        error
-      );
-
-    }
-
+    } catch (error) {}
   }
-
-
-  /* =======================================================
-     ENTER FULLSCREEN
-     ======================================================= */
 
   async function enterFullscreen() {
-
-    if (!player) {
-
-      return;
-
-    }
-
-
     try {
-
       if (player.requestFullscreen) {
-
         await player.requestFullscreen();
-
-      } else if (
-        player.webkitRequestFullscreen
-      ) {
-
+      } else if (player.webkitRequestFullscreen) {
         player.webkitRequestFullscreen();
-
       } else {
-
-        console.log(
-          "XKiss: Fullscreen is not supported."
-        );
-
         return;
-
       }
-
 
       await lockLandscape();
-
     } catch (error) {
-
-      console.error(
-        "XKiss fullscreen enter error:",
-        error
-      );
-
+      console.error("XKiss fullscreen error:", error);
     }
-
   }
-
-
-  /* =======================================================
-     EXIT FULLSCREEN
-     ======================================================= */
 
   async function exitFullscreen() {
-
     try {
-
       if (document.exitFullscreen) {
-
         await document.exitFullscreen();
-
-      } else if (
-        document.webkitExitFullscreen
-      ) {
-
+      } else if (document.webkitExitFullscreen) {
         document.webkitExitFullscreen();
-
       }
-
     } catch (error) {
-
-      console.error(
-        "XKiss fullscreen exit error:",
-        error
-      );
-
+      console.error("XKiss fullscreen exit error:", error);
     }
-
 
     unlockOrientation();
-
   }
 
+  fullscreenBtn?.addEventListener("click", async e => {
+    e.stopPropagation();
 
-  /* =======================================================
-     FULLSCREEN BUTTON
-     ======================================================= */
-
-  if (fullscreenBtn) {
-
-    fullscreenBtn.addEventListener(
-      "click",
-      async event => {
-
-        event.stopPropagation();
-
-
-        if (isFullscreen()) {
-
-          await exitFullscreen();
-
-        } else {
-
-          await enterFullscreen();
-
-        }
-
-      }
-    );
-
-  }
-
-
-  /* =======================================================
-     FULLSCREEN STATE CHANGE
-     ======================================================= */
-
-  function handleFullscreenChange() {
-
-    const active =
-      isFullscreen();
-
-
-    if (!active) {
-
-      unlockOrientation();
-
+    if (isFullscreen()) {
+      await exitFullscreen();
+    } else {
+      await enterFullscreen();
     }
+  });
 
+  function fullscreenChanged() {
+    if (!isFullscreen()) unlockOrientation();
   }
-
 
   document.addEventListener(
     "fullscreenchange",
-    handleFullscreenChange
+    fullscreenChanged
   );
-
 
   document.addEventListener(
     "webkitfullscreenchange",
-    handleFullscreenChange
+    fullscreenChanged
   );
 
+  /* Close menus */
+  document.addEventListener("click", () => {
+    qualityMenu?.classList.remove("show");
+    speedMenu?.classList.remove("show");
+    settingsMenu?.classList.remove("show");
+  });
 
-  /* =======================================================
-     CLOSE MENUS OUTSIDE
-     ======================================================= */
+  [qualityMenu, speedMenu, settingsMenu].forEach(menu => {
+    menu?.addEventListener("click", e => e.stopPropagation());
+  });
 
-  document.addEventListener(
-    "click",
-    () => {
-
-      if (qualityMenu) {
-
-        qualityMenu.classList.remove(
-          "show"
-        );
-
-      }
-
-
-      if (speedMenu) {
-
-        speedMenu.classList.remove(
-          "show"
-        );
-
-      }
-
-
-      if (settingsMenu) {
-
-        settingsMenu.classList.remove(
-          "show"
-        );
-
-      }
-
-    }
-  );
-
-
-  /* =======================================================
-     KEEP MENU CLICKS OPEN
-     ======================================================= */
-
-  [
-    qualityMenu,
-    speedMenu,
-    settingsMenu
-  ].forEach(
-    menu => {
-
-      if (!menu) {
-
-        return;
-
-      }
-
-
-      menu.addEventListener(
-        "click",
-        event => {
-
-          event.stopPropagation();
-
-        }
-      );
-
-    }
-  );
-
-
-  /* =======================================================
-     INITIAL STATE
-     ======================================================= */
-
+  /* Initial state */
   video.volume = 1;
-
   video.muted = false;
+  video.playbackRate = currentSpeed;
 
-  video.playbackRate =
-    currentSpeed;
-
-
-  if (volume) {
-
-    volume.value =
-      "1";
-
-  }
-
-
-  if (qualityBtn) {
-
-    qualityBtn.textContent =
-      currentQualityValue;
-
-  }
-
-
-  if (currentQuality) {
-
-    currentQuality.textContent =
-      currentQualityValue;
-
-  }
-
-
-  if (speedBtn) {
-
-    speedBtn.textContent =
-      currentSpeed + "x";
-
-  }
-
-
-  updateMuteButton();
-
-
-  /* =======================================================
-     READY
-     ======================================================= */
+  if (qualityBtn) qualityBtn.textContent = currentQualityValue;
+  if (currentQuality) currentQuality.textContent = currentQualityValue;
+  if (speedBtn) speedBtn.textContent = currentSpeed + "x";
 
   console.log(
     "XKiss Player loaded:",
     videoData.id,
     videoData.title
   );
-
 });
