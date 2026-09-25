@@ -23,6 +23,7 @@ import { evaluateViewPipeline } from "./views-revenue/view-pipeline.js";
 import { evaluateViewCountDecision } from "./views-revenue/view-count-decision.js";
 import { isWalletLedgerReady, storeWalletEntry, getWalletEntry } from "./wallet/wallet-ledger-store.js";
 import { evaluateRevenueToWallet } from "./wallet/revenue-to-wallet.js";
+import { evaluatePendingSettlement } from "./wallet/wallet-settlement.js";
 import {
   VIEWS_REVENUE_RULES,
   validateViewEvent,
@@ -117,6 +118,25 @@ export default {
         ok: true,
         service: "XKiss View Qualification Pipeline",
         result: evaluateViewPipeline(body)
+      });
+    }
+
+    if (url.pathname === "/api/wallet/settlement-check" && request.method === "POST") {
+      let body;
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          message: "Invalid wallet settlement data."
+        }, 400);
+      }
+
+      return json({
+        ok: true,
+        service: "XKiss Wallet Settlement",
+        result: evaluatePendingSettlement(body)
       });
     }
 
