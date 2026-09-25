@@ -20,6 +20,7 @@ import {
   getViewEvent
 } from "./views-revenue/view-event-store.js";
 import { evaluateViewPipeline } from "./views-revenue/view-pipeline.js";
+import { evaluateViewCountDecision } from "./views-revenue/view-count-decision.js";
 import {
   VIEWS_REVENUE_RULES,
   validateViewEvent,
@@ -76,6 +77,25 @@ export default {
         message: isViewEventStoreReady(env)
           ? "Durable view event storage is connected."
           : "Durable view event storage is prepared but not connected yet."
+      });
+    }
+
+    if (url.pathname === "/api/views/event/count-decision" && request.method === "POST") {
+      let body;
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          message: "Invalid view count decision data."
+        }, 400);
+      }
+
+      return json({
+        ok: true,
+        service: "XKiss View Count Decision Engine",
+        result: evaluateViewCountDecision(env, body)
       });
     }
 
