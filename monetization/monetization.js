@@ -23,6 +23,36 @@
     }
   }
 
+  async function loadEligibilityRules() {
+    try {
+      const response = await fetch(API_BASE + "/api/monetization/eligibility/rules", {
+        headers: { "Accept": "application/json" }
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data.ok || !data.rules) {
+        throw new Error("Eligibility rules unavailable.");
+      }
+
+      const rules = data.rules;
+      document.getElementById("eligibility-age").textContent = rules.minimumAge + "+";
+      document.getElementById("eligibility-verification").textContent =
+        rules.verificationRequired ? "Required" : "Not required";
+      document.getElementById("eligibility-policy").textContent =
+        rules.policyAcceptanceRequired ? "Required" : "Not required";
+      document.getElementById("eligibility-status").textContent =
+        rules.monetizationEnabled ? "Active" : "Not active";
+      document.getElementById("eligibility-message").textContent =
+        rules.monetizationEnabled
+          ? "Eligibility checks are active."
+          : "Eligibility rules are prepared and waiting for monetization activation.";
+    } catch {
+      document.getElementById("eligibility-message").textContent =
+        "Creator eligibility rules could not be loaded.";
+      document.getElementById("eligibility-status").textContent = "Unavailable";
+    }
+  }
+
   async function loadMonetizationRules() {
     const message = document.getElementById("rules-message");
 
@@ -63,5 +93,6 @@
   window.addEventListener("DOMContentLoaded", () => {
     checkSystem();
     loadMonetizationRules();
+    loadEligibilityRules();
   });
 })();
