@@ -90,6 +90,16 @@
         </label>
       </div>
 
+      <div class="upload-progress" aria-live="polite">
+        <div class="progress-head">
+          <span id="progress-label">Upload not started</span>
+          <strong id="progress-value">0%</strong>
+        </div>
+        <div class="progress-track">
+          <div id="progress-bar" class="progress-bar" style="width:0%"></div>
+        </div>
+      </div>
+
       <div class="upload-actions">
         <button id="prepare-upload" class="primary" type="button">Prepare Upload</button>
         <button id="reset-upload" class="secondary" type="button">Reset</button>
@@ -99,7 +109,7 @@
 
       <div class="architecture-note">
         <strong>Storage architecture</strong>
-        <span>The upload layer is connected to the XKiss Worker. Cloud storage is intentionally not activated yet; when R2 is enabled, the same upload flow will use the production storage binding.</span>
+        <span>The upload layer is connected to the XKiss Worker. Cloud storage is intentionally not activated yet; when R2 is enabled and creator authorization is connected, the same flow will support the production upload.</span>
       </div>
     </div>
   </section>
