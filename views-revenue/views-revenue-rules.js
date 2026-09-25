@@ -31,6 +31,10 @@ export function validateViewEvent(input = {}) {
     return { valid: false, status: "invalid", reason: "videoId is required." };
   }
 
+  if (!input.creatorId) {
+    return { valid: false, status: "invalid", reason: "creatorId is required for attribution." };
+  }
+
   if (!input.viewerSessionId) {
     return { valid: false, status: "invalid", reason: "viewerSessionId is required." };
   }
