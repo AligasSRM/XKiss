@@ -66,6 +66,18 @@ export default {
       });
     }
 
+    if (url.pathname === "/api/views/storage/status" && request.method === "GET") {
+      return json({
+        ok: true,
+        service: "XKiss Durable View Event Store",
+        storageReady: isViewEventStoreReady(env),
+        storage: "XKISS_VIEW_EVENTS",
+        message: isViewEventStoreReady(env)
+          ? "Durable view event storage is connected."
+          : "Durable view event storage is prepared but not connected yet."
+      });
+    }
+
     if (url.pathname === "/api/views/status" && request.method === "GET") {
       return json({
         ok: true,
