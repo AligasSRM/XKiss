@@ -214,6 +214,34 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   /*
+   * Views & Revenue — view event
+   *
+   * A view event is sent only after playback has genuinely started.
+   * The Worker validates the event. It is not counted or persisted yet.
+   */
+  let viewEventSent = false;
+
+  async function sendViewEventOnce() {
+    if (viewEventSent || !window.XKissViews) {
+      return;
+    }
+
+    viewEventSent = true;
+
+    try {
+      const event = window.XKissViews.createViewEvent(videoData.id);
+      const result = await window.XKissViews.validateViewEvent(event);
+
+      console.log("XKiss View Event:", result);
+    } catch (error) {
+      viewEventSent = false;
+      console.error("XKiss: View event failed:", error);
+    }
+  }
+
+  video.addEventListener("playing", sendViewEventOnce);
+
+  /*
    * Public player state
    */
 
