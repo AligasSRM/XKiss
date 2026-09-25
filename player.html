@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XKiss Video Player</title>
+</head>
+
+<body>
+
+  <main>
+
+    <h1 id="videoTitle">XKiss Test Video</h1>
+
+    <div>
+      <span id="videoDuration">00:04</span>
+      <span> • </span>
+      <span id="creatorName">XKiss Creator</span>
+    </div>
+
+    <div id="videoTags">
+      <span>#XKiss</span>
+      <span>#Video</span>
+      <span>#Test</span>
+    </div>
+
+    <div id="videoQuality">
+      Quality:
+      <span id="currentQuality">720p</span>
+    </div>
+
+    <section>
+
+      <div id="player">
+
+        <video
+          id="video"
+          playsinline
+          preload="metadata"
+          controls
+        >
+          <source
+            src="https://aligassrm.github.io/XKiss/20260923_234200-3.mp4"
+            type="video/mp4"
+          >
+          Your browser does not support HTML5 video.
+        </video>
+
+        <div id="xkissLogo">
+          <span class="rainbow-x">X</span><span class="white-kiss">kiss</span>
+        </div>
+
+      </div>
+
+    </section>
+
+    <section id="videoActions">
+
+      <button type="button">Views <span id="views">0</span></button>
+
+      <button type="button">Like</button>
+
+      <button type="button">Dislike</button>
+
+      <button type="button">Comments</button>
+
+      <button type="button">Download</button>
+
+      <button type="button">Save / Favorite</button>
+
+      <button type="button">Share</button>
+
+      <button type="button">Report</button>
+
+    </section>
+
+    <section>
+      <h2>Related Videos</h2>
+      <p>Related videos will appear here.</p>
+    </section>
+
+    <section>
+      <h2>From Creator</h2>
+      <p>More videos from this creator will appear here.</p>
+    </section>
+
+    <section>
+      <h2>Creator Information</h2>
+      <p>Creator information will appear here.</p>
+    </section>
+
+    <section>
+      <h2>Comments</h2>
+      <p>Comments will appear here.</p>
+    </section>
+
+    <section>
+      <h2>About / Video Information</h2>
+      <p>Video information will appear here.</p>
+    </section>
+
+  </main>
+
+  <script>
+
+    const video = document.getElementById("video");
+
+    const viewsElement = document.getElementById("views");
+
+    const currentQualityElement =
+      document.getElementById("currentQuality");
+
+    const videoId = "xkiss-test-001";
+
+    let views = 0;
+
+    function addView() {
+      views++;
+      viewsElement.textContent = views;
+    }
+
+    video.addEventListener("play", function () {
+      if (!video.dataset.viewed) {
+        video.dataset.viewed = "true";
+        addView();
+      }
+    });
+
+    console.log("XKiss Player loaded.");
+    console.log("Video ID:", videoId);
+
+  </script>
+
+</body>
+</html>
