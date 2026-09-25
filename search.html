@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <meta name="theme-color" content="#07080b">
+<meta name="description" content="Search XKiss videos by title, creator, category or tag.">
 <title>XKiss — Search & Categories</title>
 <link rel="stylesheet" href="search/search.css">
 </head>
@@ -42,8 +43,13 @@
       <h2>Results</h2>
       <p id="result-count">0 videos</p>
     </div>
-    <button id="clear-search" class="clear-btn" type="button">Clear</button>
+    <div class="search-actions">
+      <button id="share-search" class="clear-btn" type="button">Share</button>
+      <button id="clear-search" class="clear-btn" type="button">Clear</button>
+    </div>
   </section>
+
+  <p id="share-status" class="share-status" role="status" aria-live="polite"></p>
 
   <section id="results-grid" class="results-grid" aria-live="polite"></section>
 
