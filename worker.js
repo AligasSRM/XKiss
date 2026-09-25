@@ -19,6 +19,7 @@ import {
   validateViewEvent,
   evaluateViewCount,
   evaluateQualifiedView,
+  evaluateTrafficQuality,
   validateRevenueEvent
 } from "./views-revenue/views-revenue-rules.js";
 
@@ -104,6 +105,25 @@ export default {
         ok: true,
         service: "XKiss View Count Check",
         result: evaluateViewCount(body)
+      });
+    }
+
+    if (url.pathname === "/api/views/event/traffic-check" && request.method === "POST") {
+      let body;
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          message: "Invalid traffic data."
+        }, 400);
+      }
+
+      return json({
+        ok: true,
+        service: "XKiss Traffic Quality Check",
+        result: evaluateTrafficQuality(body)
       });
     }
 
