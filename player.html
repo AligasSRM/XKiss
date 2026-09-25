@@ -15,33 +15,49 @@
 
     <h1 id="videoTitle">XKiss Test Video</h1>
 
-    <div>
+    <div class="video-meta">
+
       <span id="videoDuration">00:04</span>
-      <span> • </span>
-      <span id="creatorName">XKiss Creator</span>
+
+      <span>•</span>
+
+      <span id="creatorName">
+        XKiss Creator
+      </span>
+
     </div>
 
-    <div id="videoTags">
+    <div id="videoTags" class="video-tags">
+
       <span>#XKiss</span>
       <span>#Video</span>
       <span>#Test</span>
+
     </div>
 
-    <div id="videoQuality">
+    <div id="videoQuality" class="video-quality">
+
       Quality:
-      <span id="currentQuality">720p</span>
+      <span id="currentQuality">
+        720p
+      </span>
+
     </div>
 
-    <section>
+    <!-- =====================================================
+         XKiss New Video Player
+         ===================================================== -->
 
-      <div id="player">
+    <section class="player-section">
+
+      <div id="player" class="xkiss-player">
 
         <video
           id="video"
           playsinline
           preload="metadata"
-          controls
         >
+
           <source
             src="https://aligassrm.github.io/XKiss/20260923_234200-3.mp4"
             type="video/mp4"
@@ -51,18 +67,34 @@
 
         </video>
 
-        <div id="xkissLogo">
+        <!-- XKiss Logo -->
+
+        <div
+          id="xkissLogo"
+          class="xkiss-logo"
+          aria-label="XKiss"
+        >
+
           <span class="rainbow-x">X</span><span class="white-kiss">kiss</span>
+
         </div>
 
       </div>
 
     </section>
 
-    <section id="videoActions">
+    <!-- =====================================================
+         Video Actions
+         ===================================================== -->
+
+    <section
+      id="videoActions"
+      class="video-actions"
+    >
 
       <button type="button">
-        Views <span id="views">0</span>
+        Views
+        <span id="views">0</span>
       </button>
 
       <button type="button">
@@ -95,72 +127,83 @@
 
     </section>
 
-    <section>
+    <!-- =====================================================
+         Related Videos
+         ===================================================== -->
+
+    <section class="content-section">
+
       <h2>Related Videos</h2>
-      <p>Related videos will appear here.</p>
+
+      <p>
+        Related videos will appear here.
+      </p>
+
     </section>
 
-    <section>
+    <!-- =====================================================
+         From Creator
+         ===================================================== -->
+
+    <section class="content-section">
+
       <h2>From Creator</h2>
-      <p>More videos from this creator will appear here.</p>
+
+      <p>
+        More videos from this creator will appear here.
+      </p>
+
     </section>
 
-    <section>
+    <!-- =====================================================
+         Creator Information
+         ===================================================== -->
+
+    <section class="content-section">
+
       <h2>Creator Information</h2>
-      <p>Creator information will appear here.</p>
+
+      <p>
+        Creator information will appear here.
+      </p>
+
     </section>
 
-    <section>
+    <!-- =====================================================
+         Comments
+         ===================================================== -->
+
+    <section class="content-section">
+
       <h2>Comments</h2>
-      <p>Comments will appear here.</p>
+
+      <p>
+        Comments will appear here.
+      </p>
+
     </section>
 
-    <section>
+    <!-- =====================================================
+         About / Video Information
+         ===================================================== -->
+
+    <section class="content-section">
+
       <h2>About / Video Information</h2>
-      <p>Video information will appear here.</p>
+
+      <p>
+        Video information will appear here.
+      </p>
+
     </section>
 
   </main>
 
-  <script>
+  <!-- =======================================================
+       XKiss Player JavaScript
+       ======================================================= -->
 
-    const video = document.getElementById("video");
-
-    const viewsElement =
-      document.getElementById("views");
-
-    const currentQualityElement =
-      document.getElementById("currentQuality");
-
-    const videoId = "xkiss-test-001";
-
-    let views = 0;
-
-    function addView() {
-
-      views++;
-
-      viewsElement.textContent = views;
-
-    }
-
-    video.addEventListener("play", function () {
-
-      if (!video.dataset.viewed) {
-
-        video.dataset.viewed = "true";
-
-        addView();
-
-      }
-
-    });
-
-    console.log("XKiss Player loaded.");
-
-    console.log("Video ID:", videoId);
-
-  </script>
+  <script src="js/player.js"></script>
 
 </body>
 </html>
