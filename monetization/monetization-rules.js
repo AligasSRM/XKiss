@@ -93,3 +93,76 @@ export function evaluateCreatorEligibility(input = {}) {
     reason: "Creator meets the current monetization eligibility rules."
   };
 }
+
+export function calculateRevenue(input = {}) {
+  const grossAmount = Number(input.grossAmount);
+  const providerFeeAmount = Number(input.providerFeeAmount || 0);
+
+  if (!Number.isFinite(grossAmount) || grossAmount < 0) {
+    return {
+      ok: false,
+      status: "invalid",
+      reason: "Gross revenue must be a valid non-negative number."
+    };
+  }
+
+  if (!Number.isFinite(providerFeeAmount) || providerFeeAmount < 0) {
+    return {
+      ok: false,
+      status: "invalid",
+      reason: "Provider fees must be a valid non-negative number."
+    };
+  }
+
+  if (
+    MONETIZATION_RULES.creatorSharePercent === null ||
+    MONETIZATION_RULES.platformSharePercent === null
+  ) {
+    return {
+      ok: false,
+      status: "not_configured",
+      reason: "Creator and platform share percentages are not configured yet."
+    };
+  }
+
+  const totalShare =
+    Number(MONETIZATION_RULES.creatorSharePercent) +
+    Number(MONETIZATION_RULES.platformSharePercent);
+
+  if (totalShare !== 100) {
+    return {
+      ok: false,
+      status: "invalid_configuration",
+      reason: "Creator and platform shares must total 100%."
+    };
+  }
+
+  const eventType = String(input.eventType || "sale");
+  const multiplier =
+    eventType === "refund" || eventType === "chargeback" ? -1 : 1;
+
+  const netRevenueBeforeShares =
+    Math.max(0, grossAmount - providerFeeAmount);
+
+  const creatorAmount =
+    netRevenueBeforeShares *
+    (Number(MONETIZATION_RULES.creatorSharePercent) / 100) *
+    multiplier;
+
+  const platformAmount =
+    netRevenueBeforeShares *
+    (Number(MONETIZATION_RULES.platformSharePercent) / 100) *
+    multiplier;
+
+  return {
+    ok: true,
+    status: "calculated",
+    eventType,
+    grossAmount: grossAmount * multiplier,
+    providerFeeAmount: providerFeeAmount * multiplier,
+    netRevenueBeforeShares: netRevenueBeforeShares * multiplier,
+    creatorAmount,
+    platformAmount,
+    currency: MONETIZATION_RULES.currency
+  };
+}
