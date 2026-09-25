@@ -229,7 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
     viewEventSent = true;
 
     try {
-      const event = window.XKissViews.createViewEvent(videoData.id);
+      const event = window.XKissViews.createViewEvent(videoData.id, videoData.creatorId);
       const result = await window.XKissViews.validateViewEvent(event);
 
       console.log("XKiss View Event:", result);
