@@ -1,33 +1,6 @@
-/* =========================================================
-   XKiss Video Data
-   Professional Video Data Schema V2
-
-   Purpose:
-   - Central source of video metadata
-   - Compatible with XKiss Player
-   - Ready for future Search / Creator / Comments /
-     Analytics / Download / Sharing systems
-
-   IMPORTANT:
-   - Only real video sources are added.
-   - Unsupported or unknown technical data stays null.
-   - Device/browser capabilities are NOT stored here.
-   - Runtime capabilities belong to player.js.
-   ========================================================= */
-
-
 const XKISS_VIDEOS = {
 
-
-  /* =======================================================
-     VIDEO 001
-     ======================================================= */
-
   "video-001": {
-
-    /* =====================================================
-       IDENTITY
-       ===================================================== */
 
     id: "video-001",
 
@@ -45,13 +18,7 @@ const XKISS_VIDEOS = {
       "Test"
     ],
 
-
-    /* =====================================================
-       BASIC INFORMATION
-       ===================================================== */
-
-    description:
-      "XKiss test video for the new video player.",
+    description: "XKiss test video for the new video player.",
 
     language: "en",
 
@@ -61,46 +28,17 @@ const XKISS_VIDEOS = {
 
     updatedAt: null,
 
-
-    /* =====================================================
-       MEDIA
-       ===================================================== */
-
     media: {
-
       type: "video",
-
       poster: "",
-
       thumbnail: "",
-
       mimeType: "video/mp4",
-
       codec: null,
-
       width: null,
-
       height: null,
-
       frameRate: null,
-
       bitrate: null
-
     },
-
-
-    /* =====================================================
-       VIDEO SOURCES
-       =====================================================
-
-       IMPORTANT:
-       Approved quality levels ONLY:
-
-       340p
-       460p
-       720p
-       1080p
-       ===================================================== */
 
     sources: {
 
@@ -115,11 +53,6 @@ const XKISS_VIDEOS = {
 
     },
 
-
-    /* =====================================================
-       QUALITY SYSTEM
-       ===================================================== */
-
     quality: {
 
       default: "720p",
@@ -132,11 +65,6 @@ const XKISS_VIDEOS = {
       ]
 
     },
-
-
-    /* =====================================================
-       PLAYER CONFIGURATION
-       ===================================================== */
 
     player: {
 
@@ -171,11 +99,6 @@ const XKISS_VIDEOS = {
 
     },
 
-
-    /* =====================================================
-       CAPTIONS / SUBTITLES
-       ===================================================== */
-
     captions: {
 
       available: false,
@@ -183,17 +106,6 @@ const XKISS_VIDEOS = {
       tracks: []
 
     },
-
-
-    /* =====================================================
-       STATISTICS
-       =====================================================
-
-       These are currently local/default values.
-
-       In the production platform these values will come
-       from the XKiss backend/database.
-       ===================================================== */
 
     statistics: {
 
@@ -213,16 +125,6 @@ const XKISS_VIDEOS = {
 
     },
 
-
-    /* =====================================================
-       USER STATE
-       =====================================================
-
-       This represents the current user's state.
-
-       Later this will come from the user's account/session.
-       ===================================================== */
-
     userState: {
 
       liked: false,
@@ -238,11 +140,6 @@ const XKISS_VIDEOS = {
       lastPosition: 0
 
     },
-
-
-    /* =====================================================
-       CREATOR
-       ===================================================== */
 
     creatorInfo: {
 
@@ -260,11 +157,6 @@ const XKISS_VIDEOS = {
 
     },
 
-
-    /* =====================================================
-       DISCOVERY
-       ===================================================== */
-
     discovery: {
 
       relatedVideos: [],
@@ -278,11 +170,6 @@ const XKISS_VIDEOS = {
       ]
 
     },
-
-
-    /* =====================================================
-       DOWNLOAD
-       ===================================================== */
 
     download: {
 
@@ -299,11 +186,6 @@ const XKISS_VIDEOS = {
 
     },
 
-
-    /* =====================================================
-       SHARING
-       ===================================================== */
-
     sharing: {
 
       enabled: true,
@@ -316,11 +198,6 @@ const XKISS_VIDEOS = {
 
     },
 
-
-    /* =====================================================
-       MODERATION / SAFETY
-       ===================================================== */
-
     moderation: {
 
       visibility: "public",
@@ -330,29 +207,16 @@ const XKISS_VIDEOS = {
       reportEnabled: true,
 
       reportReasons: [
-
         "Spam",
-
         "Misleading",
-
         "Copyright",
-
         "Harassment",
-
         "Violence",
-
         "Illegal Content",
-
         "Other"
-
       ]
 
     },
-
-
-    /* =====================================================
-       VIDEO INFORMATION
-       ===================================================== */
 
     videoInfo: {
 
@@ -374,40 +238,18 @@ const XKISS_VIDEOS = {
 
     },
 
-
-    /* =====================================================
-       CHAPTERS
-       ===================================================== */
-
     chapters: [],
 
-
-    /* =====================================================
-       COMMENTS
-       ===================================================== */
-
     comments: []
-
 
   }
 
 };
 
 
-/* =========================================================
-   XKiss VIDEO DATA HELPERS
-   ========================================================= */
-
-
-/**
- * Return a video by ID.
- */
 function getXKissVideo(videoId) {
 
-  if (
-    !videoId ||
-    typeof XKISS_VIDEOS === "undefined"
-  ) {
+  if (!videoId || typeof XKISS_VIDEOS === "undefined") {
 
     return null;
 
@@ -418,14 +260,9 @@ function getXKissVideo(videoId) {
 }
 
 
-/**
- * Return all videos.
- */
 function getAllXKissVideos() {
 
-  if (
-    typeof XKISS_VIDEOS === "undefined"
-  ) {
+  if (typeof XKISS_VIDEOS === "undefined") {
 
     return [];
 
@@ -436,16 +273,9 @@ function getAllXKissVideos() {
 }
 
 
-/**
- * Return the configured source for a quality.
- */
-function getXKissVideoSource(
-  videoId,
-  quality
-) {
+function getXKissVideoSource(videoId, quality) {
 
-  const video =
-    getXKissVideo(videoId);
+  const video = getXKissVideo(videoId);
 
   if (!video || !video.sources) {
 
@@ -458,20 +288,10 @@ function getXKissVideoSource(
 }
 
 
-/**
- * Check whether a quality is configured.
- */
-function isXKissQualityAvailable(
-  videoId,
-  quality
-) {
+function isXKissQualityAvailable(videoId, quality) {
 
-  const source =
-    getXKissVideoSource(
-      videoId,
-      quality
-    );
+  const source = getXKissVideoSource(videoId, quality);
 
   return Boolean(source);
 
-    }
+       }
