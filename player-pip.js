@@ -20,63 +20,100 @@
 
     async function enterPiP() {
       if (!isSupported()) {
-        console.log("XKiss: Picture-in-Picture unavailable.");
-        return;
+        console.warn(
+          "XKiss: Picture-in-Picture is not available."
+        );
+        return false;
       }
 
       try {
         if (document.pictureInPictureElement === video) {
-          return;
+          return true;
+        }
+
+        if (video.readyState === 0) {
+          console.warn(
+            "XKiss: Video is not ready for Picture-in-Picture."
+          );
+          return false;
         }
 
         await video.requestPictureInPicture();
+
+        return true;
       } catch (error) {
         console.error(
           "XKiss PiP error:",
           error
         );
+
+        return false;
       }
     }
 
     async function exitPiP() {
       try {
-        if (document.pictureInPictureElement === video) {
+        if (
+          document.pictureInPictureElement &&
+          document.exitPictureInPicture
+        ) {
           await document.exitPictureInPicture();
+          return true;
         }
+
+        return false;
       } catch (error) {
         console.error(
           "XKiss PiP exit error:",
           error
         );
+
+        return false;
       }
     }
 
     async function togglePiP() {
       if (document.pictureInPictureElement === video) {
-        await exitPiP();
-      } else {
-        await enterPiP();
+        return await exitPiP();
       }
+
+      return await enterPiP();
     }
 
     if (pipBtn) {
-      pipBtn.addEventListener("click", async e => {
-        e.stopPropagation();
+      pipBtn.addEventListener("click", async function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
         await togglePiP();
       });
     }
 
     video.addEventListener(
       "enterpictureinpicture",
-      () => {
+      function () {
         pipBtn?.classList.add("active");
+
+        if (pipBtn) {
+          pipBtn.setAttribute(
+            "aria-pressed",
+            "true"
+          );
+        }
       }
     );
 
     video.addEventListener(
       "leavepictureinpicture",
-      () => {
+      function () {
         pipBtn?.classList.remove("active");
+
+        if (pipBtn) {
+          pipBtn.setAttribute(
+            "aria-pressed",
+            "false"
+          );
+        }
       }
     );
 
@@ -84,6 +121,9 @@
       pipBtn.disabled = true;
       pipBtn.title =
         "Picture-in-Picture is not available on this device.";
+    } else if (pipBtn) {
+      pipBtn.disabled = false;
+      pipBtn.title = "Picture-in-Picture";
     }
 
     window.XKissPlayerPiP = {
@@ -93,11 +133,16 @@
       togglePiP
     };
 
-    console.log("XKiss Player PiP loaded.");
+    console.log(
+      "XKiss Player PiP loaded."
+    );
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
+    document.addEventListener(
+      "DOMContentLoaded",
+      init
+    );
   } else {
     init();
   }
