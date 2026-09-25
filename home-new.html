@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<title>XKiss — Home</title>
+<style>
+:root{--bg:#07080b;--panel:#101218;--panel2:#151821;--line:rgba(255,255,255,.08);--text:#f5f5f7;--muted:#9296a4;--pink:#ff2d75;--purple:#bf5af2;--shadow:0 24px 80px rgba(0,0,0,.42)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at 8% 0%,rgba(191,90,242,.12),transparent 30%),radial-gradient(circle at 92% 8%,rgba(255,45,117,.09),transparent 28%),var(--bg);color:var(--text);line-height:1.5}
+a{text-decoration:none;color:inherit}button{font:inherit;cursor:pointer}
+.header{position:sticky;top:0;z-index:100;background:rgba(7,8,11,.82);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.nav{max-width:1320px;margin:auto;min-height:72px;padding:12px 22px;display:flex;align-items:center;gap:24px}
+.logo{font-size:31px;font-weight:900;letter-spacing:-1.6px}.logo-x{background:linear-gradient(90deg,#ff2d55,#ff9500,#ffd60a,#30d158,#0a84ff,#5e5ce6,#bf5af2);-webkit-background-clip:text;background-clip:text;color:transparent}.logo-kiss{color:#f7f5ff}
+.nav-links{flex:1;display:flex;justify-content:center;gap:22px;color:#aeb1bd;font-size:13px}.nav-links a:hover{color:#fff}
+.login{border:0;border-radius:10px;padding:10px 17px;color:#fff;font-weight:800;background:linear-gradient(135deg,var(--pink),var(--purple))}
+.container{max-width:1320px;margin:auto;padding:30px 22px 80px}
+.hero{position:relative;overflow:hidden;min-height:470px;border:1px solid var(--line);border-radius:28px;padding:58px 46px;display:flex;align-items:center;background:radial-gradient(circle at 78% 30%,rgba(191,90,242,.25),transparent 27%),radial-gradient(circle at 20% 85%,rgba(255,45,117,.16),transparent 32%),linear-gradient(135deg,#171a23,#090a0e 75%);box-shadow:var(--shadow)}
+.hero:after{content:"X";position:absolute;right:6%;top:5%;font-size:390px;line-height:1;font-weight:900;opacity:.035;background:linear-gradient(90deg,#ff2d55,#bf5af2);-webkit-background-clip:text;color:transparent}
+.hero-content{position:relative;z-index:2;max-width:760px}.badge{display:inline-block;margin-bottom:18px;padding:7px 12px;border:1px solid rgba(255,45,117,.28);border-radius:30px;background:rgba(255,45,117,.09);color:#ff9abb;font-size:10px;font-weight:900;letter-spacing:1.4px}
+.hero h1{font-size:clamp(42px,7vw,78px);line-height:.98;letter-spacing:-4px;margin-bottom:20px}.hero h1 span{background:linear-gradient(90deg,#fff,#cfcbdc);-webkit-background-clip:text;color:transparent}
+.hero p{max-width:690px;color:#a9acb8;font-size:16px;margin-bottom:28px}.hero-actions{display:flex;gap:10px;flex-wrap:wrap}.btn{border:0;border-radius:11px;padding:13px 20px;font-weight:800}.primary{color:#fff;background:linear-gradient(135deg,var(--pink),var(--purple))}.secondary{color:#fff;background:rgba(255,255,255,.055);border:1px solid var(--line)}
+.section{margin-top:58px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:20px}.title{font-size:27px;letter-spacing:-.8px}.sub{color:var(--muted);font-size:12px;margin-top:4px}
+.quick-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.quick-card{padding:22px 14px;border:1px solid var(--line);border-radius:15px;background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.015));text-align:center;color:#dddfe6;font-weight:800}.quick-card:hover{border-color:rgba(191,90,242,.4);transform:translateY(-2px)}
+.featured{display:grid;grid-template-columns:1.3fr .7fr;overflow:hidden;border:1px solid var(--line);border-radius:22px;background:linear-gradient(135deg,#171a23,#0d0f14);box-shadow:var(--shadow)}
+.featured-copy{padding:40px}.kicker{color:#ff77a5;font-size:10px;font-weight:900;letter-spacing:1.5px;margin-bottom:10px}.featured h2{font-size:38px;line-height:1.05;margin-bottom:12px}.featured p{color:var(--muted);max-width:550px;margin-bottom:20px}.featured-visual{min-height:300px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(191,90,242,.3),transparent 31%),linear-gradient(135deg,#222631,#090a0e)}.featured-play{width:82px;height:82px;border:0;border-radius:50%;color:#fff;font-size:30px;background:linear-gradient(135deg,var(--pink),var(--purple));box-shadow:0 16px 45px rgba(255,45,117,.25)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{border:1px solid var(--line);border-radius:30px;padding:8px 13px;color:#b9bcc7;background:rgba(255,255,255,.035)}.chip.active,.chip:hover{color:#fff;background:rgba(191,90,242,.12);border-color:rgba(191,90,242,.4)}
+.videos-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.video-card{overflow:hidden;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.012));transition:.2s}.video-card:hover{transform:translateY(-3px)}
+.video-thumb{height:215px;position:relative;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(191,90,242,.2),transparent 35%),linear-gradient(135deg,#222630,#090a0e)}.thumb-brand-x{font-size:60px;font-weight:900;line-height:.8;background:linear-gradient(90deg,#ff2d55,#ff9500,#ffd60a,#30d158,#0a84ff,#bf5af2);-webkit-background-clip:text;color:transparent}.thumb-brand-kiss{font-size:24px;color:#fff}.play-circle{position:absolute;width:58px;height:58px;border:0;border-radius:50%;color:#fff;background:linear-gradient(135deg,var(--pink),var(--purple));font-size:22px}
+.thumb-quality{position:absolute;right:12px;bottom:12px;padding:5px 7px;border-radius:6px;background:rgba(0,0,0,.55);font-size:10px}.video-info{padding:16px}.video-title{font-size:16px;font-weight:800;margin-bottom:11px}.video-creator-row{display:flex;align-items:center;gap:9px}.creator-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple))}.video-creator-name{font-size:12px;font-weight:700}.mini-follow{margin-left:auto;padding:6px 9px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.04);color:#fff;font-size:10px}.video-meta{margin-top:12px;color:#777b88;font-size:11px}.video-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}.video-tags span{padding:4px 7px;border-radius:5px;background:rgba(255,255,255,.045);color:#9ea2af;font-size:9px}.watch-btn{width:100%;margin-top:13px;padding:10px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.05);color:#fff;font-weight:800}.watch-btn:hover{background:linear-gradient(135deg,var(--pink),var(--purple))}
+.creator-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.creator-card{padding:22px;border:1px solid var(--line);border-radius:17px;background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.012));text-align:center}.creator-card .creator-avatar{width:54px;height:54px;margin:0 auto 12px;font-size:18px}.creator-name{font-weight:800}.creator-role{color:var(--muted);font-size:11px;margin-top:3px}.follow-btn{margin-top:14px;width:100%;padding:9px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.05);color:#fff;font-weight:700}
+.footer{margin-top:70px;padding:28px;text-align:center;border-top:1px solid var(--line);color:#666b78;font-size:11px}
+@media(max-width:900px){.nav-links{gap:12px}.quick-grid{grid-template-columns:repeat(3,1fr)}.featured{grid-template-columns:1fr}.videos-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){.nav{padding:10px 14px}.logo{font-size:27px}.nav-links{display:none}.container{padding:16px 14px 55px}.hero{min-height:500px;padding:36px 24px;border-radius:22px}.hero h1{letter-spacing:-2.5px}.hero p{font-size:14px}.hero:after{font-size:260px;right:-8%;top:22%}.section{margin-top:44px}.title{font-size:23px}.quick-grid{grid-template-columns:repeat(2,1fr)}.featured-copy{padding:27px}.featured h2{font-size:29px}.featured-visual{min-height:210px}.videos-grid,.creator-grid{grid-template-columns:1fr}.video-thumb{height:220px}}
+</style>
+</head>
+<body>
+<header class="header">
+<nav class="nav">
+<a class="logo" href="#home"><span class="logo-x">X</span><span class="logo-kiss">Kiss</span></a>
+<div class="nav-links">
+<a href="#home">Home</a><a href="#videos">Videos</a><a href="#creators">Creators</a><a href="#categories">Categories</a><a href="#account">Account</a>
+</div>
+<button class="login" type="button" onclick="alert('Login system will be connected later.')">Login</button>
+</nav>
+</header>
+
+<main class="container">
+<section class="hero" id="home">
+<div class="hero-content">
+<div class="badge">18+ ADULTS ONLY</div>
+<h1>Welcome to <span>XKiss</span></h1>
+<p>A modern premium video home built to connect discovery, creators and the new independent XKiss Video Player.</p>
+<div class="hero-actions">
+<button class="btn primary" data-hero-action="watch" data-video-id="video-001">▶ Watch Featured</button>
+<a class="btn secondary" href="#videos">Explore Videos</a>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-head"><div><h2 class="title">Quick Access</h2><div class="sub">The main Home navigation, ready for the next platform modules.</div></div></div>
+<div class="quick-grid">
+<a class="quick-card" href="#videos">Videos</a><a class="quick-card" href="#creators">Creators</a><a class="quick-card" href="#categories">Categories</a><a class="quick-card" href="#account">My Account</a><a class="quick-card" href="#home">Home</a>
+</div>
+</section>
+
+<section class="section">
+<div class="featured">
+<div class="featured-copy">
+<div class="kicker">FEATURED VIDEO</div>
+<h2>Ali Excel</h2>
+<p>The Home page now connects directly to the independent XKiss player instead of the old inline video modal.</p>
+<button class="btn primary featured-btn" data-video-id="video-001" data-hero-action="watch">▶ Open XKiss Player</button>
+</div>
+<div class="featured-visual"><button class="featured-play" data-video-id="video-001" data-hero-action="watch" aria-label="Play featured video">▶</button></div>
+</div>
+</section>
+
+<section class="section" id="videos">
+<div class="section-head"><div><h2 class="title">Latest Videos</h2><div class="sub">Video cards use the new player URL and video-data structure.</div></div></div>
+<div class="videos-grid">
+<article class="video-card" data-video-id="video-001">
+<div class="video-thumb">
+<div><div class="thumb-brand-x">X</div><div class="thumb-brand-kiss">kiss</div></div>
+<button class="play-circle" type="button" aria-label="Play video">▶</button>
+<div class="thumb-quality">720p</div>
+</div>
+<div class="video-info">
+<div class="video-title">XKiss Test Video</div>
+<div class="video-creator-row"><div class="creator-avatar">X</div><div><div class="video-creator-name">XKiss Creator</div><div class="video-creator">Creator</div></div><button class="mini-follow" type="button">Follow</button></div>
+<div class="video-meta">00:04 · 0 views</div>
+<div class="video-tags"><span>XKiss</span><span>Video</span><span>Test</span></div>
+<button class="watch-btn" type="button">Watch Now</button>
+</div>
+</article>
+<article class="video-card" data-video-id="video-001">
+<div class="video-thumb"><div><div class="thumb-brand-x">X</div><div class="thumb-brand-kiss">kiss</div></div><button class="play-circle" type="button">▶</button><div class="thumb-quality">720p</div></div>
+<div class="video-info"><div class="video-title">Featured Player Demo</div><div class="video-creator-row"><div class="creator-avatar">A</div><div class="video-creator-name">Ali Sr.M</div><button class="mini-follow" type="button">Follow</button></div><div class="video-meta">Demo · XKiss Player</div><div class="video-tags"><span>Demo</span><span>Player</span></div><button class="watch-btn" type="button">Watch Now</button></div>
+</article>
+<article class="video-card" data-video-id="video-001">
+<div class="video-thumb"><div><div class="thumb-brand-x">X</div><div class="thumb-brand-kiss">kiss</div></div><button class="play-circle" type="button">▶</button><div class="thumb-quality">720p</div></div>
+<div class="video-info"><div class="video-title">New Home Experience</div><div class="video-creator-row"><div class="creator-avatar">X</div><div class="video-creator-name">XKiss Creator</div><button class="mini-follow" type="button">Follow</button></div><div class="video-meta">Demo · New Home</div><div class="video-tags"><span>Home</span><span>New</span></div><button class="watch-btn" type="button">Watch Now</button></div>
+</article>
+</div>
+</section>
+
+<section class="section" id="categories">
+<div class="section-head"><div><h2 class="title">Categories</h2><div class="sub">Category controls are connected to the Home video grid.</div></div></div>
+<div class="chips"><button class="chip active">All</button><button class="chip">New</button><button class="chip">Trending</button><button class="chip">Popular</button><button class="chip">Test</button><button class="chip">AI</button></div>
+</section>
+
+<section class="section" id="creators">
+<div class="section-head"><div><h2 class="title">Creators</h2><div class="sub">Creator cards are prepared for profiles and follow systems.</div></div></div>
+<div class="creator-grid">
+<div class="creator-card" data-creator-id="creator-001"><div class="creator-avatar">X</div><div class="creator-name">XKiss Creator</div><div class="creator-role">Video Creator</div><button class="follow-btn" type="button">Follow</button></div>
+<div class="creator-card" data-creator-id="creator-001"><div class="creator-avatar">A</div><div class="creator-name">Ali Sr.M</div><div class="creator-role">Creator</div><button class="follow-btn" type="button">Follow</button></div>
+<div class="creator-card" data-creator-id="creator-001"><div class="creator-avatar">+</div><div class="creator-name">More Creators</div><div class="creator-role">Coming next</div><button class="follow-btn" type="button">Follow</button></div>
+</div>
+</section>
+
+<section class="section" id="account">
+<div class="section-head"><div><h2 class="title">My Account</h2><div class="sub">Account area reserved for the User Account module.</div></div></div>
+<div class="quick-grid"><div class="quick-card">Profile</div><div class="quick-card">Favorites</div><div class="quick-card">History</div><div class="quick-card">Settings</div><div class="quick-card">Security</div></div>
+</section>
+</main>
+<footer class="footer">XKiss — New Home · 18+ · Independent Video Player Architecture</footer>
+
+<script src="home/home-core.js"></script>
+<script src="home/home-navigation.js"></script>
+<script src="home/home-hero.js"></script>
+<script src="home/home-videos.js"></script>
+<script src="home/home-creators.js"></script>
+<script src="home/home-categories.js"></script>
+</body>
+</html>
