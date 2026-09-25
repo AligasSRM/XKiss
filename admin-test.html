@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XKiss — Admin Dashboard Test</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #111;
+      color: #fff;
+      padding: 20px;
+    }
+
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      color: #aaa;
+      margin-top: 0;
+    }
+
+    .card {
+      background: #1b1b1b;
+      border: 1px solid #333;
+      border-radius: 14px;
+      padding: 16px;
+      margin: 12px 0;
+    }
+
+    .status {
+      font-weight: 700;
+      margin: 8px 0;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 8px;
+      border: 0;
+      border-radius: 10px;
+      background: #fff;
+      color: #111;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #0b0b0b;
+      border-radius: 10px;
+      padding: 12px;
+      overflow: auto;
+    }
+
+    .pass {
+      color: #7CFF9B;
+    }
+
+    .fail {
+      color: #FF7777;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>XKiss — Admin Dashboard Test</h1>
+    <p class="subtitle">Section 14 final structural test</p>
+
+    <div class="card">
+      <div id="overall" class="status">Ready</div>
+      <button id="runAll">Run Full Admin Test</button>
+    </div>
+
+    <div class="card">
+      <h2>Module Results</h2>
+      <pre id="results">No test run yet.</pre>
+    </div>
+
+    <div class="card">
+      <h2>Validation Tests</h2>
+      <button id="testUser">Test User Management</button>
+      <button id="testContent">Test Content Management</button>
+      <button id="testReport">Test Reports</button>
+      <button id="testAnalytics">Test Analytics</button>
+      <button id="testStorage">Test Storage</button>
+      <button id="testSettings">Test Settings</button>
+      <button id="testAccess">Test Access & Roles</button>
+      <button id="testAudit">Test Audit</button>
+    </div>
+
+    <div class="card">
+      <h2>Test Output</h2>
+      <pre id="output">Waiting...</pre>
+    </div>
+  </main>
+
+  <script type="module">
+    import { getSection14FinalStatus } from "./admin/section-14-status.js";
+    import { validateUserManagementAction } from "./admin/admin-user-management.js";
+    import { validateContentAction } from "./admin/admin-content-management.js";
+    import { validateReportAction } from "./admin/admin-reports.js";
+    import { createAnalyticsQuery } from "./admin/admin-analytics.js";
+    import { validateStorageAction } from "./admin/admin-storage.js";
+    import { validateSettingsAction } from "./admin/admin-settings.js";
+    import { validateAdminRolePermission } from "./admin/admin-access.js";
+    import { validateAuditAction } from "./admin/admin-audit.js";
+
+    const $ = (id) => document.getElementById(id);
+
+    function show(value) {
+      $("output").textContent = JSON.stringify(value, null, 2);
+    }
+
+    function run(name, fn) {
+      try {
+        const result = fn();
+        show({ test: name, result });
+        return result;
+      } catch (error) {
+        const result = {
+          ok: false,
+          status: "error",
+          reason: error instanceof Error ? error.message : String(error)
+        };
+        show({ test: name, result });
+        return result;
+      }
+    }
+
+    $("runAll").addEventListener("click", () => {
+      const finalStatus = getSection14FinalStatus();
+
+      const checks = {
+        foundation: finalStatus.modulesReady,
+        section: finalStatus.section === 14,
+        locked: finalStatus.locked === true,
+        productionDisabled: finalStatus.productionEnabled === false,
+        finalTestPassed: finalStatus.finalTestPassed === true,
+        moduleCount: finalStatus.moduleCount === 10
+      };
+
+      $("overall").textContent =
+        Object.values(checks).every(Boolean)
+          ? "PASS — Section 14 is structurally ready"
+          : "REVIEW REQUIRED";
+
+      $("overall").className =
+        "status " +
+        (Object.values(checks).every(Boolean) ? "pass" : "fail");
+
+      $("results").textContent = JSON.stringify({
+        finalStatus,
+        checks
+      }, null, 2);
+    });
+
+    $("testUser").addEventListener("click", () =>
+      run("User Management", () =>
+        validateUserManagementAction({
+          userId: "test-user-001",
+          action: "suspend"
+        })
+      )
+    );
+
+    $("testContent").addEventListener("click", () =>
+      run("Content Management", () =>
+        validateContentAction({
+          contentId: "test-video-001",
+          action: "review"
+        })
+      )
+    );
+
+    $("testReport").addEventListener("click", () =>
+      run("Reports", () =>
+        validateReportAction({
+          reportId: "test-report-001",
+          action: "review"
+        })
+      )
+    );
+
+    $("testAnalytics").addEventListener("click", () =>
+      run("Analytics", () =>
+        createAnalyticsQuery({
+          metric: "views",
+          timeRange: "7d"
+        })
+      )
+    );
+
+    $("testStorage").addEventListener("click", () =>
+      run("Storage", () =>
+        validateStorageAction({
+          action: "inspect"
+        })
+      )
+    );
+
+    $("testSettings").addEventListener("click", () =>
+      run("Settings", () =>
+        validateSettingsAction({
+          setting: "platform_age_requirement",
+          action: "update"
+        })
+      )
+    );
+
+    $("testAccess").addEventListener("click", () =>
+      run("Access & Roles", () =>
+        validateAdminRolePermission("moderator", "manage_reports")
+      )
+    );
+
+    $("testAudit").addEventListener("click", () =>
+      run("Audit", () =>
+        validateAuditAction({
+          action: "search"
+        })
+      )
+    );
+  </script>
+</body>
+</html>
