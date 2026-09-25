@@ -8,8 +8,10 @@ document.addEventListener("xkiss:search-ready", () => {
   const resultCount = document.getElementById("result-count");
   const emptyState = document.getElementById("empty-state");
   const clearButton = document.getElementById("clear-search");
+  const shareButton = document.getElementById("share-search");
+  const shareStatus = document.getElementById("share-status");
 
-  if (!API || !input || !categoryList || !resultsGrid || !resultCount || !emptyState || !clearButton) {
+  if (!API || !input || !categoryList || !resultsGrid || !resultCount || !emptyState || !clearButton || !shareButton || !shareStatus) {
     console.error("XKiss Search: UI could not initialize.");
     return;
   }
@@ -70,6 +72,42 @@ document.addEventListener("xkiss:search-ready", () => {
     input.value = API.getState().query;
   }
 
+  function showShareStatus(message) {
+    shareStatus.textContent = message;
+    window.clearTimeout(showShareStatus.timer);
+    showShareStatus.timer = window.setTimeout(() => {
+      shareStatus.textContent = "";
+    }, 2500);
+  }
+
+  async function shareSearch() {
+    const url = API.getSearchShareUrl();
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "XKiss Search",
+          text: "XKiss Search & Categories",
+          url
+        });
+        showShareStatus("Share sheet opened.");
+        return;
+      }
+
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+        showShareStatus("Search link copied.");
+        return;
+      }
+
+      showShareStatus("Copy is not available on this device.");
+    } catch (error) {
+      if (error?.name !== "AbortError") {
+        showShareStatus("Could not share the search link.");
+      }
+    }
+  }
+
   input.addEventListener("input", () => {
     API.setQuery(input.value);
     renderResults();
@@ -82,6 +120,8 @@ document.addEventListener("xkiss:search-ready", () => {
     renderResults();
     input.focus();
   });
+
+  shareButton.addEventListener("click", shareSearch);
 
   syncInput();
   renderCategories();
