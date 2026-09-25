@@ -166,3 +166,66 @@ export function calculateRevenue(input = {}) {
     currency: MONETIZATION_RULES.currency
   };
 }
+
+
+export const MONETIZATION_POLICY_RULES = {
+  version: "1.0-draft",
+  status: "draft",
+  policyAcceptanceRequired: true,
+  prohibitedActivityCheck: true,
+  verificationRequired: true,
+  fraudReview: true,
+  refundHandling: "reverse_related_earnings",
+  chargebackHandling: "reverse_related_earnings",
+  suspensionHandling: "pause_future_monetization",
+  auditTrailRequired: true,
+  manualReviewAvailable: true
+};
+
+export function evaluateMonetizationPolicy(input = {}) {
+  if (!MONETIZATION_POLICY_RULES.policyAcceptanceRequired) {
+    return {
+      status: "ready",
+      allowed: true,
+      reason: "Policy acceptance is not required."
+    };
+  }
+
+  if (!input.policyAccepted) {
+    return {
+      status: "pending",
+      allowed: false,
+      reason: "Monetization policy must be accepted."
+    };
+  }
+
+  if (MONETIZATION_POLICY_RULES.verificationRequired && !input.verified) {
+    return {
+      status: "pending",
+      allowed: false,
+      reason: "Creator verification is required."
+    };
+  }
+
+  if (input.prohibitedActivity) {
+    return {
+      status: "suspended",
+      allowed: false,
+      reason: "Monetization is blocked pending policy review."
+    };
+  }
+
+  if (input.fraudReviewRequired) {
+    return {
+      status: "review",
+      allowed: false,
+      reason: "Monetization activity requires review."
+    };
+  }
+
+  return {
+    status: "allowed",
+    allowed: true,
+    reason: "Current monetization policy checks are satisfied."
+  };
+}
