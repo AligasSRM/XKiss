@@ -22,6 +22,7 @@ import {
 import { evaluateViewPipeline } from "./views-revenue/view-pipeline.js";
 import { evaluateViewCountDecision } from "./views-revenue/view-count-decision.js";
 import { isWalletLedgerReady, storeWalletEntry, getWalletEntry } from "./wallet/wallet-ledger-store.js";
+import { evaluateRevenueToWallet } from "./wallet/revenue-to-wallet.js";
 import {
   VIEWS_REVENUE_RULES,
   validateViewEvent,
@@ -116,6 +117,25 @@ export default {
         ok: true,
         service: "XKiss View Qualification Pipeline",
         result: evaluateViewPipeline(body)
+      });
+    }
+
+    if (url.pathname === "/api/wallet/revenue-to-pending" && request.method === "POST") {
+      let body;
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          message: "Invalid revenue-to-wallet data."
+        }, 400);
+      }
+
+      return json({
+        ok: true,
+        service: "XKiss Revenue To Wallet",
+        result: evaluateRevenueToWallet(body)
       });
     }
 
