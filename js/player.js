@@ -1,8 +1,19 @@
 /* =========================================================
    XKiss Video Player
    Connected to XKISS_VIDEOS
-   Quality System:
+
+   Quality:
    340p / 460p / 720p / 1080p
+
+   Fullscreen:
+   - Fullscreen player container
+   - Request landscape on mobile when supported
+   - Restore normal orientation after exit
+
+   PiP:
+   - Enter PiP
+   - Exit PiP with the same button
+   - Keep PiP independent from fullscreen logic
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -13,7 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const video = document.getElementById("video");
   const videoSource = document.getElementById("videoSource");
-
   const player = document.getElementById("player");
 
   const playPauseBtn = document.getElementById("playPauseBtn");
@@ -48,6 +58,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const videoTags = document.getElementById("videoTags");
   const currentQuality = document.getElementById("currentQuality");
   const views = document.getElementById("views");
+
+
+  /* =======================================================
+     BASIC SAFETY
+     ======================================================= */
+
+  if (!video || !player) {
+    console.error("XKiss: Required player elements not found.");
+    return;
+  }
 
 
   /* =======================================================
@@ -104,34 +124,23 @@ document.addEventListener("DOMContentLoaded", () => {
      ======================================================= */
 
   if (videoTitle) {
-
     videoTitle.textContent =
       videoData.title || "XKiss Video";
-
   }
-
 
   if (videoDuration) {
-
     videoDuration.textContent =
       videoData.duration || "00:00";
-
   }
-
 
   if (creatorName) {
-
     creatorName.textContent =
       videoData.creator || "XKiss Creator";
-
   }
 
-
   if (views) {
-
     views.textContent =
       Number(videoData.views || 0);
-
   }
 
 
@@ -178,9 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "1080p"
   ];
 
-
   let currentQualityValue = "720p";
-
 
   const QUALITY_SOURCES = {
 
@@ -212,10 +219,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-
     const source =
       QUALITY_SOURCES[quality];
-
 
     if (!source) {
 
@@ -227,46 +232,33 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-
     const wasPlaying =
       autoPlay || !video.paused;
-
 
     const currentPosition =
       video.currentTime || 0;
 
-
     currentQualityValue =
       quality;
 
-
     if (currentQuality) {
-
       currentQuality.textContent =
         quality;
-
     }
-
 
     if (qualityBtn) {
-
       qualityBtn.textContent =
         quality;
-
     }
-
 
     if (!videoSource) {
       return;
     }
 
-
     videoSource.src =
       source;
 
-
     video.load();
-
 
     video.addEventListener(
       "loadedmetadata",
@@ -277,7 +269,6 @@ document.addEventListener("DOMContentLoaded", () => {
           restorePosition
         );
 
-
         if (
           Number.isFinite(currentPosition) &&
           currentPosition < video.duration
@@ -287,7 +278,6 @@ document.addEventListener("DOMContentLoaded", () => {
             currentPosition;
 
         }
-
 
         if (wasPlaying) {
 
@@ -321,18 +311,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return "00:00";
     }
 
-
     const totalSeconds =
       Math.floor(seconds);
-
 
     const minutes =
       Math.floor(totalSeconds / 60);
 
-
     const secs =
       totalSeconds % 60;
-
 
     return (
       String(minutes).padStart(2, "0") +
@@ -383,7 +369,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =======================================================
-     VIDEO PLAY EVENT
+     PLAY EVENT
      ======================================================= */
 
   video.addEventListener(
@@ -391,18 +377,11 @@ document.addEventListener("DOMContentLoaded", () => {
     () => {
 
       if (playPauseBtn) {
-
-        playPauseBtn.textContent =
-          "❚❚";
-
+        playPauseBtn.textContent = "❚❚";
       }
 
-
       if (centerPlayBtn) {
-
-        centerPlayBtn.style.display =
-          "none";
-
+        centerPlayBtn.style.display = "none";
       }
 
     }
@@ -410,7 +389,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =======================================================
-     VIDEO PAUSE EVENT
+     PAUSE EVENT
      ======================================================= */
 
   video.addEventListener(
@@ -418,18 +397,11 @@ document.addEventListener("DOMContentLoaded", () => {
     () => {
 
       if (playPauseBtn) {
-
-        playPauseBtn.textContent =
-          "▶";
-
+        playPauseBtn.textContent = "▶";
       }
 
-
       if (centerPlayBtn) {
-
-        centerPlayBtn.style.display =
-          "flex";
-
+        centerPlayBtn.style.display = "flex";
       }
 
     }
@@ -437,7 +409,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =======================================================
-     VIDEO ENDED
+     ENDED
      ======================================================= */
 
   video.addEventListener(
@@ -445,18 +417,11 @@ document.addEventListener("DOMContentLoaded", () => {
     () => {
 
       if (playPauseBtn) {
-
-        playPauseBtn.textContent =
-          "▶";
-
+        playPauseBtn.textContent = "▶";
       }
 
-
       if (centerPlayBtn) {
-
-        centerPlayBtn.style.display =
-          "flex";
-
+        centerPlayBtn.style.display = "flex";
       }
 
     }
@@ -494,19 +459,14 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-
       const percentage =
         (video.currentTime /
           video.duration) * 100;
 
-
       if (progress) {
-
         progress.value =
           percentage;
-
       }
-
 
       if (currentTimeEl) {
 
@@ -514,7 +474,6 @@ document.addEventListener("DOMContentLoaded", () => {
           formatTime(video.currentTime);
 
       }
-
 
       if (durationEl) {
 
@@ -541,7 +500,6 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
-
         video.currentTime =
           (Number(progress.value) / 100) *
           video.duration;
@@ -565,10 +523,8 @@ document.addEventListener("DOMContentLoaded", () => {
         video.volume =
           Number(volume.value);
 
-
         video.muted =
           video.volume === 0;
-
 
         updateMuteButton();
 
@@ -587,7 +543,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!muteBtn) {
       return;
     }
-
 
     if (
       video.muted ||
@@ -632,26 +587,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     qualityBtn.addEventListener(
       "click",
-      (event) => {
+      event => {
 
         event.stopPropagation();
 
-        qualityMenu.classList.toggle(
-          "show"
-        );
-
+        qualityMenu.classList.toggle("show");
 
         if (speedMenu) {
-          speedMenu.classList.remove(
-            "show"
-          );
+          speedMenu.classList.remove("show");
         }
 
-
         if (settingsMenu) {
-          settingsMenu.classList.remove(
-            "show"
-          );
+          settingsMenu.classList.remove("show");
         }
 
       }
@@ -667,7 +614,6 @@ document.addEventListener("DOMContentLoaded", () => {
         "[data-quality]"
       );
 
-
     qualityButtons.forEach(button => {
 
       button.addEventListener(
@@ -677,12 +623,10 @@ document.addEventListener("DOMContentLoaded", () => {
           const quality =
             button.dataset.quality;
 
-
           loadVideoSource(
             quality,
             !video.paused
           );
-
 
           qualityMenu.classList.remove(
             "show"
@@ -702,31 +646,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let currentSpeed = 1;
 
-
   if (speedBtn && speedMenu) {
 
     speedBtn.addEventListener(
       "click",
-      (event) => {
+      event => {
 
         event.stopPropagation();
 
-        speedMenu.classList.toggle(
-          "show"
-        );
-
+        speedMenu.classList.toggle("show");
 
         if (qualityMenu) {
-          qualityMenu.classList.remove(
-            "show"
-          );
+          qualityMenu.classList.remove("show");
         }
 
-
         if (settingsMenu) {
-          settingsMenu.classList.remove(
-            "show"
-          );
+          settingsMenu.classList.remove("show");
         }
 
       }
@@ -742,7 +677,6 @@ document.addEventListener("DOMContentLoaded", () => {
         "[data-speed]"
       );
 
-
     speedButtons.forEach(button => {
 
       button.addEventListener(
@@ -752,27 +686,20 @@ document.addEventListener("DOMContentLoaded", () => {
           const speed =
             Number(button.dataset.speed);
 
-
           if (!Number.isFinite(speed)) {
             return;
           }
 
-
           currentSpeed =
             speed;
-
 
           video.playbackRate =
             speed;
 
-
           if (speedBtn) {
-
             speedBtn.textContent =
               speed + "x";
-
           }
-
 
           speedMenu.classList.remove(
             "show"
@@ -794,26 +721,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     settingsBtn.addEventListener(
       "click",
-      (event) => {
+      event => {
 
         event.stopPropagation();
 
-        settingsMenu.classList.toggle(
-          "show"
-        );
-
+        settingsMenu.classList.toggle("show");
 
         if (qualityMenu) {
-          qualityMenu.classList.remove(
-            "show"
-          );
+          qualityMenu.classList.remove("show");
         }
 
-
         if (speedMenu) {
-          speedMenu.classList.remove(
-            "show"
-          );
+          speedMenu.classList.remove("show");
         }
 
       }
@@ -852,28 +771,16 @@ document.addEventListener("DOMContentLoaded", () => {
       "click",
       () => {
 
-        currentSpeed =
-          1;
+        currentSpeed = 1;
 
-
-        video.playbackRate =
-          1;
-
+        video.playbackRate = 1;
 
         if (speedBtn) {
-
-          speedBtn.textContent =
-            "1x";
-
+          speedBtn.textContent = "1x";
         }
 
-
         if (settingsMenu) {
-
-          settingsMenu.classList.remove(
-            "show"
-          );
-
+          settingsMenu.classList.remove("show");
         }
 
       }
@@ -886,35 +793,82 @@ document.addEventListener("DOMContentLoaded", () => {
      PICTURE IN PICTURE
      ======================================================= */
 
+  async function enterPiP() {
+
+    if (
+      !document.pictureInPictureEnabled ||
+      video.disablePictureInPicture
+    ) {
+
+      return;
+
+    }
+
+    if (
+      document.pictureInPictureElement === video
+    ) {
+
+      return;
+
+    }
+
+    try {
+
+      await video.requestPictureInPicture();
+
+    } catch (error) {
+
+      console.error(
+        "XKiss PiP enter error:",
+        error
+      );
+
+    }
+
+  }
+
+
+  async function exitPiP() {
+
+    if (
+      document.pictureInPictureElement
+    ) {
+
+      try {
+
+        await document.exitPictureInPicture();
+
+      } catch (error) {
+
+        console.error(
+          "XKiss PiP exit error:",
+          error
+        );
+
+      }
+
+    }
+
+  }
+
+
   if (pipBtn) {
 
     pipBtn.addEventListener(
       "click",
-      async () => {
+      async event => {
 
-        try {
+        event.stopPropagation();
 
-          if (
-            document.pictureInPictureElement
-          ) {
+        if (
+          document.pictureInPictureElement === video
+        ) {
 
-            await document.exitPictureInPicture();
+          await exitPiP();
 
-          } else if (
-            document.pictureInPictureEnabled &&
-            !video.disablePictureInPicture
-          ) {
+        } else {
 
-            await video.requestPictureInPicture();
-
-          }
-
-        } catch (error) {
-
-          console.error(
-            "XKiss PiP error:",
-            error
-          );
+          await enterPiP();
 
         }
 
@@ -925,7 +879,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =======================================================
-     FULLSCREEN + LANDSCAPE
+     PiP STATE
+     ======================================================= */
+
+  video.addEventListener(
+    "enterpictureinpicture",
+    () => {
+
+      if (pipBtn) {
+        pipBtn.classList.add("active");
+      }
+
+    }
+  );
+
+
+  video.addEventListener(
+    "leavepictureinpicture",
+    () => {
+
+      if (pipBtn) {
+        pipBtn.classList.remove("active");
+      }
+
+    }
+  );
+
+
+  /* =======================================================
+     FULLSCREEN SUPPORT
+     ======================================================= */
+
+  function isFullscreen() {
+
+    return Boolean(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement
+    );
+
+  }
+
+
+  /* =======================================================
+     LANDSCAPE LOCK
      ======================================================= */
 
   async function lockLandscape() {
@@ -937,23 +933,33 @@ document.addEventListener("DOMContentLoaded", () => {
         typeof screen.orientation.lock === "function"
       ) {
 
-        await screen.orientation.lock("landscape");
+        await screen.orientation.lock(
+          "landscape"
+        );
+
+        return true;
 
       }
 
     } catch (error) {
 
       console.log(
-        "XKiss: Landscape orientation lock is not available on this device/browser.",
+        "XKiss: Landscape lock unavailable:",
         error
       );
 
     }
 
+    return false;
+
   }
 
 
-  async function unlockOrientation() {
+  /* =======================================================
+     ORIENTATION UNLOCK
+     ======================================================= */
+
+  function unlockOrientation() {
 
     try {
 
@@ -969,7 +975,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
 
       console.log(
-        "XKiss: Orientation unlock is not available.",
+        "XKiss: Orientation unlock unavailable:",
         error
       );
 
@@ -978,12 +984,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
+  /* =======================================================
+     ENTER FULLSCREEN
+     ======================================================= */
+
   async function enterFullscreen() {
 
     if (!player) {
       return;
     }
-
 
     try {
 
@@ -1000,18 +1009,16 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
 
         console.log(
-          "XKiss: Fullscreen is not supported by this browser."
+          "XKiss: Fullscreen is not supported."
         );
 
         return;
 
       }
 
-
       /*
-       * Important:
-       * Orientation lock normally works only after
-       * fullscreen has been successfully entered.
+       * Fullscreen must be active before
+       * requesting landscape orientation.
        */
 
       await lockLandscape();
@@ -1019,7 +1026,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
 
       console.error(
-        "XKiss fullscreen error:",
+        "XKiss fullscreen enter error:",
         error
       );
 
@@ -1027,6 +1034,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   }
 
+
+  /* =======================================================
+     EXIT FULLSCREEN
+     ======================================================= */
 
   async function exitFullscreen() {
 
@@ -1053,27 +1064,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
-
-    await unlockOrientation();
+    unlockOrientation();
 
   }
 
+
+  /* =======================================================
+     FULLSCREEN BUTTON
+     ======================================================= */
 
   if (fullscreenBtn) {
 
     fullscreenBtn.addEventListener(
       "click",
-      async (event) => {
+      async event => {
 
         event.stopPropagation();
 
-
-        const isFullscreen =
-          document.fullscreenElement ||
-          document.webkitFullscreenElement;
-
-
-        if (isFullscreen) {
+        if (isFullscreen()) {
 
           await exitFullscreen();
 
@@ -1095,12 +1103,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function handleFullscreenChange() {
 
-    const isFullscreen =
-      document.fullscreenElement ||
-      document.webkitFullscreenElement;
+    const active =
+      isFullscreen();
 
-
-    if (!isFullscreen) {
+    if (!active) {
 
       unlockOrientation();
 
@@ -1122,7 +1128,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =======================================================
-     CLOSE MENUS WHEN CLICKING OUTSIDE
+     CLOSE MENUS OUTSIDE
      ======================================================= */
 
   document.addEventListener(
@@ -1130,29 +1136,15 @@ document.addEventListener("DOMContentLoaded", () => {
     () => {
 
       if (qualityMenu) {
-
-        qualityMenu.classList.remove(
-          "show"
-        );
-
+        qualityMenu.classList.remove("show");
       }
-
 
       if (speedMenu) {
-
-        speedMenu.classList.remove(
-          "show"
-        );
-
+        speedMenu.classList.remove("show");
       }
 
-
       if (settingsMenu) {
-
-        settingsMenu.classList.remove(
-          "show"
-        );
-
+        settingsMenu.classList.remove("show");
       }
 
     }
@@ -1160,7 +1152,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =======================================================
-     PREVENT MENU CLICKS FROM CLOSING THEMSELVES
+     KEEP MENU CLICKS OPEN
      ======================================================= */
 
   [
@@ -1172,7 +1164,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!menu) {
       return;
     }
-
 
     menu.addEventListener(
       "click",
@@ -1190,44 +1181,30 @@ document.addEventListener("DOMContentLoaded", () => {
      INITIAL STATE
      ======================================================= */
 
-  video.volume =
-    1;
-
-
-  video.muted =
-    false;
-
-
-  video.playbackRate =
-    1;
-
+  video.volume = 1;
+  video.muted = false;
+  video.playbackRate = 1;
 
   if (volume) {
-
-    volume.value =
-      "1";
-
+    volume.value = "1";
   }
-
 
   if (qualityBtn) {
-
     qualityBtn.textContent =
       currentQualityValue;
-
   }
-
 
   if (currentQuality) {
-
     currentQuality.textContent =
       currentQualityValue;
-
   }
-
 
   updateMuteButton();
 
+
+  /* =======================================================
+     READY
+     ======================================================= */
 
   console.log(
     "XKiss Player loaded:",
