@@ -1,349 +1,319 @@
-const video = document.getElementById("video");
-const player = document.getElementById("player");
+/* =========================================================
+   XKiss Video Player
+   Connected to XKISS_VIDEOS
+   Quality System:
+   340p / 460p / 720p / 1080p
+   ========================================================= */
 
-if (!video || !player) {
+document.addEventListener("DOMContentLoaded", () => {
 
-  console.error(
-    "XKiss Player: video or player element not found."
-  );
+  /* =======================================================
+     ELEMENTS
+     ======================================================= */
 
-} else {
+  const video = document.getElementById("video");
+  const videoSource = document.getElementById("videoSource");
 
-  /* =========================================================
-     XKiss Player Configuration
-     ========================================================= */
+  const player = document.getElementById("player");
+
+  const playPauseBtn = document.getElementById("playPauseBtn");
+  const centerPlayBtn = document.getElementById("centerPlayBtn");
+
+  const progress = document.getElementById("progress");
+
+  const currentTimeEl = document.getElementById("currentTime");
+  const durationEl = document.getElementById("duration");
+
+  const muteBtn = document.getElementById("muteBtn");
+  const volume = document.getElementById("volume");
+
+  const qualityBtn = document.getElementById("qualityBtn");
+  const qualityMenu = document.getElementById("qualityMenu");
+
+  const speedBtn = document.getElementById("speedBtn");
+  const speedMenu = document.getElementById("speedMenu");
+
+  const settingsBtn = document.getElementById("settingsBtn");
+  const settingsMenu = document.getElementById("settingsMenu");
+
+  const pipBtn = document.getElementById("pipBtn");
+  const fullscreenBtn = document.getElementById("fullscreenBtn");
+
+  const ccBtn = document.getElementById("ccBtn");
+  const resetSpeedBtn = document.getElementById("resetSpeedBtn");
+
+  const videoTitle = document.getElementById("videoTitle");
+  const videoDuration = document.getElementById("videoDuration");
+  const creatorName = document.getElementById("creatorName");
+  const videoTags = document.getElementById("videoTags");
+  const currentQuality = document.getElementById("currentQuality");
+  const views = document.getElementById("views");
+
+
+  /* =======================================================
+     VIDEO ID
+     ======================================================= */
+
+  const params = new URLSearchParams(window.location.search);
+
+  const requestedVideoId =
+    params.get("id") || "video-001";
+
+
+  /* =======================================================
+     VIDEO DATA
+     ======================================================= */
+
+  let videoData = null;
+
+  if (
+    typeof XKISS_VIDEOS !== "undefined" &&
+    XKISS_VIDEOS[requestedVideoId]
+  ) {
+
+    videoData = XKISS_VIDEOS[requestedVideoId];
+
+  } else if (
+    typeof XKISS_VIDEOS !== "undefined" &&
+    XKISS_VIDEOS["video-001"]
+  ) {
+
+    videoData = XKISS_VIDEOS["video-001"];
+
+  }
+
+
+  /* =======================================================
+     SAFETY CHECK
+     ======================================================= */
+
+  if (!videoData) {
+
+    console.error("XKiss: Video data not found.");
+
+    if (videoTitle) {
+      videoTitle.textContent = "Video Not Found";
+    }
+
+    return;
+  }
+
+
+  /* =======================================================
+     VIDEO INFORMATION
+     ======================================================= */
+
+  if (videoTitle) {
+
+    videoTitle.textContent =
+      videoData.title || "XKiss Video";
+
+  }
+
+
+  if (videoDuration) {
+
+    videoDuration.textContent =
+      videoData.duration || "00:00";
+
+  }
+
+
+  if (creatorName) {
+
+    creatorName.textContent =
+      videoData.creator || "XKiss Creator";
+
+  }
+
+
+  if (views) {
+
+    views.textContent =
+      Number(videoData.views || 0);
+
+  }
+
+
+  /* =======================================================
+     TAGS
+     ======================================================= */
+
+  if (videoTags) {
+
+    videoTags.innerHTML = "";
+
+    if (
+      Array.isArray(videoData.tags) &&
+      videoData.tags.length > 0
+    ) {
+
+      videoData.tags.forEach(tag => {
+
+        const tagElement =
+          document.createElement("span");
+
+        tagElement.textContent =
+          tag.startsWith("#")
+            ? tag
+            : "#" + tag;
+
+        videoTags.appendChild(tagElement);
+
+      });
+
+    }
+
+  }
+
+
+  /* =======================================================
+     QUALITY SYSTEM
+     ======================================================= */
+
+  const QUALITY_OPTIONS = [
+    "340p",
+    "460p",
+    "720p",
+    "1080p"
+  ];
+
+
+  let currentQualityValue = "720p";
+
 
   const QUALITY_SOURCES = {
 
-    "340p": "",
+    "340p":
+      videoData.sources?.["340p"] || "",
 
-    "460p": "",
+    "460p":
+      videoData.sources?.["460p"] || "",
 
     "720p":
-      "https://aligassrm.github.io/XKiss/20260923_234200-3.mp4",
+      videoData.sources?.["720p"] || "",
 
-    "1080p": ""
+    "1080p":
+      videoData.sources?.["1080p"] || ""
 
   };
 
-  let currentQuality = "720p";
 
-  /* =========================================================
-     Disable Native Controls
-     ========================================================= */
+  /* =======================================================
+     LOAD VIDEO SOURCE
+     ======================================================= */
 
-  video.controls = false;
+  function loadVideoSource(
+    quality,
+    autoPlay = false
+  ) {
 
-  /* =========================================================
-     Create Controls
-     ========================================================= */
+    if (!QUALITY_OPTIONS.includes(quality)) {
+      return;
+    }
 
-  const controls = document.createElement("div");
 
-  controls.className = "xkiss-controls";
+    const source =
+      QUALITY_SOURCES[quality];
 
-  controls.innerHTML = `
 
-    <div class="xkiss-progress-area">
+    if (!source) {
 
-      <input
-        class="xkiss-progress"
-        type="range"
-        min="0"
-        max="100"
-        value="0"
-        step="0.1"
-        aria-label="Video progress"
-      >
+      alert(
+        quality +
+        " is not configured yet."
+      );
 
-    </div>
+      return;
+    }
 
-    <div class="xkiss-control-row">
 
-      <button
-        class="xkiss-button xkiss-play"
-        type="button"
-        aria-label="Play"
-      >
-        ▶
-      </button>
+    const wasPlaying =
+      autoPlay || !video.paused;
 
-      <button
-        class="xkiss-button xkiss-mute"
-        type="button"
-        aria-label="Mute"
-      >
-        🔊
-      </button>
 
-      <input
-        class="xkiss-volume"
-        type="range"
-        min="0"
-        max="1"
-        value="1"
-        step="0.05"
-        aria-label="Volume"
-      >
+    const currentPosition =
+      video.currentTime || 0;
 
-      <span class="xkiss-time">
-        <span class="xkiss-current-time">00:00</span>
-        /
-        <span class="xkiss-duration">00:00</span>
-      </span>
 
-      <div class="xkiss-spacer"></div>
+    currentQualityValue =
+      quality;
 
-      <button
-        class="xkiss-button xkiss-speed"
-        type="button"
-        aria-label="Playback speed"
-      >
-        1x
-      </button>
 
-      <button
-        class="xkiss-button xkiss-quality"
-        type="button"
-        aria-label="Video quality"
-      >
-        720p
-      </button>
+    if (currentQuality) {
 
-      <button
-        class="xkiss-button xkiss-settings"
-        type="button"
-        aria-label="Settings"
-      >
-        ⚙
-      </button>
+      currentQuality.textContent =
+        quality;
 
-      <button
-        class="xkiss-button xkiss-pip"
-        type="button"
-        aria-label="Picture in Picture"
-      >
-        ▣
-      </button>
+    }
 
-      <button
-        class="xkiss-button xkiss-fullscreen"
-        type="button"
-        aria-label="Fullscreen"
-      >
-        ⛶
-      </button>
 
-    </div>
-  `;
+    if (qualityBtn) {
 
-  player.appendChild(controls);
+      qualityBtn.textContent =
+        quality;
 
-  /* =========================================================
-     Center Play
-     ========================================================= */
+    }
 
-  const centerPlay = document.createElement("button");
 
-  centerPlay.type = "button";
+    if (!videoSource) {
+      return;
+    }
 
-  centerPlay.className =
-    "xkiss-center-play";
 
-  centerPlay.setAttribute(
-    "aria-label",
-    "Play video"
+    videoSource.src =
+      source;
+
+
+    video.load();
+
+
+    video.addEventListener(
+      "loadedmetadata",
+      function restorePosition() {
+
+        video.removeEventListener(
+          "loadedmetadata",
+          restorePosition
+        );
+
+
+        if (
+          Number.isFinite(currentPosition) &&
+          currentPosition < video.duration
+        ) {
+
+          video.currentTime =
+            currentPosition;
+
+        }
+
+
+        if (wasPlaying) {
+
+          video.play().catch(() => {});
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     INITIAL VIDEO
+     ======================================================= */
+
+  loadVideoSource(
+    currentQualityValue,
+    false
   );
 
-  centerPlay.innerHTML = "▶";
 
-  player.appendChild(centerPlay);
-
-  /* =========================================================
-     Quality Menu
-     ========================================================= */
-
-  const qualityMenu = document.createElement("div");
-
-  qualityMenu.className =
-    "xkiss-menu xkiss-quality-menu";
-
-  qualityMenu.innerHTML = `
-
-    <div class="xkiss-menu-title">
-      Quality
-    </div>
-
-    <button
-      type="button"
-      data-quality="340p"
-    >
-      340p
-    </button>
-
-    <button
-      type="button"
-      data-quality="460p"
-    >
-      460p
-    </button>
-
-    <button
-      type="button"
-      data-quality="720p"
-    >
-      720p
-    </button>
-
-    <button
-      type="button"
-      data-quality="1080p"
-    >
-      1080p
-    </button>
-
-  `;
-
-  player.appendChild(qualityMenu);
-
-  /* =========================================================
-     Speed Menu
-     ========================================================= */
-
-  const speedMenu = document.createElement("div");
-
-  speedMenu.className =
-    "xkiss-menu xkiss-speed-menu";
-
-  speedMenu.innerHTML = `
-
-    <div class="xkiss-menu-title">
-      Playback Speed
-    </div>
-
-    <button type="button" data-speed="0.5">
-      0.5x
-    </button>
-
-    <button type="button" data-speed="0.75">
-      0.75x
-    </button>
-
-    <button type="button" data-speed="1">
-      Normal
-    </button>
-
-    <button type="button" data-speed="1.25">
-      1.25x
-    </button>
-
-    <button type="button" data-speed="1.5">
-      1.5x
-    </button>
-
-    <button type="button" data-speed="2">
-      2x
-    </button>
-
-  `;
-
-  player.appendChild(speedMenu);
-
-  /* =========================================================
-     Settings Menu
-     ========================================================= */
-
-  const settingsMenu = document.createElement("div");
-
-  settingsMenu.className =
-    "xkiss-menu xkiss-settings-menu";
-
-  settingsMenu.innerHTML = `
-
-    <div class="xkiss-menu-title">
-      Settings
-    </div>
-
-    <button
-      type="button"
-      class="xkiss-cc-button"
-    >
-      CC
-    </button>
-
-    <button
-      type="button"
-      class="xkiss-reset-speed"
-    >
-      Reset Speed
-    </button>
-
-  `;
-
-  player.appendChild(settingsMenu);
-
-  /* =========================================================
-     Elements
-     ========================================================= */
-
-  const playButton =
-    controls.querySelector(
-      ".xkiss-play"
-    );
-
-  const muteButton =
-    controls.querySelector(
-      ".xkiss-mute"
-    );
-
-  const volumeSlider =
-    controls.querySelector(
-      ".xkiss-volume"
-    );
-
-  const progressSlider =
-    controls.querySelector(
-      ".xkiss-progress"
-    );
-
-  const currentTimeElement =
-    controls.querySelector(
-      ".xkiss-current-time"
-    );
-
-  const durationElement =
-    controls.querySelector(
-      ".xkiss-duration"
-    );
-
-  const speedButton =
-    controls.querySelector(
-      ".xkiss-speed"
-    );
-
-  const qualityButton =
-    controls.querySelector(
-      ".xkiss-quality"
-    );
-
-  const settingsButton =
-    controls.querySelector(
-      ".xkiss-settings"
-    );
-
-  const pipButton =
-    controls.querySelector(
-      ".xkiss-pip"
-    );
-
-  const fullscreenButton =
-    controls.querySelector(
-      ".xkiss-fullscreen"
-    );
-
-  /* =========================================================
-     Utility
-     ========================================================= */
+  /* =======================================================
+     TIME FORMAT
+     ======================================================= */
 
   function formatTime(seconds) {
 
@@ -351,105 +321,31 @@ if (!video || !player) {
       return "00:00";
     }
 
+
+    const totalSeconds =
+      Math.floor(seconds);
+
+
     const minutes =
-      Math.floor(seconds / 60);
+      Math.floor(totalSeconds / 60);
+
 
     const secs =
-      Math.floor(seconds % 60);
+      totalSeconds % 60;
+
 
     return (
       String(minutes).padStart(2, "0") +
       ":" +
       String(secs).padStart(2, "0")
     );
+
   }
 
-  function updatePlayButton() {
 
-    if (video.paused) {
-
-      playButton.textContent = "▶";
-
-      centerPlay.style.display =
-        "flex";
-
-    } else {
-
-      playButton.textContent = "❚❚";
-
-      centerPlay.style.display =
-        "none";
-    }
-  }
-
-  function updateMuteButton() {
-
-    if (
-      video.muted ||
-      video.volume === 0
-    ) {
-
-      muteButton.textContent = "🔇";
-
-    } else {
-
-      muteButton.textContent = "🔊";
-    }
-  }
-
-  function updateProgress() {
-
-    if (
-      !Number.isFinite(video.duration) ||
-      video.duration <= 0
-    ) {
-
-      progressSlider.value = 0;
-
-      return;
-    }
-
-    const percent =
-      (video.currentTime /
-        video.duration) *
-      100;
-
-    progressSlider.value =
-      percent;
-
-    currentTimeElement.textContent =
-      formatTime(
-        video.currentTime
-      );
-
-    durationElement.textContent =
-      formatTime(
-        video.duration
-      );
-  }
-
-  /* =========================================================
-     Menu Control
-     ========================================================= */
-
-  function closeAllMenus() {
-
-    qualityMenu.classList.remove(
-      "show"
-    );
-
-    speedMenu.classList.remove(
-      "show"
-    );
-
-    settingsMenu.classList.remove(
-      "show"
-    );
-  }
-
-  /* =========================================================
-     Play / Pause
-     ========================================================= */
+  /* =======================================================
+     PLAY / PAUSE
+     ======================================================= */
 
   function togglePlay() {
 
@@ -462,152 +358,421 @@ if (!video || !player) {
       video.pause();
 
     }
+
   }
 
-  playButton.addEventListener(
-    "click",
-    togglePlay
-  );
 
-  centerPlay.addEventListener(
-    "click",
-    togglePlay
-  );
+  if (playPauseBtn) {
 
-  video.addEventListener(
-    "click",
-    togglePlay
-  );
+    playPauseBtn.addEventListener(
+      "click",
+      togglePlay
+    );
+
+  }
+
+
+  if (centerPlayBtn) {
+
+    centerPlayBtn.addEventListener(
+      "click",
+      togglePlay
+    );
+
+  }
+
+
+  /* =======================================================
+     VIDEO PLAY EVENT
+     ======================================================= */
 
   video.addEventListener(
     "play",
-    updatePlayButton
+    () => {
+
+      if (playPauseBtn) {
+
+        playPauseBtn.textContent =
+          "❚❚";
+
+      }
+
+
+      if (centerPlayBtn) {
+
+        centerPlayBtn.style.display =
+          "none";
+
+      }
+
+    }
   );
+
+
+  /* =======================================================
+     VIDEO PAUSE EVENT
+     ======================================================= */
 
   video.addEventListener(
     "pause",
-    updatePlayButton
-  );
-
-  /* =========================================================
-     Progress
-     ========================================================= */
-
-  progressSlider.addEventListener(
-    "input",
     () => {
 
-      if (
-        !Number.isFinite(video.duration) ||
-        video.duration <= 0
-      ) {
-        return;
+      if (playPauseBtn) {
+
+        playPauseBtn.textContent =
+          "▶";
+
       }
 
-      const percent =
-        Number(
-          progressSlider.value
-        );
 
-      video.currentTime =
-        (percent / 100) *
-        video.duration;
+      if (centerPlayBtn) {
+
+        centerPlayBtn.style.display =
+          "flex";
+
+      }
 
     }
   );
 
+
+  /* =======================================================
+     VIDEO ENDED
+     ======================================================= */
+
   video.addEventListener(
-    "timeupdate",
-    updateProgress
+    "ended",
+    () => {
+
+      if (playPauseBtn) {
+
+        playPauseBtn.textContent =
+          "▶";
+
+      }
+
+
+      if (centerPlayBtn) {
+
+        centerPlayBtn.style.display =
+          "flex";
+
+      }
+
+    }
   );
+
+
+  /* =======================================================
+     DURATION
+     ======================================================= */
 
   video.addEventListener(
     "loadedmetadata",
-    updateProgress
-  );
-
-  /* =========================================================
-     Volume
-     ========================================================= */
-
-  volumeSlider.addEventListener(
-    "input",
     () => {
 
-      video.volume =
-        Number(
-          volumeSlider.value
+      if (durationEl) {
+
+        durationEl.textContent =
+          formatTime(video.duration);
+
+      }
+
+    }
+  );
+
+
+  /* =======================================================
+     PROGRESS UPDATE
+     ======================================================= */
+
+  video.addEventListener(
+    "timeupdate",
+    () => {
+
+      if (!video.duration) {
+        return;
+      }
+
+
+      const percentage =
+        (video.currentTime /
+          video.duration) * 100;
+
+
+      if (progress) {
+
+        progress.value =
+          percentage;
+
+      }
+
+
+      if (currentTimeEl) {
+
+        currentTimeEl.textContent =
+          formatTime(video.currentTime);
+
+      }
+
+
+      if (durationEl) {
+
+        durationEl.textContent =
+          formatTime(video.duration);
+
+      }
+
+    }
+  );
+
+
+  /* =======================================================
+     PROGRESS SEEK
+     ======================================================= */
+
+  if (progress) {
+
+    progress.addEventListener(
+      "input",
+      () => {
+
+        if (!video.duration) {
+          return;
+        }
+
+
+        video.currentTime =
+          (Number(progress.value) / 100) *
+          video.duration;
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     VOLUME
+     ======================================================= */
+
+  if (volume) {
+
+    volume.addEventListener(
+      "input",
+      () => {
+
+        video.volume =
+          Number(volume.value);
+
+
+        video.muted =
+          video.volume === 0;
+
+
+        updateMuteButton();
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     MUTE
+     ======================================================= */
+
+  function updateMuteButton() {
+
+    if (!muteBtn) {
+      return;
+    }
+
+
+    if (
+      video.muted ||
+      video.volume === 0
+    ) {
+
+      muteBtn.textContent =
+        "🔇";
+
+    } else {
+
+      muteBtn.textContent =
+        "🔊";
+
+    }
+
+  }
+
+
+  if (muteBtn) {
+
+    muteBtn.addEventListener(
+      "click",
+      () => {
+
+        video.muted =
+          !video.muted;
+
+        updateMuteButton();
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     QUALITY MENU
+     ======================================================= */
+
+  if (qualityBtn && qualityMenu) {
+
+    qualityBtn.addEventListener(
+      "click",
+      (event) => {
+
+        event.stopPropagation();
+
+        qualityMenu.classList.toggle(
+          "show"
         );
 
-      video.muted =
-        video.volume === 0;
 
-      updateMuteButton();
+        if (speedMenu) {
+          speedMenu.classList.remove(
+            "show"
+          );
+        }
 
-    }
-  );
 
-  muteButton.addEventListener(
-    "click",
-    () => {
+        if (settingsMenu) {
+          settingsMenu.classList.remove(
+            "show"
+          );
+        }
 
-      video.muted =
-        !video.muted;
+      }
+    );
 
-      updateMuteButton();
+  }
 
-    }
-  );
 
-  /* =========================================================
-     Speed
-     ========================================================= */
+  if (qualityMenu) {
 
-  speedButton.addEventListener(
-    "click",
-    event => {
-
-      event.stopPropagation();
-
-      qualityMenu.classList.remove(
-        "show"
+    const qualityButtons =
+      qualityMenu.querySelectorAll(
+        "[data-quality]"
       );
 
-      settingsMenu.classList.remove(
-        "show"
-      );
 
-      speedMenu.classList.toggle(
-        "show"
-      );
-
-    }
-  );
-
-  speedMenu
-    .querySelectorAll(
-      "[data-speed]"
-    )
-    .forEach(button => {
+    qualityButtons.forEach(button => {
 
       button.addEventListener(
         "click",
-        event => {
+        () => {
 
-          event.stopPropagation();
+          const quality =
+            button.dataset.quality;
+
+
+          loadVideoSource(
+            quality,
+            !video.paused
+          );
+
+
+          qualityMenu.classList.remove(
+            "show"
+          );
+
+        }
+      );
+
+    });
+
+  }
+
+
+  /* =======================================================
+     SPEED
+     ======================================================= */
+
+  let currentSpeed = 1;
+
+
+  if (speedBtn && speedMenu) {
+
+    speedBtn.addEventListener(
+      "click",
+      (event) => {
+
+        event.stopPropagation();
+
+        speedMenu.classList.toggle(
+          "show"
+        );
+
+
+        if (qualityMenu) {
+          qualityMenu.classList.remove(
+            "show"
+          );
+        }
+
+
+        if (settingsMenu) {
+          settingsMenu.classList.remove(
+            "show"
+          );
+        }
+
+      }
+    );
+
+  }
+
+
+  if (speedMenu) {
+
+    const speedButtons =
+      speedMenu.querySelectorAll(
+        "[data-speed]"
+      );
+
+
+    speedButtons.forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
 
           const speed =
-            Number(
-              button.dataset.speed
-            );
+            Number(button.dataset.speed);
+
+
+          if (!Number.isFinite(speed)) {
+            return;
+          }
+
+
+          currentSpeed =
+            speed;
+
 
           video.playbackRate =
             speed;
 
-          speedButton.textContent =
-            speed === 1
-              ? "1x"
-              : speed + "x";
+
+          if (speedBtn) {
+
+            speedBtn.textContent =
+              speed + "x";
+
+          }
+
 
           speedMenu.classList.remove(
             "show"
@@ -618,461 +783,298 @@ if (!video || !player) {
 
     });
 
-  /* =========================================================
-     Quality
-     ========================================================= */
+  }
 
-  qualityButton.addEventListener(
-    "click",
-    event => {
 
-      event.stopPropagation();
+  /* =======================================================
+     SETTINGS
+     ======================================================= */
 
-      speedMenu.classList.remove(
-        "show"
-      );
+  if (settingsBtn && settingsMenu) {
 
-      settingsMenu.classList.remove(
-        "show"
-      );
+    settingsBtn.addEventListener(
+      "click",
+      (event) => {
 
-      qualityMenu.classList.toggle(
-        "show"
-      );
+        event.stopPropagation();
 
-    }
-  );
+        settingsMenu.classList.toggle(
+          "show"
+        );
 
-  qualityMenu
-    .querySelectorAll(
-      "[data-quality]"
-    )
-    .forEach(button => {
 
-      button.addEventListener(
-        "click",
-        event => {
-
-          event.stopPropagation();
-
-          const quality =
-            button.dataset.quality;
-
-          changeQuality(
-            quality
+        if (qualityMenu) {
+          qualityMenu.classList.remove(
+            "show"
           );
-
-        }
-      );
-
-    });
-
-  function changeQuality(
-    quality
-  ) {
-
-    if (
-      !Object.prototype.hasOwnProperty.call(
-        QUALITY_SOURCES,
-        quality
-      )
-    ) {
-      return;
-    }
-
-    const source =
-      QUALITY_SOURCES[quality];
-
-    /*
-      If the quality has no real source yet,
-      do not change the current video.
-    */
-
-    if (!source) {
-
-      qualityMenu.classList.remove(
-        "show"
-      );
-
-      alert(
-        quality +
-        " is not configured yet."
-      );
-
-      return;
-    }
-
-    if (
-      quality === currentQuality
-    ) {
-
-      qualityMenu.classList.remove(
-        "show"
-      );
-
-      return;
-    }
-
-    const currentTime =
-      video.currentTime;
-
-    const wasPlaying =
-      !video.paused;
-
-    currentQuality =
-      quality;
-
-    video.src =
-      source;
-
-    qualityButton.textContent =
-      quality;
-
-    const pageQuality =
-      document.getElementById(
-        "currentQuality"
-      );
-
-    if (pageQuality) {
-
-      pageQuality.textContent =
-        quality;
-    }
-
-    video.addEventListener(
-      "loadedmetadata",
-      function restorePosition() {
-
-        video.currentTime =
-          Math.min(
-            currentTime,
-            video.duration ||
-              currentTime
-          );
-
-        if (wasPlaying) {
-
-          video.play()
-            .catch(() => {});
-
         }
 
-        video.removeEventListener(
-          "loadedmetadata",
-          restorePosition
+
+        if (speedMenu) {
+          speedMenu.classList.remove(
+            "show"
+          );
+        }
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     CC
+     ======================================================= */
+
+  if (ccBtn) {
+
+    ccBtn.addEventListener(
+      "click",
+      () => {
+
+        alert(
+          "CC is ready for future subtitle integration."
         );
 
       }
     );
 
-    video.load();
-
-    qualityMenu.classList.remove(
-      "show"
-    );
   }
 
-  /* =========================================================
-     Settings
-     ========================================================= */
 
-  settingsButton.addEventListener(
-    "click",
-    event => {
+  /* =======================================================
+     RESET SPEED
+     ======================================================= */
 
-      event.stopPropagation();
+  if (resetSpeedBtn) {
 
-      qualityMenu.classList.remove(
-        "show"
-      );
-
-      speedMenu.classList.remove(
-        "show"
-      );
-
-      settingsMenu.classList.toggle(
-        "show"
-      );
-
-    }
-  );
-
-  settingsMenu
-    .querySelector(
-      ".xkiss-reset-speed"
-    )
-    .addEventListener(
+    resetSpeedBtn.addEventListener(
       "click",
-      event => {
+      () => {
 
-        event.stopPropagation();
+        currentSpeed =
+          1;
 
-        video.playbackRate = 1;
 
-        speedButton.textContent =
-          "1x";
+        video.playbackRate =
+          1;
+
+
+        if (speedBtn) {
+
+          speedBtn.textContent =
+            "1x";
+
+        }
+
+
+        if (settingsMenu) {
+
+          settingsMenu.classList.remove(
+            "show"
+          );
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     PICTURE IN PICTURE
+     ======================================================= */
+
+  if (pipBtn) {
+
+    pipBtn.addEventListener(
+      "click",
+      async () => {
+
+        try {
+
+          if (
+            document.pictureInPictureElement
+          ) {
+
+            await document.exitPictureInPicture();
+
+          } else if (
+            document.pictureInPictureEnabled &&
+            !video.disablePictureInPicture
+          ) {
+
+            await video.requestPictureInPicture();
+
+          }
+
+        } catch (error) {
+
+          console.error(
+            "XKiss PiP error:",
+            error
+          );
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     FULLSCREEN
+     ======================================================= */
+
+  if (fullscreenBtn) {
+
+    fullscreenBtn.addEventListener(
+      "click",
+      async () => {
+
+        try {
+
+          if (
+            document.fullscreenElement
+          ) {
+
+            await document.exitFullscreen();
+
+          } else if (player) {
+
+            await player.requestFullscreen();
+
+          }
+
+        } catch (error) {
+
+          console.error(
+            "XKiss fullscreen error:",
+            error
+          );
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     CLOSE MENUS WHEN CLICKING OUTSIDE
+     ======================================================= */
+
+  document.addEventListener(
+    "click",
+    () => {
+
+      if (qualityMenu) {
+
+        qualityMenu.classList.remove(
+          "show"
+        );
+
+      }
+
+
+      if (speedMenu) {
+
+        speedMenu.classList.remove(
+          "show"
+        );
+
+      }
+
+
+      if (settingsMenu) {
 
         settingsMenu.classList.remove(
           "show"
         );
 
       }
-    );
 
-  settingsMenu
-    .querySelector(
-      ".xkiss-cc-button"
-    )
-    .addEventListener(
+    }
+  );
+
+
+  /* =======================================================
+     PREVENT MENU CLICKS FROM CLOSING THEMSELVES
+     ======================================================= */
+
+  [
+    qualityMenu,
+    speedMenu,
+    settingsMenu
+  ].forEach(menu => {
+
+    if (!menu) {
+      return;
+    }
+
+
+    menu.addEventListener(
       "click",
       event => {
 
         event.stopPropagation();
 
-        alert(
-          "CC / subtitles are not configured yet."
-        );
-
       }
     );
 
-  /* =========================================================
-     Picture in Picture
-     ========================================================= */
+  });
 
-  pipButton.addEventListener(
-    "click",
-    async event => {
 
-      event.stopPropagation();
+  /* =======================================================
+     INITIAL STATE
+     ======================================================= */
 
-      try {
+  video.volume =
+    1;
 
-        if (
-          document.pictureInPictureElement
-        ) {
 
-          await document.exitPictureInPicture();
+  video.muted =
+    false;
 
-        } else if (
-          document.pictureInPictureEnabled
-        ) {
 
-          await video.requestPictureInPicture();
+  video.playbackRate =
+    1;
 
-        }
 
-      } catch (error) {
+  if (volume) {
 
-        console.error(
-          "XKiss PiP error:",
-          error
-        );
+    volume.value =
+      "1";
 
-      }
+  }
 
-    }
-  );
 
-  /* =========================================================
-     Fullscreen
-     ========================================================= */
+  if (qualityBtn) {
 
-  fullscreenButton.addEventListener(
-    "click",
-    async event => {
+    qualityBtn.textContent =
+      currentQualityValue;
 
-      event.stopPropagation();
+  }
 
-      try {
 
-        if (
-          !document.fullscreenElement
-        ) {
+  if (currentQuality) {
 
-          if (
-            player.requestFullscreen
-          ) {
+    currentQuality.textContent =
+      currentQualityValue;
 
-            await player.requestFullscreen();
+  }
 
-          } else if (
-            video.webkitEnterFullscreen
-          ) {
-
-            video.webkitEnterFullscreen();
-
-          }
-
-        } else {
-
-          await document.exitFullscreen();
-
-        }
-
-      } catch (error) {
-
-        console.error(
-          "XKiss fullscreen error:",
-          error
-        );
-
-      }
-
-    }
-  );
-
-  /* =========================================================
-     Prevent Controls From Affecting Video
-     ========================================================= */
-
-  controls.addEventListener(
-    "click",
-    event => {
-
-      event.stopPropagation();
-
-    }
-  );
-
-  qualityMenu.addEventListener(
-    "click",
-    event => {
-
-      event.stopPropagation();
-
-    }
-  );
-
-  speedMenu.addEventListener(
-    "click",
-    event => {
-
-      event.stopPropagation();
-
-    }
-  );
-
-  settingsMenu.addEventListener(
-    "click",
-    event => {
-
-      event.stopPropagation();
-
-    }
-  );
-
-  /* =========================================================
-     Close Menus Outside Player
-     ========================================================= */
-
-  document.addEventListener(
-    "click",
-    event => {
-
-      if (
-        !player.contains(
-          event.target
-        )
-      ) {
-
-        closeAllMenus();
-
-      }
-
-    }
-  );
-
-  /* =========================================================
-     Keyboard Controls
-     ========================================================= */
-
-  document.addEventListener(
-    "keydown",
-    event => {
-
-      if (
-        event.target.tagName ===
-          "INPUT" ||
-        event.target.tagName ===
-          "TEXTAREA"
-      ) {
-        return;
-      }
-
-      switch (event.key) {
-
-        case " ":
-
-          event.preventDefault();
-
-          togglePlay();
-
-          break;
-
-        case "ArrowRight":
-
-          video.currentTime =
-            Math.min(
-              video.duration || 0,
-              video.currentTime + 5
-            );
-
-          break;
-
-        case "ArrowLeft":
-
-          video.currentTime =
-            Math.max(
-              0,
-              video.currentTime - 5
-            );
-
-          break;
-
-        case "m":
-        case "M":
-
-          video.muted =
-            !video.muted;
-
-          updateMuteButton();
-
-          break;
-
-        case "f":
-        case "F":
-
-          fullscreenButton.click();
-
-          break;
-
-      }
-
-    }
-  );
-
-  /* =========================================================
-     Initial State
-     ========================================================= */
-
-  video.volume = 1;
-
-  video.playbackRate = 1;
-
-  updatePlayButton();
 
   updateMuteButton();
 
-  updateProgress();
 
   console.log(
-    "XKiss Player 2.0 loaded."
+    "XKiss Player loaded:",
+    videoData.id,
+    videoData.title
   );
 
-  console.log(
-    "Quality options:",
-    "340p, 460p, 720p, 1080p"
-  );
-
-}
+});
