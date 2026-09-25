@@ -31,6 +31,10 @@ h2 {
   font-size: 22px;
 }
 
+/* =========================================================
+   VIDEO INFORMATION
+   ========================================================= */
+
 .video-meta {
   display: flex;
   gap: 8px;
@@ -92,7 +96,9 @@ h2 {
 }
 
 /* =========================================================
-   LOGO
+   XKISS LOGO
+   X = RAINBOW
+   KISS = WHITE
    ========================================================= */
 
 .xkiss-logo {
@@ -100,10 +106,13 @@ h2 {
   top: 14px;
   right: 16px;
   z-index: 20;
+
   font-size: 25px;
   font-weight: 900;
   letter-spacing: -1px;
+
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+
   pointer-events: none;
 }
 
@@ -121,6 +130,7 @@ h2 {
 
   -webkit-background-clip: text;
   background-clip: text;
+
   color: transparent;
 }
 
@@ -129,13 +139,182 @@ h2 {
 }
 
 /* =========================================================
-   CENTER PLAY
+   PLAYER CONTROLS
    ========================================================= */
 
-.xkiss-center-play {
+.player-controls {
   position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  z-index: 25;
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 10px;
+
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.97),
+    rgba(0, 0, 0, 0.82),
+    rgba(0, 0, 0, 0)
+  );
+}
+
+/* =========================================================
+   PLAYER BUTTONS
+   ========================================================= */
+
+.player-controls button {
+  flex: 0 0 auto;
+
+  min-width: 38px;
+  height: 36px;
+
+  padding: 0 8px;
+
+  border: 0;
+  border-radius: 6px;
+
+  background: rgba(20, 20, 20, 0.95);
+  color: #ffffff;
+
+  font-size: 15px;
+
+  cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.player-controls button:hover,
+.player-controls button:active {
+  background: #333333;
+}
+
+/* =========================================================
+   PROGRESS
+   ========================================================= */
+
+#progress {
+  flex: 1;
+
+  width: 100%;
+  min-width: 60px;
+  height: 5px;
+
+  margin: 0;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  background: rgba(255, 255, 255, 0.35);
+
+  border-radius: 10px;
+
+  cursor: pointer;
+}
+
+#progress::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: 13px;
+  height: 13px;
+
+  border-radius: 50%;
+
+  background: #e00000;
+
+  cursor: pointer;
+}
+
+#progress::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: #e00000;
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   TIME
+   ========================================================= */
+
+#currentTime,
+#duration {
+  flex: 0 0 auto;
+
+  color: #ffffff;
+
+  font-size: 12px;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   VOLUME
+   ========================================================= */
+
+#volume {
+  width: 70px;
+  height: 5px;
+
+  flex: 0 0 auto;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  background: rgba(255, 255, 255, 0.35);
+
+  border-radius: 10px;
+
+  cursor: pointer;
+}
+
+#volume::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: 12px;
+  height: 12px;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  cursor: pointer;
+}
+
+#volume::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   LARGE CENTER PLAY BUTTON
+   ========================================================= */
+
+.center-play-button {
+  position: absolute;
+
   left: 50%;
   top: 50%;
+
   transform: translate(-50%, -50%);
 
   width: 78px;
@@ -157,6 +336,7 @@ h2 {
   padding-left: 6px;
 
   cursor: pointer;
+
   z-index: 30;
 
   box-shadow: 0 5px 25px rgba(0, 0, 0, 0.65);
@@ -164,184 +344,15 @@ h2 {
   -webkit-tap-highlight-color: transparent;
 }
 
-.xkiss-center-play:active {
+.center-play-button:active {
   transform: translate(-50%, -50%) scale(0.94);
 }
 
 /* =========================================================
-   CONTROLS
+   PLAYER MENUS
    ========================================================= */
 
-.xkiss-controls {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  z-index: 25;
-
-  padding: 8px 10px 10px;
-
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.97),
-    rgba(0, 0, 0, 0.80),
-    rgba(0, 0, 0, 0)
-  );
-}
-
-/* =========================================================
-   PROGRESS
-   ========================================================= */
-
-.xkiss-progress-area {
-  width: 100%;
-  padding: 5px 0 8px;
-}
-
-.xkiss-progress {
-  width: 100%;
-  height: 5px;
-
-  margin: 0;
-
-  appearance: none;
-  -webkit-appearance: none;
-
-  background: rgba(255, 255, 255, 0.35);
-
-  border-radius: 10px;
-
-  cursor: pointer;
-}
-
-.xkiss-progress::-webkit-slider-thumb {
-  appearance: none;
-  -webkit-appearance: none;
-
-  width: 13px;
-  height: 13px;
-
-  border-radius: 50%;
-
-  background: #e00000;
-
-  cursor: pointer;
-}
-
-.xkiss-progress::-moz-range-thumb {
-  width: 13px;
-  height: 13px;
-
-  border: 0;
-  border-radius: 50%;
-
-  background: #e00000;
-
-  cursor: pointer;
-}
-
-/* =========================================================
-   CONTROL ROW
-   ========================================================= */
-
-.xkiss-control-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  width: 100%;
-}
-
-.xkiss-button {
-  width: 38px;
-  height: 36px;
-
-  flex: 0 0 auto;
-
-  padding: 0;
-
-  border: 0;
-  border-radius: 6px;
-
-  background: rgba(20, 20, 20, 0.92);
-
-  color: #ffffff;
-
-  font-size: 17px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-
-  -webkit-tap-highlight-color: transparent;
-}
-
-.xkiss-button:active {
-  background: #333333;
-}
-
-.xkiss-spacer {
-  flex: 1;
-}
-
-/* =========================================================
-   VOLUME
-   ========================================================= */
-
-.xkiss-volume {
-  width: 70px;
-  height: 5px;
-
-  flex: 0 0 auto;
-
-  appearance: none;
-  -webkit-appearance: none;
-
-  background: rgba(255, 255, 255, 0.35);
-
-  border-radius: 10px;
-}
-
-.xkiss-volume::-webkit-slider-thumb {
-  appearance: none;
-  -webkit-appearance: none;
-
-  width: 12px;
-  height: 12px;
-
-  border-radius: 50%;
-
-  background: #ffffff;
-}
-
-.xkiss-volume::-moz-range-thumb {
-  width: 12px;
-  height: 12px;
-
-  border: 0;
-  border-radius: 50%;
-
-  background: #ffffff;
-}
-
-/* =========================================================
-   TIME
-   ========================================================= */
-
-.xkiss-time {
-  color: #ffffff;
-  font-size: 12px;
-  white-space: nowrap;
-  padding: 0 3px;
-}
-
-/* =========================================================
-   MENUS
-   ========================================================= */
-
-.xkiss-menu {
+.player-menu {
   position: absolute;
 
   right: 10px;
@@ -349,15 +360,14 @@ h2 {
 
   z-index: 100;
 
-  width: 170px;
-  min-width: 170px;
+  width: 175px;
+  min-width: 175px;
 
   padding: 7px;
 
   background: rgba(10, 10, 10, 0.98);
 
   border: 1px solid #3a3a3a;
-
   border-radius: 10px;
 
   box-shadow: 0 10px 35px rgba(0, 0, 0, 0.85);
@@ -365,28 +375,11 @@ h2 {
   display: none;
 }
 
-.xkiss-menu.show {
+.player-menu.show {
   display: block;
 }
 
-/* Menu title */
-
-.xkiss-menu-title {
-  padding: 8px 10px 10px;
-
-  color: #aaaaaa;
-
-  font-size: 12px;
-  font-weight: bold;
-
-  border-bottom: 1px solid #292929;
-
-  margin-bottom: 4px;
-}
-
-/* Every menu option is vertical */
-
-.xkiss-menu button {
+.player-menu button {
   display: block;
 
   width: 100%;
@@ -410,34 +403,40 @@ h2 {
   cursor: pointer;
 }
 
-.xkiss-menu button:hover,
-.xkiss-menu button:active {
+.player-menu button:hover,
+.player-menu button:active {
   background: #272727;
 }
 
-/* Quality menu specifically */
+/* =========================================================
+   QUALITY MENU
+   ========================================================= */
 
-.xkiss-quality-menu {
+.quality-menu {
   width: 155px;
 }
 
-.xkiss-quality-menu button {
+.quality-menu button {
   text-align: center;
 }
 
-/* Speed menu */
+/* =========================================================
+   SPEED MENU
+   ========================================================= */
 
-.xkiss-speed-menu {
+.speed-menu {
   width: 165px;
 }
 
-.xkiss-speed-menu button {
+.speed-menu button {
   text-align: center;
 }
 
-/* Settings menu */
+/* =========================================================
+   SETTINGS MENU
+   ========================================================= */
 
-.xkiss-settings-menu {
+.settings-menu {
   width: 185px;
 }
 
@@ -472,7 +471,7 @@ h2 {
 }
 
 /* =========================================================
-   CONTENT
+   CONTENT SECTIONS
    ========================================================= */
 
 .content-section {
@@ -503,31 +502,34 @@ h2 {
     font-size: 20px;
   }
 
-  .xkiss-center-play {
+  .center-play-button {
     width: 68px;
     height: 68px;
     font-size: 29px;
   }
 
-  .xkiss-control-row {
+  .player-controls {
     gap: 4px;
+    padding: 8px 7px 9px;
   }
 
-  .xkiss-button {
-    width: 34px;
+  .player-controls button {
+    min-width: 34px;
     height: 34px;
-    font-size: 15px;
+    padding: 0 6px;
+    font-size: 14px;
   }
 
-  .xkiss-volume {
+  #volume {
     width: 55px;
   }
 
-  .xkiss-time {
+  #currentTime,
+  #duration {
     font-size: 10px;
   }
 
-  .xkiss-menu {
+  .player-menu {
     right: 7px;
     bottom: 60px;
   }
@@ -543,21 +545,23 @@ h2 {
 
 @media (max-width: 390px) {
 
-  .xkiss-volume {
+  #volume {
     display: none;
   }
 
-  .xkiss-time {
+  #currentTime,
+  #duration {
     font-size: 9px;
   }
 
-  .xkiss-button {
-    width: 32px;
+  .player-controls button {
+    min-width: 32px;
     height: 32px;
+    padding: 0 5px;
   }
 
-  .xkiss-menu {
+  .player-menu {
     width: 150px;
     min-width: 150px;
   }
-    }
+  }
