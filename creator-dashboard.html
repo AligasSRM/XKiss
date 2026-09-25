@@ -16,6 +16,7 @@
 </nav></header>
 <main class="dashboard-page">
 <section class="dashboard-hero"><div><span class="eyebrow">XKISS CREATOR</span><h1>Creator Dashboard</h1><p>Your central creator workspace for videos, live broadcasting, storage and future earnings.</p></div><span id="system-status" class="system-pill"><span></span> Checking system</span></section>
+
 <section class="stats-section"><div class="section-head"><div><h2>Overview</h2><p>Current platform data only. No placeholder earnings or fake metrics.</p></div></div>
 <div class="stats-grid">
 <article class="stat-card"><span class="stat-label">My Videos</span><strong id="video-count">—</strong><span>Production library</span></article>
@@ -23,6 +24,17 @@
 <article class="stat-card"><span class="stat-label">Storage</span><strong id="storage-state">—</strong><span id="storage-detail">Checking storage</span></article>
 <article class="stat-card"><span class="stat-label">Monetization</span><strong>Not active</strong><span>Payment layer comes later</span></article>
 </div></section>
+
+<section class="wallet-section"><div class="section-head"><div><h2>Wallet &amp; Payouts</h2><p>Live wallet state only. No fake balance or payout amount is displayed.</p></div></div>
+<div class="wallet-grid">
+<article class="wallet-card"><span class="wallet-label">Pending Balance</span><strong id="wallet-pending">—</strong><span id="wallet-pending-detail">Wallet ledger not connected</span></article>
+<article class="wallet-card"><span class="wallet-label">Available Balance</span><strong id="wallet-available">—</strong><span id="wallet-available-detail">Settlement not connected</span></article>
+<article class="wallet-card"><span class="wallet-label">Payout Status</span><strong id="payout-state">—</strong><span id="payout-detail">Checking payout layer</span></article>
+<article class="wallet-card"><span class="wallet-label">Security</span><strong id="payout-security">Prepared</strong><span>Server-side authorization rules</span></article>
+</div>
+<div class="wallet-note"><strong>Wallet architecture ready</strong><span>Revenue → Pending → Settlement → Available → Payout. Real balances and payments remain disabled until the required storage, account verification and payment layers are enabled.</span></div>
+</section>
+
 <section class="actions-section"><div class="section-head"><div><h2>Creator Tools</h2><p>Quick access to the working creator modules.</p></div></div>
 <div class="action-grid">
 <a class="action-card primary-card" href="creator-upload.html"><span class="action-number">01</span><strong>Upload Video</strong><span>Prepare video metadata and connect to production storage when enabled.</span><b>Open Upload →</b></a>
@@ -30,9 +42,10 @@
 <a class="action-card" href="live.html"><span class="action-number">03</span><strong>Go Live</strong><span>Open Live and use the working camera and microphone recorder.</span><b>Open Live →</b></a>
 <a class="action-card" href="index.html#account"><span class="action-number">04</span><strong>Account</strong><span>Account and creator identity controls will connect here.</span><b>Open Account →</b></a>
 </div></section>
+
 <section class="roadmap-section"><div class="roadmap-card"><div><span class="eyebrow">CREATOR PLATFORM</span><h2>Ready for the next layers</h2><p>The dashboard is separated from storage, payments and account authentication so those systems can be connected later without rebuilding this creator workspace.</p></div>
 <div class="roadmap-grid">
-<div><strong>01</strong><span>Video Upload & Storage</span><em id="roadmap-storage">Pending</em></div><div><strong>02</strong><span>Creator Library</span><em>Ready</em></div><div><strong>03</strong><span>Live</span><em>Recorder ready</em></div><div><strong>04</strong><span>Monetization</span><em>Next layer</em></div><div><strong>05</strong><span>Wallet & Payouts</span><em>Future layer</em></div><div><strong>06</strong><span>Creator Analytics</span><em>Future layer</em></div>
+<div><strong>01</strong><span>Video Upload &amp; Storage</span><em id="roadmap-storage">Pending</em></div><div><strong>02</strong><span>Creator Library</span><em>Ready</em></div><div><strong>03</strong><span>Live</span><em>Recorder ready</em></div><div><strong>04</strong><span>Monetization</span><em>Next layer</em></div><div><strong>05</strong><span>Wallet &amp; Payouts</span><em id="roadmap-wallet">Prepared</em></div><div><strong>06</strong><span>Creator Analytics</span><em>Future layer</em></div>
 </div></div></section>
 </main>
 <footer class="dashboard-footer"><div>XKiss — Creator Dashboard</div><a href="index.html">Back to Home</a></footer>
