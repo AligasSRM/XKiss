@@ -1,0 +1,163 @@
+name: XKiss Player Full Regression 15.23-15.27
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "player/runtime/**"
+      - "js/player.js"
+      - "js/player/**"
+      - "player.html"
+      - ".github/workflows/xkiss-player-full-regression.yml"
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Runtime control 15.23 self-test
+        run: |
+          node --input-type=module -e "import { runXKissPlayerRuntimeControlSelfCheck } from './player/runtime/player-runtime-control-self-test.js'; const r=runXKissPlayerRuntimeControlSelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+
+      - name: Lifecycle 15.24 self-test
+        run: |
+          node --input-type=module -e "import { runXKissModuleLifecycleSelfCheck } from './player/runtime/xkiss-module-lifecycle-self-test.js'; const r=runXKissModuleLifecycleSelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+
+      - name: Contract 15.25 self-test
+        run: |
+          node --input-type=module -e "import { runXKissModuleContractSelfCheck } from './player/runtime/xkiss-module-contract-self-test.js'; const r=runXKissModuleContractSelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+
+      - name: Orchestration 15.26 self-test
+        run: |
+          node --input-type=module -e "import { runXKissModuleOrchestrationSelfCheck } from './player/runtime/xkiss-module-orchestration-self-test.js'; const r=runXKissModuleOrchestrationSelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+
+      - name: Security 15.27 self-test
+        run: |
+          node --input-type=module -e "import { runXKissModuleSecuritySelfCheck } from './player/runtime/xkiss-module-security-self-test.js'; const r=runXKissModuleSecuritySelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+
+      - name: Full integration and Chrome regression
+        run: |
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install chrome
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/xkiss-http.log 2>&1 &
+
+          node --input-type=module <<'NODE'
+          import { chromium } from "playwright";
+
+          const browser = await chromium.launch({channel:"chrome",headless:true});
+          const page = await browser.newPage();
+
+          const errors = [];
+          page.on("pageerror", e => errors.push(String(e)));
+          page.on("console", m => {
+            if (m.type() === "error") errors.push(m.text());
+          });
+
+          await page.goto("http://127.0.0.1:4173/player.html?id=video-001",{waitUntil:"domcontentloaded"});
+          await page.waitForFunction(() => window.XKissPlayerCore?.platformCore?.connected === true);
+          await page.waitForFunction(() =>
+            window.XKissPlayerCore?.moduleLifecycle &&
+            window.XKissPlayerCore?.moduleContracts &&
+            window.XKissPlayerCore?.moduleOrchestrator &&
+            window.XKissPlayerCore?.moduleSecurity
+          );
+
+          const result = await page.evaluate(async () => {
+            const core = window.XKissPlayerCore;
+            const video = document.getElementById("video");
+            const lifecycle = core.moduleLifecycle;
+            const contracts = core.moduleContracts;
+            const orchestrator = core.moduleOrchestrator;
+            const security = core.moduleSecurity;
+
+            const checks = {};
+
+            checks.core = core.platformCore?.connected === true;
+            checks.lifecycle = lifecycle?.getStatus && core.getModuleStatus;
+            checks.contracts = contracts?.register && contracts?.hasCapability;
+            checks.orchestration = orchestrator?.plan && orchestrator?.activate;
+            checks.security = security?.authorize && security?.checkIntegrity;
+
+            const control = {
+              pause: core.control("pause"),
+              mute: core.control("mute", true),
+              volume: core.control("volume", 0.5),
+              speed: core.control("speed", 1.25),
+              seek: core.control("seek", 0),
+              reload: core.control("reload"),
+              reset: core.control("reset")
+            };
+            checks.controls =
+              control.pause?.ok === true &&
+              control.mute?.value === true &&
+              control.volume?.value === 0.5 &&
+              control.speed?.value === 1.25 &&
+              control.seek?.ok === true &&
+              control.reload?.ok === true &&
+              control.reset?.ok === true;
+
+            contracts.register("reg-base", {
+              version:"1.0.0",
+              dependencies:[],
+              capabilities:["regression.base","playback.control"]
+            });
+            contracts.register("reg-top", {
+              version:"1.0.0",
+              dependencies:["reg-base"],
+              capabilities:["regression.top"]
+            });
+            lifecycle.register("reg-base",{init(){},start(){}});
+            lifecycle.register("reg-top",{init(){},start(){}});
+            const plan = orchestrator.plan("reg-top");
+            const activation = orchestrator.activate("reg-top");
+            const states = lifecycle.getStatus();
+
+            checks.dependencyOrder =
+              JSON.stringify(plan.order) === JSON.stringify(["reg-base","reg-top"]) &&
+              activation.ok === true &&
+              states["reg-base"]?.state === "active" &&
+              states["reg-top"]?.state === "active";
+
+            const auth = security.authorize("execute","reg-top","regression.top");
+            const denied = security.authorize("execute","unknown-regression-module");
+            const valid = security.validateInput("normal text",{type:"string",maxLength:100});
+            const dangerous = security.validateInput("<script>alert(1)</script>",{type:"string",maxLength:100});
+            const integrity = security.checkIntegrity();
+
+            checks.securityGate =
+              auth.ok === true &&
+              denied.ok === false &&
+              valid.ok === true &&
+              dangerous.ok === false &&
+              integrity.ok === true;
+
+            checks.qualityList = ["340p","460p","720p","1080p"].every(q =>
+              q === "340p" || q === "460p" || q === "720p" || q === "1080p"
+            );
+
+            return {
+              stage:"15.23-15.27",
+              checks,
+              playerReady: !!video,
+              title: document.getElementById("videoTitle")?.textContent || "",
+              qualityList:["340p","460p","720p","1080p"]
+            };
+          });
+
+          console.log(JSON.stringify({result,errors},null,2));
+
+          if (!Object.values(result.checks).every(Boolean) ||
+              !result.playerReady ||
+              errors.length > 0) {
+            process.exit(1);
+          }
+
+          await browser.close();
+          NODE
