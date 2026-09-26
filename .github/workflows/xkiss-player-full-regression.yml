@@ -10,6 +10,8 @@ on:
       - "js/player/**"
       - "player.html"
       - "core/xkiss-*-contract*.js"
+      - "settings/**"
+      - "audit/**"
       - ".github/workflows/xkiss-player-full-regression.yml"
 
 jobs:
@@ -69,6 +71,13 @@ jobs:
       - name: Production policy contract self-test
         run: |
           node --input-type=module -e "import { runXKissProductionPolicyContractSelfTest } from './core/xkiss-production-policy-contract-self-test.js'; const r=runXKissProductionPolicyContractSelfTest(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+
+      - name: Platform Settings Section 15 self-test
+        run: |
+          node --input-type=module -e "import { runXKissPlatformSettingsSectionSelfTest } from './settings/xkiss-platform-settings-section-self-test.js'; const r=runXKissPlatformSettingsSectionSelfTest(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+
+      - name: Final cross-section review
+        run: node audit/xkiss-final-review.js
 
       - name: Full integration and Chrome regression
         run: |
