@@ -25,7 +25,7 @@ const XKISS_VIDEOS = {
       "460p": "",
 
       "720p":
-        "https://aligassrm.github.io/XKiss/20260923_234200-3.mp4",
+        "20260923_234200-3.mp4",
 
       "1080p": ""
 
