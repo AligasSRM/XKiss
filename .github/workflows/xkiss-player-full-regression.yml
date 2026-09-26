@@ -1,4 +1,4 @@
-name: XKiss Player Full Regression 15.23-15.27
+name: XKiss Player Full Regression 15.23-15.28
 
 on:
   workflow_dispatch:
@@ -41,6 +41,10 @@ jobs:
         run: |
           node --input-type=module -e "import { runXKissModuleSecuritySelfCheck } from './player/runtime/xkiss-module-security-self-test.js'; const r=runXKissModuleSecuritySelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
 
+      - name: Health 15.28 self-test
+        run: |
+          node --input-type=module -e "import { runXKissModuleHealthSelfCheck } from './player/runtime/xkiss-module-health-self-test.js'; const r=runXKissModuleHealthSelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+
       - name: Full integration and Chrome regression
         run: |
           npm init -y
@@ -66,7 +70,8 @@ jobs:
             window.XKissPlayerCore?.moduleLifecycle &&
             window.XKissPlayerCore?.moduleContracts &&
             window.XKissPlayerCore?.moduleOrchestrator &&
-            window.XKissPlayerCore?.moduleSecurity
+            window.XKissPlayerCore?.moduleSecurity &&
+            window.XKissPlayerCore?.moduleHealth
           );
 
           const result = await page.evaluate(async () => {
@@ -76,6 +81,7 @@ jobs:
             const contracts = core.moduleContracts;
             const orchestrator = core.moduleOrchestrator;
             const security = core.moduleSecurity;
+            const health = core.moduleHealth;
 
             const checks = {};
 
@@ -84,6 +90,7 @@ jobs:
             checks.contracts = typeof contracts?.register === "function" && typeof contracts?.hasCapability === "function";
             checks.orchestration = typeof orchestrator?.plan === "function" && typeof orchestrator?.activate === "function";
             checks.security = typeof security?.authorize === "function" && typeof security?.checkIntegrity === "function";
+            checks.health = typeof health?.scan === "function" && typeof health?.getHealth === "function" && typeof health?.getFaults === "function";
 
             const control = {
               pause: core.control("pause"),
@@ -139,12 +146,26 @@ jobs:
               dangerous.ok === false &&
               integrity.ok === true;
 
+            health.scan();
+            const healthSummary = health.getHealth();
+            const healthReport = health.report({
+              module: "reg-top",
+              status: "WARNING",
+              severity: "MEDIUM",
+              timestamp: Date.now()
+            });
+            checks.healthGate =
+              healthReport.ok === true &&
+              healthSummary.modules >= 1 &&
+              health.get("reg-top")?.status === "WARNING" &&
+              health.getFaults().length === 0;
+
             checks.qualityList = ["340p","460p","720p","1080p"].every(q =>
               q === "340p" || q === "460p" || q === "720p" || q === "1080p"
             );
 
             return {
-              stage:"15.23-15.27",
+              stage:"15.23-15.28",
               checks,
               playerReady: !!video,
               title: document.getElementById("videoTitle")?.textContent || "",
