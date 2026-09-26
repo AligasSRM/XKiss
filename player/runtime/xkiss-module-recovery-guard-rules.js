@@ -1,0 +1,2 @@
+export const XKISS_MODULE_RECOVERY_GUARD_RULES={stage:"15.31",name:"XKiss Recovery Guard & Anti-Loop Protection",version:"1.0.0",status:"prepared",failClosed:true,maxAttempts:3,windowMs:60000,cooldownMs:30000,maxHistory:100};
+export function validateRecoveryGuardRequest(request={}){const module=typeof request.module==="string"&&/^[A-Za-z0-9._-]{1,80}$/.test(request.module);return{ok:module,error:module?null:"invalid-module"};}
