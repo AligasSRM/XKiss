@@ -1,0 +1,127 @@
+name: XKiss Player Runtime 15.16
+
+on:
+  push:
+    paths:
+      - "index.html"
+      - "player.html"
+      - "js/player.js"
+      - "js/video-data.js"
+      - "js/player/*.js"
+      - "home/*.js"
+      - "player/runtime/*.js"
+      - ".github/workflows/xkiss-player-runtime-15-16.yml"
+  workflow_dispatch:
+
+jobs:
+  player-runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run 15.16 core self-test
+        run: |
+          node --input-type=module <<'NODE'
+          import { runXKissPlayerRuntimeIntegrationSelfCheck } from "./player/runtime/player-runtime-integration-self-test.js";
+          import { validateXKissPlayerRuntimeIntegration, evaluateXKissPlayerRuntimeIntegrationRequest } from "./player/runtime/player-runtime-integration-integration.js";
+
+          const selfTest = runXKissPlayerRuntimeIntegrationSelfCheck();
+          const integration = validateXKissPlayerRuntimeIntegration();
+          const valid = evaluateXKissPlayerRuntimeIntegrationRequest({
+            operation: "validate_video_runtime",
+            homepageVerified: true,
+            playerPageVerified: true,
+            playerCoreConnected: true,
+            modulesConnected: true,
+            qualitiesVerified: true,
+            videoRuntimeVerified: true
+          });
+
+          const result = {
+            stage_15_16: { selfTest, integration, valid },
+            allPassed: selfTest.ok === true && integration.ok === true && valid.allowed === true
+          };
+
+          console.log(JSON.stringify(result, null, 2));
+          if (!result.allPassed) process.exit(1);
+          NODE
+
+      - name: Install browser test dependency
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install chromium
+
+      - name: Start local XKiss server
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/xkiss-http.log 2>&1 &
+          sleep 2
+
+      - name: Real Home and Player browser test
+        run: |
+          node --input-type=module <<'NODE'
+          import { chromium } from "playwright";
+
+          const browser = await chromium.launch({ headless: true });
+          const page = await browser.newPage();
+          const errors = [];
+          page.on("pageerror", error => errors.push(String(error)));
+          page.on("console", message => {
+            if (message.type() === "error") errors.push(message.text());
+          });
+
+          await page.goto("http://127.0.0.1:4173/index.html", { waitUntil: "networkidle" });
+
+          if (await page.title() !== "XKiss — Home") throw new Error("Home title failed");
+          if (!(await page.locator(".hero").count())) throw new Error("Home hero missing");
+          if ((await page.locator(".video-card").count()) < 1) throw new Error("Home video cards missing");
+
+          await page.locator("[data-hero-action='watch']").first().click();
+          await page.waitForURL(/player\.html\?id=video-001/);
+          await page.waitForLoadState("networkidle");
+
+          if (await page.title() !== "XKiss Video Player") throw new Error("Player title failed");
+          if (!(await page.locator("#video").count())) throw new Error("Video element missing");
+          if (!(await page.locator("#player").count())) throw new Error("Player container missing");
+
+          await page.waitForFunction(() => window.XKissPlayerCore && window.XKissPlayerCore.platformCore?.connected === true);
+          await page.waitForFunction(() => window.XKissPlayerCore && Object.keys(window.XKissPlayerCore.getModuleStatus()).length >= 5);
+
+          const qualities = await page.locator("#qualityMenu [data-quality]").evaluateAll(nodes => nodes.map(node => node.dataset.quality));
+          const expected = ["340p", "460p", "720p", "1080p"];
+          if (JSON.stringify(qualities) !== JSON.stringify(expected)) throw new Error("Quality set failed: " + JSON.stringify(qualities));
+
+          const source = await page.locator("#videoSource").getAttribute("src");
+          if (!source || !source.includes(".mp4")) throw new Error("Video source not configured");
+
+          await page.locator("#playPauseBtn").click();
+          await page.waitForTimeout(3000);
+
+          const runtime = await page.locator("#video").evaluate(video => ({
+            currentTime: video.currentTime,
+            paused: video.paused,
+            readyState: video.readyState,
+            source: document.getElementById("videoSource")?.src || ""
+          }));
+
+          if (runtime.readyState < 1) throw new Error("Video did not reach metadata-ready state");
+          if (!(runtime.currentTime > 0 || runtime.paused === false)) throw new Error("Video did not start playback");
+          if (errors.length) throw new Error("Browser errors: " + errors.join(" | "));
+
+          console.log(JSON.stringify({
+            home: "PASS",
+            navigation: "PASS",
+            player: "PASS",
+            platformCoreBridge: "PASS",
+            playerModules: "PASS",
+            qualities,
+            videoRuntime: runtime
+          }, null, 2));
+
+          await browser.close();
+          NODE
