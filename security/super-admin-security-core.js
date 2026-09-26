@@ -13,9 +13,9 @@ import {
 } from "./super-admin-reauth.js";
 
 export const SUPER_ADMIN_SECURITY_CORE = {
-  section: "15.3",
+  section: "14",
   name: "Super Admin Security Core",
-  status: "ready",
+  status: "configured",
   enabled: false,
   modules: [
     "security-rules",
@@ -63,7 +63,7 @@ export function validateSuperAdminSecurityCore() {
     reauthenticationReady: status.reauthentication.ok === true,
     mfaReady: status.mfa.ok === true,
     activationAllowed: false,
-    reason: "15.3 Core is structurally connected. Backend providers are not connected, so activation remains disabled."
+    reason: "Super Admin security core is structurally complete and fail-closed. Backend authentication, authorization, MFA, session and audit providers are required before production activation."
   };
 }
 
