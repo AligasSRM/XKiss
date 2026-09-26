@@ -1,8 +1,8 @@
 import { evaluateViewPipeline } from "./view-pipeline.js";
 import { createViewDeduplicationKey } from "./views-revenue-rules.js";
-import { isViewEventStoreReady } from "./view-event-store.js";
+import { commitQualifiedView, isViewEventStoreReady } from "./view-event-store.js";
 
-export function evaluateViewCountDecision(env, input = {}) {
+export async function evaluateViewCountDecision(env, input = {}) {
   const pipeline = evaluateViewPipeline(input);
 
   if (pipeline.status !== "qualified_pending_storage") {
@@ -26,17 +26,33 @@ export function evaluateViewCountDecision(env, input = {}) {
       stage: "storage",
       duplicateKey,
       pipeline,
-      reason: "The view passed the current qualification checks, but durable event storage is not connected. No count was recorded."
+      reason: "The view passed qualification, but durable event storage is not connected. No production count was recorded."
+    };
+  }
+
+  const commit = await commitQualifiedView(env, input);
+
+  if (commit.status === "duplicate") {
+    return {
+      ok: true,
+      status: "duplicate",
+      counted: Boolean(commit.counted),
+      stage: "count_commit",
+      duplicateKey,
+      pipeline,
+      commit,
+      reason: "This view event was already recorded and cannot increment the count again."
     };
   }
 
   return {
     ok: true,
-    status: "count_ready",
-    counted: false,
-    stage: "count_commit_pending",
+    status: "counted",
+    counted: true,
+    stage: "count_commit",
     duplicateKey,
     pipeline,
-    reason: "The event passed the current checks and storage is available. A final durable count commit is still required before incrementing the view counter."
+    commit,
+    reason: "Qualified view passed validation and was durably recorded as counted."
   };
 }
