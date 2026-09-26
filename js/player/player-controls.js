@@ -400,6 +400,7 @@
     updateMuteButton();
 
 
+    window.XKissPlayerCore?.registerModule("controls");
     console.log(
       "XKiss Player Controls loaded."
     );
