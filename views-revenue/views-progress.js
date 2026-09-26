@@ -59,17 +59,18 @@
     };
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
+  function installProgressTracking() {
+    if (installProgressTracking.installed) {
+      return true;
+    }
+
     const state = window.XKissPlayer;
 
-    if (
-      !state ||
-      !state.video ||
-      !state.data
-    ) {
-      console.error("XKiss: Watch progress module could not find player state.");
-      return;
+    if (!state || !state.video || !state.data) {
+      return false;
     }
+
+    installProgressTracking.installed = true;
 
     const video = state.video;
     const videoData = state.data;
@@ -82,9 +83,7 @@
     });
 
     video.addEventListener("timeupdate", () => {
-      if (!started) {
-        return;
-      }
+      if (!started) return;
 
       const currentTime = Number(video.currentTime);
 
@@ -98,9 +97,7 @@
 
       const event = createProgressEvent(videoData, video);
 
-      if (!event) {
-        return;
-      }
+      if (!event) return;
 
       lastReportedSeconds = currentTime;
       sendWatchProgress(event);
@@ -108,10 +105,17 @@
 
     video.addEventListener("ended", () => {
       const event = createProgressEvent(videoData, video);
-
-      if (event) {
-        sendWatchProgress(event);
-      }
+      if (event) sendWatchProgress(event);
     });
+
+    return true;
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    if (installProgressTracking()) return;
+
+    window.addEventListener("xkiss:player-ready", installProgressTracking, { once: true });
   });
+
+  window.addEventListener("xkiss:player-ready", installProgressTracking, { once: true });
 })();
