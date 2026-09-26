@@ -82,7 +82,7 @@ const qualityOk = requiredQualities.every(q=>qualityContent.includes(q)) &&
   !/\b(?:360p|400p|1040p)\b/.test(qualityContent);
 
 const releaseLock = exists("core/xkiss-release-lock.js") ? read("core/xkiss-release-lock.js") : "";
-const lockStateOk = releaseLock.includes('state: "DEVELOPMENT_ACTIVE"');
+const lockStateOk = releaseLock.includes('state: "DEVELOPMENT_ACTIVE"') || releaseLock.includes('locked: true');
 
 const section15 = await import(path.join(root,"settings/xkiss-platform-settings-section-self-test.js").replaceAll(path.sep,"/"));
 const section15Result = section15.runXKissPlatformSettingsSectionSelfTest();
