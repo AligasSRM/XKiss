@@ -61,24 +61,34 @@ document.addEventListener("DOMContentLoaded", () => {
   Promise.all([
     import("../player/runtime/xkiss-module-lifecycle-integration.js"),
     import("../player/runtime/xkiss-module-contract-integration.js"),
-    import("../player/runtime/xkiss-module-orchestration-integration.js")
+    import("../player/runtime/xkiss-module-orchestration-integration.js"),
+    import("../player/runtime/xkiss-module-security-integration.js")
   ])
-    .then(([lifecycleModule, contractModule, orchestrationModule]) => {
+    .then(([lifecycleModule, contractModule, orchestrationModule, securityModule]) => {
       const lifecycle = lifecycleModule.installXKissModuleLifecycle(window.XKissPlayerCore);
       const contracts = contractModule.installXKissModuleContractRegistry(window.XKissPlayerCore);
       if (!lifecycle.ok || !contracts.ok) {
         console.error("XKiss: Module orchestration prerequisites failed.");
         return;
       }
-      const result = orchestrationModule.installXKissModuleOrchestrator(window.XKissPlayerCore);
-      if (!result.ok) {
-        console.error("XKiss: Module orchestration installation failed:", result.error);
+
+      const orchestration = orchestrationModule.installXKissModuleOrchestrator(window.XKissPlayerCore);
+      if (!orchestration.ok) {
+        console.error("XKiss: Module orchestration installation failed:", orchestration.error);
         return;
       }
+
+      const security = securityModule.installXKissModuleSecurity(window.XKissPlayerCore);
+      if (!security.ok) {
+        console.error("XKiss: Security installation failed:", security.error);
+        return;
+      }
+
       console.log("XKiss Module Dependency Orchestration 15.26 ready.");
+      console.log("XKiss Security & Attack Protection 15.27 ready.");
     })
     .catch(error => {
-      console.error("XKiss: Module orchestration load failed:", error);
+      console.error("XKiss: Runtime security/orchestration load failed:", error);
     });
 
   /*
