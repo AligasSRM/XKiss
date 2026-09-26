@@ -18,9 +18,7 @@
       button.dataset.liveProfileBound = "true";
 
       button.addEventListener("click", () => {
-        const creatorId = button.dataset.liveProfile;
-        if (!creatorId) return;
-        window.location.href = "creator.html?id=" + encodeURIComponent(creatorId);
+        window.location.href = "index.html#creators";
       });
     });
 
@@ -31,6 +29,14 @@
       button.addEventListener("click", () => {
         button.textContent = "Reminder Set";
         button.disabled = true;
+        try {
+          const id = button.dataset.liveReminder;
+          const reminders = JSON.parse(localStorage.getItem("xkiss_live_reminders") || "[]");
+          if (id && !reminders.includes(id)) {
+            reminders.push(id);
+            localStorage.setItem("xkiss_live_reminders", JSON.stringify(reminders));
+          }
+        } catch (_) {}
       });
     });
   }
