@@ -1,0 +1,2 @@
+export const XKISS_PLAYER_RUNTIME_CONTROL_RULES={section:"15.23",name:"XKiss Player Runtime Control Rules",version:"1.0.0",status:"prepared",actions:["play","pause","mute","volume","speed","seek","reload","reset"]};
+export function validateXKissPlayerRuntimeControlRequest(request={}){const action=XKISS_PLAYER_RUNTIME_CONTROL_RULES.actions.includes(request.action);const core=request.playerCoreConnected===true;const active=request.runtimeActive===true;return{allowed:action&&core&&active,gates:{action,playerCoreConnected:core,runtimeActive:active}};}
