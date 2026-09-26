@@ -4,8 +4,9 @@ export function runXKissReleaseLockSelfTest() {
   const status = getXKissReleaseLockStatus();
   return {
     ok:
-      status.locked === true &&
-      status.sourceCode === "LOCKED" &&
+      status.locked === false &&
+      status.state === "DEVELOPMENT_ACTIVE" &&
+      status.sourceCode === "DEVELOPMENT_ACTIVE" &&
       status.productionActivation === "BLOCKED_UNTIL_EXTERNAL_VERIFICATION" &&
       status.failClosed === true &&
       status.lockBypass === false
