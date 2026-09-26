@@ -112,6 +112,26 @@ jobs:
           if (!source || !source.includes(".mp4")) throw new Error("Video source not configured");
 
           await page.waitForFunction(() => document.getElementById("video")?.readyState >= 1, null, { timeout: 10000 }).catch(() => {});
+          
+          const directTest = await page.evaluate(async () => {
+            const v = document.getElementById("video");
+            v.pause();
+            v.src = "20260923_230154.mp4";
+            v.load();
+            await new Promise(resolve => {
+              const done = () => resolve();
+              v.addEventListener("loadedmetadata", done, { once: true });
+              v.addEventListener("error", done, { once: true });
+              setTimeout(done, 5000);
+            });
+            return {
+              readyState: v.readyState,
+              error: v.error ? { code: v.error.code, message: v.error.message || "" } : null,
+              duration: v.duration,
+              currentSrc: v.currentSrc
+            };
+          });
+          console.log("DIRECT_MP4_TEST", JSON.stringify(directTest));
 
           await page.locator("#playPauseBtn").click();
           await page.waitForTimeout(3000);
