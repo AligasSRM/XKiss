@@ -1,0 +1,36 @@
+name: XKiss Player Runtime 15.31 Recovery Guard & Anti-Loop Protection
+on:
+  push:
+    branches: [main]
+    paths:
+      - "player/runtime/xkiss-module-recovery-guard-*.js"
+      - "js/player.js"
+      - ".github/workflows/xkiss-player-runtime-15-31.yml"
+  workflow_dispatch:
+jobs:
+  recovery-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Recovery Guard self-test
+        run: node --input-type=module -e "import {runXKissModuleRecoveryGuardSelfCheck} from './player/runtime/xkiss-module-recovery-guard-self-test.js'; const r=await runXKissModuleRecoveryGuardSelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+      - name: Recovery Guard integration test
+        run: node --input-type=module -e "import {installXKissModuleRecoveryGuard} from './player/runtime/xkiss-module-recovery-guard-integration.js'; const core={moduleRecovery:{recover:async()=>({ok:true,status:'RECOVERED'})},registerModule(){return{ok:true}}}; const r=installXKissModuleRecoveryGuard(core); console.log(JSON.stringify({ok:r.ok,stage:r.stage,coreControlled:r.coreControlled,status:r.recoveryGuard?.getStatus()},null,2)); if(!r.ok||r.stage!=='15.31'||r.coreControlled!==true||r.recoveryGuard?.getStatus().guardReady!==true) process.exit(1)"
+      - name: Real Chrome recovery guard test
+        run: |
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install chrome
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/xkiss-http.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import {chromium} from "playwright";
+          const browser=await chromium.launch({channel:"chrome",headless:true}); const page=await browser.newPage(); const errors=[];
+          page.on("pageerror",e=>errors.push(String(e))); page.on("console",m=>{if(m.type()==="error")errors.push(m.text())});
+          await page.goto("http://127.0.0.1:4173/player.html?id=video-001",{waitUntil:"domcontentloaded"});
+          await page.waitForFunction(()=>window.XKissPlayerCore?.moduleRecoveryGuard);
+          const result=await page.evaluate(()=>{const c=window.XKissPlayerCore,g=c.moduleRecoveryGuard,s=g.getStatus();return{stage:g.stage,coreControlled:c.moduleRecoveryGuard===g,guardReady:s.guardReady===true,maxAttempts:s.maxAttempts};});
+          console.log(JSON.stringify({stage:"15.31",...result,errors},null,2)); if(!result.coreControlled||!result.guardReady||result.maxAttempts!==3||errors.length)process.exit(1); await browser.close();
+          NODE
