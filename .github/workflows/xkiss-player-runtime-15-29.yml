@@ -1,8 +1,8 @@
 name: XKiss Player Runtime 15.29 Diagnostics & Fault Locator
 on:
   push:
-    branches:[main]
-    paths:["player/runtime/xkiss-module-diagnostics-*.js","js/player.js",".github/workflows/xkiss-player-runtime-15-29.yml"]
+    branches: [main]
+    paths: ["player/runtime/xkiss-module-diagnostics-*.js","js/player.js",".github/workflows/xkiss-player-runtime-15-29.yml"]
   workflow_dispatch:
 jobs:
   diagnostics:
