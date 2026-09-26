@@ -108,7 +108,7 @@ export default {
       return json({
         ok: true,
         service: "XKiss View Count Decision Engine",
-        result: evaluateViewCountDecision(env, body)
+        result: await evaluateViewCountDecision(env, body)
       });
     }
 
