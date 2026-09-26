@@ -1,0 +1,2 @@
+export const XKISS_PLAYER_RUNTIME_RECOVERY_RULES={section:"15.22",name:"XKiss Player Runtime Recovery Rules",version:"1.0.0",status:"prepared",operations:["recover","reset","health"]};
+export function validateXKissPlayerRuntimeRecoveryRequest(request={}){const operation=XKISS_PLAYER_RUNTIME_RECOVERY_RULES.operations.includes(request.operation);const core=request.playerCoreConnected===true;const monitoring=request.monitoringConnected===true;return{allowed:operation&&core&&monitoring,gates:{operation,playerCoreConnected:core,monitoringConnected:monitoring}};}
