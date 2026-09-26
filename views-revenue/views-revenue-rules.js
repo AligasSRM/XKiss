@@ -1,6 +1,6 @@
 export const VIEWS_REVENUE_RULES = {
-  version: "1.3-draft",
-  status: "prepared",
+  version: "1.4",
+  status: "configured",
   persistence: "not_connected",
   counting: "server_side",
   revenueEvents: "server_side",
@@ -14,10 +14,10 @@ export const VIEWS_REVENUE_RULES = {
   realActivityRequired: true,
   minimumPlaybackSignal: "playing",
   qualifiedView: {
-    status: "not_configured",
-    minimumWatchSeconds: null,
-    minimumWatchPercent: null,
-    rule: "count only after a configured watch threshold is met"
+    status: "configured",
+    minimumWatchSeconds: 10,
+    minimumWatchPercent: 20,
+    rule: "count when the viewer reaches at least 10 seconds OR 20 percent of the video, whichever comes first"
   },
   botSignals: [
     "missing_required_fields",
@@ -83,7 +83,7 @@ export function validateViewEvent(input = {}) {
     eligible: true,
     counted: false,
     duplicateKey: createViewDeduplicationKey(input),
-    countDecision: "pending_qualified_view_rule",
+    countDecision: "pending_qualified_view",
     reason: "View event passed the structural traffic checks."
   };
 }
@@ -145,14 +145,21 @@ export function evaluateQualifiedView(input = {}) {
     return invalidTraffic("watchPercent is invalid.");
   }
 
+  const qualified =
+    watchSeconds >= VIEWS_REVENUE_RULES.qualifiedView.minimumWatchSeconds ||
+    watchPercent >= VIEWS_REVENUE_RULES.qualifiedView.minimumWatchPercent;
+
   return {
     valid: true,
-    status: "threshold_pending",
-    qualified: false,
+    status: qualified ? "qualified" : "not_qualified",
+    qualified,
     counted: false,
     watchSeconds,
     watchPercent,
-    reason: "Watch activity was received, but the platform has not configured the final qualified-view threshold."
+    threshold: VIEWS_REVENUE_RULES.qualifiedView,
+    reason: qualified
+      ? "The viewer reached the configured qualified-view threshold."
+      : "The viewer has not yet reached the configured qualified-view threshold."
   };
 }
 
@@ -168,7 +175,7 @@ export function evaluateViewCount(input = {}) {
     status: "ready_for_counting",
     counted: false,
     duplicateKey: validation.duplicateKey,
-    countDecision: "pending_qualified_view_rule",
+    countDecision: "pending_qualified_view",
     reason: "The event passed structural traffic rules. Qualified-view and durable uniqueness checks must pass before counting."
   };
 }
