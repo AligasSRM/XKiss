@@ -22,7 +22,7 @@ jobs:
           node --input-type=module -e "import { runXKissModuleOrchestrationSelfCheck } from './player/runtime/xkiss-module-orchestration-self-test.js'; const r=runXKissModuleOrchestrationSelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
       - name: Module orchestration integration test
         run: |
-          node --input-type=module -e "import { installXKissModuleOrchestrator } from './player/runtime/xkiss-module-orchestration-integration.js'; const core={modules:{},registerModule(name,status){this.modules[name]={status};return true;},getModuleStatus(){return {...this.modules};},moduleContracts:{},moduleLifecycle:{}}; const r=installXKissModuleOrchestrator(core); console.log(JSON.stringify(r,null,2)); if(r.ok || r.error!=='required-core-modules-missing') process.exit(1)"
+          node --input-type=module -e "import { installXKissModuleOrchestrator } from './player/runtime/xkiss-module-orchestration-integration.js'; const core={modules:{},registerModule(name,status){this.modules[name]={status};return true;},getModuleStatus(){return {...this.modules};},moduleContracts:{},moduleLifecycle:{}}; const r=installXKissModuleOrchestrator(core); console.log(JSON.stringify(r,null,2)); if(!r.ok || r.stage!=='15.26' || r.coreControlled!==true) process.exit(1)"
       - name: Real Chrome orchestration test
         run: |
           npm init -y
