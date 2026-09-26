@@ -217,6 +217,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  video.addEventListener("error", () => {
+    console.error("XKiss: Video runtime error:", {
+      code: video.error?.code || null,
+      message: video.error?.message || "",
+      currentSrc: video.currentSrc || ""
+    });
+  });
+
   video.addEventListener("playing", sendViewEventOnce);
 
   /*
