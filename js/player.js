@@ -63,9 +63,10 @@ document.addEventListener("DOMContentLoaded", () => {
     import("../player/runtime/xkiss-module-contract-integration.js"),
     import("../player/runtime/xkiss-module-orchestration-integration.js"),
     import("../player/runtime/xkiss-module-security-integration.js"),
-    import("../player/runtime/xkiss-module-health-integration.js")
+    import("../player/runtime/xkiss-module-health-integration.js"),
+    import("../player/runtime/xkiss-module-diagnostics-integration.js")
   ])
-    .then(([lifecycleModule, contractModule, orchestrationModule, securityModule, healthModule]) => {
+    .then(([lifecycleModule, contractModule, orchestrationModule, securityModule, healthModule, diagnosticsModule]) => {
       const lifecycle = lifecycleModule.installXKissModuleLifecycle(window.XKissPlayerCore);
       const contracts = contractModule.installXKissModuleContractRegistry(window.XKissPlayerCore);
       if (!lifecycle.ok || !contracts.ok) {
@@ -94,6 +95,13 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       console.log("XKiss Module Health & Fault Detection 15.28 ready.");
+
+      const diagnostics = diagnosticsModule.installXKissModuleDiagnostics(window.XKissPlayerCore);
+      if (!diagnostics.ok) {
+        console.error("XKiss: Module Diagnostics installation failed:", diagnostics.error);
+        return;
+      }
+      console.log("XKiss Module Diagnostics & Fault Locator 15.29 ready.");
     })
     .catch(error => {
       console.error("XKiss: Runtime security/orchestration load failed:", error);
