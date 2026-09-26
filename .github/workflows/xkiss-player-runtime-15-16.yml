@@ -69,7 +69,7 @@ jobs:
           sudo apt-get install -y -qq ffmpeg
           ls -lh 20260923_234200-3.mp4
           file 20260923_234200-3.mp4 || true
-          ffprobe -v error -show_entries format=format_name,duration,size -show_entries stream=codec_name,codec_type,width,height,pix_fmt -of json 20260923_234200-3.mp4
+          ffprobe -v error -show_entries format=format_name,duration,size -show_entries stream=codec_name,codec_type,width,height,pix_fmt,profile,level,codec_tag_string,codec_long_name,sample_rate,channels -of json 20260923_234200-3.mp4
           curl -sS -D /tmp/xkiss-mp4-headers.txt -o /tmp/xkiss-mp4.bin http://127.0.0.1:4173/20260923_234200-3.mp4 || true
           cat /tmp/xkiss-mp4-headers.txt || true
           ls -lh /tmp/xkiss-mp4.bin || true
@@ -116,7 +116,7 @@ jobs:
           const directTest = await page.evaluate(async () => {
             const v = document.getElementById("video");
             v.pause();
-            v.src = "20260923_230154.mp4";
+            v.src = "20260923_234200-3.mp4";
             v.load();
             await new Promise(resolve => {
               const done = () => resolve();
