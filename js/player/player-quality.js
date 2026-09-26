@@ -130,6 +130,7 @@
       });
     });
 
+    window.XKissPlayerCore?.registerModule("quality", currentQualityValue);
     console.log(
       "XKiss Player Quality loaded:",
       currentQualityValue
