@@ -34,3 +34,5 @@ jobs:
           const result=await page.evaluate(()=>{const c=window.XKissPlayerCore,g=c.moduleRecoveryGuard,s=g.getStatus();return{stage:g.stage,coreControlled:c.moduleRecoveryGuard===g,guardReady:s.guardReady===true,maxAttempts:s.maxAttempts};});
           console.log(JSON.stringify({stage:"15.31",...result,errors},null,2)); if(!result.coreControlled||!result.guardReady||result.maxAttempts!==3||errors.length)process.exit(1); await browser.close();
           NODE
+
+# 15.31 trigger verification
