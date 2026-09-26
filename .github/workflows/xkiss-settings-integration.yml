@@ -1,4 +1,5 @@
 name: XKiss Settings Integration Test
+# Runtime/platform core integration gate
 
 on:
   push:
