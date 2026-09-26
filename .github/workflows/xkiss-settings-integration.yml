@@ -3,7 +3,8 @@ name: XKiss Settings Integration Test
 on:
   push:
     paths:
-      - "settings/system-settings-*.js"\n      - "settings/xkiss-settings-runtime-core.js"
+      - "settings/system-settings-*.js"
+      - "settings/xkiss-settings-runtime-core.js"
       - ".github/workflows/xkiss-settings-integration.yml"
   workflow_dispatch:
 
@@ -22,7 +23,8 @@ jobs:
       - name: Run 15.13 and 15.14 self-tests and integration
         run: |
           node --input-type=module <<'NODE'
-          import { getXKissSettingsRuntimeStatus, validateXKissSettingsRuntimeCore } from "./settings/xkiss-settings-runtime-core.js";\n          import { runSystemSettingsAuditReviewSelfCheck } from "./settings/system-settings-audit-review-self-test.js";
+          import { getXKissSettingsRuntimeStatus, validateXKissSettingsRuntimeCore } from "./settings/xkiss-settings-runtime-core.js";
+          import { runSystemSettingsAuditReviewSelfCheck } from "./settings/system-settings-audit-review-self-test.js";
           import {
             validateSystemSettingsAuditReviewIntegration,
             evaluateSystemSettingsAuditReviewIntegration
@@ -33,7 +35,10 @@ jobs:
             evaluateSystemSettingsAuditExportIntegration
           } from "./settings/system-settings-audit-export-integration.js";
 
-          const runtimeStatus = getXKissSettingsRuntimeStatus();\n          const runtimeValidation = validateXKissSettingsRuntimeCore();\n\n          const reviewSelf = runSystemSettingsAuditReviewSelfCheck();
+          const runtimeStatus = getXKissSettingsRuntimeStatus();
+          const runtimeValidation = validateXKissSettingsRuntimeCore();
+
+          const reviewSelf = runSystemSettingsAuditReviewSelfCheck();
           const reviewIntegration = validateSystemSettingsAuditReviewIntegration();
           const review = evaluateSystemSettingsAuditReviewIntegration({
             authorizationVerified: true,
@@ -55,7 +60,11 @@ jobs:
           });
 
           const result = {
-            runtime_settings_core: {\n              status: runtimeStatus,\n              validation: runtimeValidation\n            },\n            stage_15_13: {
+            runtime_settings_core: {
+              status: runtimeStatus,
+              validation: runtimeValidation
+            },
+            stage_15_13: {
               selfTest: reviewSelf,
               integration: reviewIntegration,
               validReview: review
