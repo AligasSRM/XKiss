@@ -18,6 +18,7 @@ export function runXKissModuleHealthSelfCheck() {
   const healthy = health.get("base");
   const invalid = health.report({ module: "base", status: "BROKEN", severity: "HIGH", timestamp: Date.now() });
   const custom = health.report({ module: "base", status: "FAULT", severity: "HIGH", timestamp: Date.now() });
+  const faultState = health.get("base");
   const locked = health.lock("base", "self-test");
   const final = health.getHealth();
   const checks = {
@@ -25,7 +26,7 @@ export function runXKissModuleHealthSelfCheck() {
     scan: scan.base?.status === "HEALTHY",
     healthyReport: healthy?.status === "HEALTHY",
     invalidRejected: invalid.ok === false,
-    faultAccepted: custom.ok === true && health.get("base")?.status === "FAULT",
+    faultAccepted: custom.ok === true && faultState?.status === "FAULT",
     lock: locked.ok === true && health.get("base")?.status === "LOCKED",
     healthSummary: final.status === "WARNING" && final.locked === 1
   };
