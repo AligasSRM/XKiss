@@ -1,0 +1,25 @@
+name: XKiss Storage Production Gate
+
+on:
+  push:
+    paths:
+      - "storage/xkiss-storage-production-gate*.js"
+      - ".github/workflows/xkiss-storage-production-gate.yml"
+  workflow_dispatch:
+
+jobs:
+  storage-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Storage production gate self-test
+        run: |
+          node --input-type=module <<'NODE'
+          import { runXKissStorageProductionGateSelfTest } from "./storage/xkiss-storage-production-gate-self-test.js";
+          const result = runXKissStorageProductionGateSelfTest();
+          console.log(JSON.stringify(result, null, 2));
+          if (!result.ok) process.exit(1);
+          NODE
