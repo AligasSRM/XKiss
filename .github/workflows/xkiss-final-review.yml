@@ -1,0 +1,23 @@
+name: XKiss Final Review
+
+on:
+  push:
+    paths:
+      - "**.js"
+      - "**.html"
+      - "**.css"
+      - "core/**"
+      - "settings/**"
+      - ".github/workflows/xkiss-final-review.yml"
+  workflow_dispatch:
+
+jobs:
+  final-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run final cross-section review
+        run: node audit/xkiss-final-review.js
