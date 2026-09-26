@@ -8,9 +8,10 @@ jobs:
   diagnostics:
     runs-on: ubuntu-latest
     steps:
-      - uses:actions/checkout@v4
-      - uses:actions/setup-node@v4
-        with:{node-version:22}
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
       - name: Diagnostics self-test
         run: node --input-type=module -e "import {runXKissModuleDiagnosticsSelfCheck} from './player/runtime/xkiss-module-diagnostics-self-test.js'; const r=runXKissModuleDiagnosticsSelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
       - name: Diagnostics integration test
