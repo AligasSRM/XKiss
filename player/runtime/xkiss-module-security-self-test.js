@@ -36,7 +36,7 @@ export function runXKissModuleSecuritySelfCheck() {
 
   const authorized = security.authorize("execute", "secure-base", "execute");
   const deniedUnknown = security.authorize("execute", "unknown-module");
-  const invalidInput = security.validateInput("<script>", { type: "string", maxLength: 100 });
+  const validInput = security.validateInput("normal user text", { type: "string", maxLength: 100 });\n  const dangerousInput = security.validateInput("<script>alert(1)</script>", { type: "string", maxLength: 100 });
   const invalidControl = security.validateInput("safe\u0000value", { type: "string" });
 
   const limited = [];
