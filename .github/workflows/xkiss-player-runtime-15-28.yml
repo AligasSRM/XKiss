@@ -1,0 +1,53 @@
+name: XKiss Player Runtime 15.28 Health & Fault Detection
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "player/runtime/xkiss-module-health-*.js"
+      - "js/player.js"
+      - ".github/workflows/xkiss-player-runtime-15-28.yml"
+  workflow_dispatch:
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Health self-test
+        run: |
+          node --input-type=module -e "import { runXKissModuleHealthSelfCheck } from './player/runtime/xkiss-module-health-self-test.js'; const r=runXKissModuleHealthSelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+      - name: Health integration test
+        run: |
+          node --input-type=module -e "import { installXKissModuleHealth } from './player/runtime/xkiss-module-health-integration.js'; const core={moduleLifecycle:{getStatus(){return {base:{state:'active'}};}},moduleContracts:{has(n){return n==='base';},get(){return {base:{name:'base'}};}},registerModule(){}}; const r=installXKissModuleHealth(core); console.log(JSON.stringify({ok:r.ok,stage:r.stage,coreControlled:r.coreControlled,health:r.health?.getHealth()},null,2)); if(!r.ok||r.stage!=='15.28'||r.coreControlled!==true) process.exit(1)"
+      - name: Real Chrome health test
+        run: |
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install chrome
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/xkiss-http.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import { chromium } from "playwright";
+          const browser=await chromium.launch({channel:"chrome",headless:true});
+          const page=await browser.newPage();
+          const errors=[];
+          page.on("pageerror",e=>errors.push(String(e)));
+          page.on("console",m=>{if(m.type()==="error") errors.push(m.text());});
+          await page.goto("http://127.0.0.1:4173/player.html?id=video-001",{waitUntil:"domcontentloaded"});
+          await page.waitForFunction(()=>window.XKissPlayerCore?.moduleHealth);
+          const result=await page.evaluate(()=>{
+            const core=window.XKissPlayerCore;
+            const health=core.moduleHealth;
+            health.scan();
+            const summary=health.getHealth();
+            const report=health.report({module:"browser-health",status:"FAULT",severity:"HIGH",timestamp:Date.now()});
+            const unknown=health.lock("unknown-module","test");
+            return {stage:health.stage,coreControlled:core.moduleHealth===health,summaryHealthy:summary.modules>=1,reportOk:report.ok,unknownDenied:unknown.ok===false};
+          });
+          console.log(JSON.stringify({stage:"15.28",...result,errors},null,2));
+          if(!result.coreControlled||!result.summaryHealthy||!result.reportOk||!result.unknownDenied||errors.length) process.exit(1);
+          await browser.close();
+          NODE
