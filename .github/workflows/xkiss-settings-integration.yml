@@ -5,6 +5,7 @@ on:
     paths:
       - "settings/system-settings-*.js"
       - "settings/xkiss-settings-runtime-core.js"
+      - "settings/system-settings-runtime-activation-*.js"
       - "worker.js"
       - "core/xkiss-platform-core.js"
       - "js/player/player-core.js"
@@ -28,7 +29,7 @@ jobs:
         with:
           node-version: 22
 
-      - name: Run 15.13 and 15.14 self-tests and integration
+      - name: Run 15.13, 15.14 and 15.15 self-tests and integration
         run: |
           node --input-type=module <<'NODE'
           import { getXKissSettingsRuntimeStatus, validateXKissSettingsRuntimeCore } from "./settings/xkiss-settings-runtime-core.js";
@@ -38,6 +39,12 @@ jobs:
             evaluateSystemSettingsAuditReviewIntegration
           } from "./settings/system-settings-audit-review-integration.js";
           import { runSystemSettingsAuditExportSelfCheck } from "./settings/system-settings-audit-export-self-test.js";
+          import { runSystemSettingsRuntimeActivationSelfCheck } from "./settings/system-settings-runtime-activation-self-test.js";
+          import {
+            validateSystemSettingsRuntimeActivationIntegration,
+            evaluateSystemSettingsRuntimeActivationIntegration
+          } from "./settings/system-settings-runtime-activation-integration.js";
+
           import {
             validateSystemSettingsAuditExportIntegration,
             evaluateSystemSettingsAuditExportIntegration
@@ -67,6 +74,16 @@ jobs:
             operation: "export_audit_history"
           });
 
+          const activationSelf = runSystemSettingsRuntimeActivationSelfCheck();
+          const activationIntegration = validateSystemSettingsRuntimeActivationIntegration();
+          const activationGate = evaluateSystemSettingsRuntimeActivationIntegration({
+            operation: "validate_activation",
+            backendConnected: true,
+            providersVerified: true,
+            authorizationVerified: true,
+            auditVerified: true
+          });
+
           const result = {
             runtime_settings_core: {
               status: runtimeStatus,
@@ -76,6 +93,11 @@ jobs:
               selfTest: reviewSelf,
               integration: reviewIntegration,
               validReview: review
+            },
+            stage_15_15: {
+              selfTest: activationSelf,
+              integration: activationIntegration,
+              validActivationGate: activationGate
             },
             stage_15_14: {
               selfTest: exportSelf,
@@ -90,7 +112,11 @@ jobs:
               exportSelf.ok === true &&
               exportIntegration.ok === true &&
               auditExport.allowed === true &&
-              auditExport.activationAllowed === false
+              auditExport.activationAllowed === false &&
+              activationSelf.ok === true &&
+              activationIntegration.ok === true &&
+              activationGate.allowed === true &&
+              activationGate.activationAllowed === false
           };
 
           console.log(JSON.stringify(result, null, 2));
