@@ -67,7 +67,7 @@ export default {
       });
     }
 
-    if (url.pathname === "/api/health") {
+    if (url.pathname === "/api/settings/status" && request.method === "GET") {\n      return json(getXKissSettingsRuntimeStatus());\n    }\n\n    if (url.pathname === "/api/health") {
       return json({
         service: "XKiss Worker",
         status: "online",
