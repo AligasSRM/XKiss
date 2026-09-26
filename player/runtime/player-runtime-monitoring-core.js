@@ -1,0 +1,7 @@
+import{validateXKissPlayerRuntimeMonitoringRequest}from"./player-runtime-monitoring-rules.js";
+export const XKISS_PLAYER_RUNTIME_MONITORING_CORE={section:"15.21",name:"XKiss Player Runtime Monitoring Core",version:"1.0.0",status:"connected",failClosed:true};
+let monitor={status:"unknown",timestamp:0,signals:{}};
+export function updateXKissPlayerRuntimeMonitor(input={}){const healthy=input.playerCoreConnected===true&&input.observabilityConnected===true&&input.readyState>=1;monitor={status:healthy?"healthy":"degraded",timestamp:Date.now(),signals:{playerCoreConnected:input.playerCoreConnected===true,observabilityConnected:input.observabilityConnected===true,readyState:Number.isFinite(input.readyState)?input.readyState:null,hasSource:typeof input.currentSrc==="string"&&input.currentSrc.length>0}};return{...monitor,signals:{...monitor.signals}};}
+export function getXKissPlayerRuntimeMonitor(){return{...monitor,signals:{...monitor.signals}};}
+export function clearXKissPlayerRuntimeMonitor(){monitor={status:"unknown",timestamp:0,signals:{}};return{ok:true,cleared:true};}
+export function evaluateXKissPlayerRuntimeMonitoring(request={}){const v=validateXKissPlayerRuntimeMonitoringRequest(request);return{allowed:v.allowed===true,gates:v.gates};}
