@@ -1,0 +1,74 @@
+name: XKiss Player Runtime 15.27 Security
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "player/runtime/xkiss-module-security-*.js"
+      - "js/player.js"
+      - ".github/workflows/xkiss-player-runtime-15-27.yml"
+  workflow_dispatch:
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Security self-test
+        run: |
+          node --input-type=module -e "import { runXKissModuleSecuritySelfCheck } from './player/runtime/xkiss-module-security-self-test.js'; const r=runXKissModuleSecuritySelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+
+      - name: Security integration test
+        run: |
+          node --input-type=module -e "import { installXKissModuleSecurity } from './player/runtime/xkiss-module-security-integration.js'; const core={moduleContracts:{},moduleLifecycle:{},moduleOrchestrator:{}}; const r=installXKissModuleSecurity(core); console.log(JSON.stringify(r,null,2)); if(r.ok || r.error!=='required-core-controls-missing') process.exit(1)"
+
+      - name: Real Chrome security test
+        run: |
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install chrome
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/xkiss-http.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import { chromium } from "playwright";
+          const browser = await chromium.launch({channel:"chrome", headless:true});
+          const page = await browser.newPage();
+          await page.goto("http://127.0.0.1:4173/player.html?id=video-001",{waitUntil:"domcontentloaded"});
+          await page.waitForFunction(() => window.XKissPlayerCore?.moduleSecurity);
+          const result = await page.evaluate(() => {
+            const core = window.XKissPlayerCore;
+            const security = core.moduleSecurity;
+            const contracts = core.moduleContracts;
+            const lifecycle = core.moduleLifecycle;
+
+            contracts.register("browser-secure", {
+              version:"1.0.0",
+              dependencies:[],
+              capabilities:["execute"]
+            });
+            lifecycle.register("browser-secure",{init(){},start(){}});
+            core.moduleOrchestrator.activate("browser-secure");
+
+            const authorized = security.authorize("execute","browser-secure","execute");
+            const unknown = security.authorize("execute","browser-unknown");
+            const dangerous = security.validateInput("<script>alert(1)</script>",{type:"string"});
+            const rate = [1,2,3,4].map(() => security.allowRate("browser-test",3,10000));
+            const integrityBefore = security.checkIntegrity();
+
+            return {
+              stage:"15.27",
+              coreControlled:core.moduleSecurity === security,
+              authorized:authorized.ok,
+              unknownDenied:unknown.ok === false && unknown.error === "unknown-module",
+              dangerousDenied:dangerous.ok === false && dangerous.error === "dangerous-input",
+              rateBlocked:rate[3].ok === false && rate[3].error === "rate-limit-exceeded",
+              integrityClean:integrityBefore.ok === true
+            };
+          });
+          console.log(JSON.stringify(result,null,2));
+          if (!(result.stage==="15.27" && result.coreControlled && result.authorized && result.unknownDenied && result.dangerousDenied && result.rateBlocked && result.integrityClean)) process.exit(1);
+          await browser.close();
+          NODE
