@@ -1,0 +1,62 @@
+name: XKiss Settings Integration Test
+
+on:
+  push:
+    paths:
+      - "settings/system-settings-*.js"
+      - ".github/workflows/xkiss-settings-integration.yml"
+  workflow_dispatch:
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run 15.13 self-test and integration
+        run: |
+          node --input-type=module <<'NODE'
+          import { runSystemSettingsAuditReviewSelfCheck } from "./settings/system-settings-audit-review-self-test.js";
+          import {
+            validateSystemSettingsAuditReviewIntegration,
+            evaluateSystemSettingsAuditReviewIntegration
+          } from "./settings/system-settings-audit-review-integration.js";
+
+          const self = runSystemSettingsAuditReviewSelfCheck();
+          const integration = validateSystemSettingsAuditReviewIntegration();
+
+          const base = {
+            authorizationVerified: true,
+            retentionStateVerified: true,
+            holdStateVerified: true,
+            backendConnected: true
+          };
+
+          const review = evaluateSystemSettingsAuditReviewIntegration({
+            ...base,
+            operation: "review_audit_history"
+          });
+
+          const result = {
+            selfTest: self,
+            integration,
+            validReview: review,
+            allPassed:
+              self.ok === true &&
+              integration.ok === true &&
+              review.allowed === true &&
+              review.activationAllowed === false
+          };
+
+          console.log(JSON.stringify(result, null, 2));
+
+          if (!result.allPassed) {
+            process.exit(1);
+          }
+          NODE
