@@ -1,0 +1,68 @@
+name: XKiss Player Runtime 15.25
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "player/runtime/xkiss-module-contract-*.js"
+      - "js/player.js"
+      - ".github/workflows/xkiss-player-runtime-15-25.yml"
+  workflow_dispatch:
+
+jobs:
+  contract-registry:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Module contract self-test
+        run: |
+          node --input-type=module -e "import { runXKissModuleContractSelfCheck } from './player/runtime/xkiss-module-contract-self-test.js'; const r=runXKissModuleContractSelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+
+      - name: Module contract integration test
+        run: |
+          node --input-type=module -e "import { installXKissModuleContractRegistry } from './player/runtime/xkiss-module-contract-integration.js'; const core={modules:{},registerModule(name,status){this.modules[name]={status};return true;},getModuleStatus(){return {...this.modules};}}; const r=installXKissModuleContractRegistry(core); console.log(JSON.stringify({ok:r.ok,stage:r.stage,coreControlled:r.coreControlled},null,2)); if(!r.ok || r.stage!=='15.25' || r.coreControlled!==true) process.exit(1)"
+
+      - name: Real Chrome contract registry test
+        run: |
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install chrome
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/xkiss-http.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import { chromium } from "playwright";
+          const browser = await chromium.launch({channel:"chrome", headless:true});
+          const page = await browser.newPage();
+          await page.goto("http://127.0.0.1:4173/player.html?id=video-001",{waitUntil:"domcontentloaded"});
+          await page.waitForFunction(() => window.XKissPlayerCore?.moduleContracts);
+          const result = await page.evaluate(() => {
+            const core = window.XKissPlayerCore;
+            const registry = core.moduleContracts;
+            const base = registry.register("browser-base", {version:"1.0.0",dependencies:[],capabilities:["playback.control"]});
+            const dependent = registry.register("browser-dependent", {version:"1.0.0",dependencies:["browser-base"],capabilities:["captions"]});
+            const duplicate = registry.register("browser-dependent", {version:"1.0.0",dependencies:["browser-base"],capabilities:[]});
+            const missing = registry.register("browser-missing", {version:"1.0.0",dependencies:["unknown-module"],capabilities:[]});
+            const capability = registry.hasCapability("browser-base","playback.control");
+            const before = registry.dependenciesReady("browser-dependent");
+            core.registerModule("browser-base","active");
+            const after = registry.dependenciesReady("browser-dependent");
+            return {
+              stage:"15.25",
+              coreConnected:core.platformCore?.connected === true,
+              coreControlled:true,
+              baseRegistered:base.ok === true,
+              dependentRegistered:dependent.ok === true,
+              duplicateRejected:duplicate.ok === false,
+              missingDependencyRejected:missing.ok === false,
+              capability,
+              blockedBeforeDependencyActive:before.ready === false,
+              readyAfterDependencyActive:after.ready === true
+            };
+          });
+          console.log(JSON.stringify(result,null,2));
+          if (!(result.stage==="15.25" && result.coreConnected && result.coreControlled && result.baseRegistered && result.dependentRegistered && result.duplicateRejected && result.missingDependencyRejected && result.capability && result.blockedBeforeDependencyActive && result.readyAfterDependencyActive)) process.exit(1);
+          await browser.close();
+          NODE
