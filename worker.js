@@ -43,7 +43,7 @@ import {
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "https://aligassrm.github.io",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-XKiss-Upload-Key, X-XKiss-File-Name, X-XKiss-Title, X-XKiss-Description, X-XKiss-Category, X-XKiss-Download-Policy, X-XKiss-Visibility",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-XKiss-CSRF, X-XKiss-Upload-Key, X-XKiss-File-Name, X-XKiss-Title, X-XKiss-Description, X-XKiss-Category, X-XKiss-Download-Policy, X-XKiss-Visibility",
   "Access-Control-Allow-Credentials": "true",
   "Vary": "Origin"
 };
@@ -51,7 +51,7 @@ const CORS_HEADERS = {
 function readXKissSessionToken(request) {
   const cookie = request.headers.get("Cookie") || "";
   const match = cookie.split(";").map(value => value.trim()).find(value => value.startsWith("xkiss_session="));
-  if (match) return decodeURIComponent(match.slice("xkiss_session=".length));
+  if (match) { try { return decodeURIComponent(match.slice("xkiss_session=".length)); } catch { return ""; } }
   const authorization = request.headers.get("Authorization") || "";
   return authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
 }
@@ -110,7 +110,7 @@ export default {
       });
       response.headers.append(
         "Set-Cookie",
-        "xkiss_session=" + encodeURIComponent(result.sessionToken) + "; Max-Age=2592000; Path=/; HttpOnly; Secure; SameSite=Strict"
+        "xkiss_session=" + encodeURIComponent(result.sessionToken) + "; Max-Age=2592000; Path=/; HttpOnly; Secure; SameSite=None"
       );
       return response;
     }
@@ -124,6 +124,9 @@ export default {
     }
 
     if (url.pathname === "/api/account/logout" && request.method === "POST") {
+      if (request.headers.get("X-XKiss-CSRF") !== "1") {
+        return json({ ok: false, status: "csrf_required" }, 403);
+      }
       const token = readXKissSessionToken(request);
       await logoutUser(env, token);
       const response = json({ ok: true, status: "logged_out" });
