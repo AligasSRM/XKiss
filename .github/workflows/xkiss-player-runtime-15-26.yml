@@ -1,0 +1,63 @@
+name: XKiss Player Runtime 15.26
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "player/runtime/xkiss-module-orchestration-*.js"
+      - "js/player.js"
+      - ".github/workflows/xkiss-player-runtime-15-26.yml"
+  workflow_dispatch:
+
+jobs:
+  orchestration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Module orchestration self-test
+        run: |
+          node --input-type=module -e "import { runXKissModuleOrchestrationSelfCheck } from './player/runtime/xkiss-module-orchestration-self-test.js'; const r=runXKissModuleOrchestrationSelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+      - name: Module orchestration integration test
+        run: |
+          node --input-type=module -e "import { installXKissModuleOrchestrator } from './player/runtime/xkiss-module-orchestration-integration.js'; const core={modules:{},registerModule(name,status){this.modules[name]={status};return true;},getModuleStatus(){return {...this.modules};},moduleContracts:{},moduleLifecycle:{}}; const r=installXKissModuleOrchestrator(core); console.log(JSON.stringify(r,null,2)); if(r.ok || r.error!=='required-core-modules-missing') process.exit(1)"
+      - name: Real Chrome orchestration test
+        run: |
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install chrome
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/xkiss-http.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import { chromium } from "playwright";
+          const browser = await chromium.launch({channel:"chrome", headless:true});
+          const page = await browser.newPage();
+          await page.goto("http://127.0.0.1:4173/player.html?id=video-001",{waitUntil:"domcontentloaded"});
+          await page.waitForFunction(() => window.XKissPlayerCore?.moduleOrchestrator);
+          const result = await page.evaluate(() => {
+            const core = window.XKissPlayerCore;
+            const orchestrator = core.moduleOrchestrator;
+            const contracts = core.moduleContracts;
+            const lifecycle = core.moduleLifecycle;
+            contracts.register("browser-base",{version:"1.0.0",dependencies:[],capabilities:["base"]});
+            contracts.register("browser-top",{version:"1.0.0",dependencies:["browser-base"],capabilities:["top"]});
+            lifecycle.register("browser-base",{init(){},start(){}});
+            lifecycle.register("browser-top",{init(){},start(){}});
+            const plan = orchestrator.plan("browser-top");
+            const active = orchestrator.activate("browser-top");
+            const states = lifecycle.getStatus();
+            return {
+              stage:"15.26",
+              coreConnected:core.platformCore?.connected===true,
+              coreControlled:true,
+              plan:plan.order,
+              activated:active.ok===true,
+              baseState:states["browser-base"]?.state,
+              topState:states["browser-top"]?.state
+            };
+          });
+          console.log(JSON.stringify(result,null,2));
+          if (!(result.stage==="15.26" && result.coreConnected && result.coreControlled && JSON.stringify(result.plan)===JSON.stringify(["browser-base","browser-top"]) && result.activated && result.baseState==="active" && result.topState==="active")) process.exit(1);
+          await browser.close();
+          NODE
