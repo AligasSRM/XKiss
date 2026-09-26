@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: 22
 
-      - name: Run 15.13 self-test and integration
+      - name: Run 15.13 and 15.14 self-tests and integration
         run: |
           node --input-type=module <<'NODE'
           import { runSystemSettingsAuditReviewSelfCheck } from "./settings/system-settings-audit-review-self-test.js";
@@ -27,31 +27,53 @@ jobs:
             validateSystemSettingsAuditReviewIntegration,
             evaluateSystemSettingsAuditReviewIntegration
           } from "./settings/system-settings-audit-review-integration.js";
+          import { runSystemSettingsAuditExportSelfCheck } from "./settings/system-settings-audit-export-self-test.js";
+          import {
+            validateSystemSettingsAuditExportIntegration,
+            evaluateSystemSettingsAuditExportIntegration
+          } from "./settings/system-settings-audit-export-integration.js";
 
-          const self = runSystemSettingsAuditReviewSelfCheck();
-          const integration = validateSystemSettingsAuditReviewIntegration();
-
-          const base = {
+          const reviewSelf = runSystemSettingsAuditReviewSelfCheck();
+          const reviewIntegration = validateSystemSettingsAuditReviewIntegration();
+          const review = evaluateSystemSettingsAuditReviewIntegration({
             authorizationVerified: true,
             retentionStateVerified: true,
             holdStateVerified: true,
-            backendConnected: true
-          };
-
-          const review = evaluateSystemSettingsAuditReviewIntegration({
-            ...base,
+            backendConnected: true,
             operation: "review_audit_history"
           });
 
+          const exportSelf = runSystemSettingsAuditExportSelfCheck();
+          const exportIntegration = validateSystemSettingsAuditExportIntegration();
+          const auditExport = evaluateSystemSettingsAuditExportIntegration({
+            authorizationVerified: true,
+            retentionStateVerified: true,
+            holdStateVerified: true,
+            reviewStateVerified: true,
+            backendConnected: true,
+            operation: "export_audit_history"
+          });
+
           const result = {
-            selfTest: self,
-            integration,
-            validReview: review,
+            stage_15_13: {
+              selfTest: reviewSelf,
+              integration: reviewIntegration,
+              validReview: review
+            },
+            stage_15_14: {
+              selfTest: exportSelf,
+              integration: exportIntegration,
+              validExport: auditExport
+            },
             allPassed:
-              self.ok === true &&
-              integration.ok === true &&
+              reviewSelf.ok === true &&
+              reviewIntegration.ok === true &&
               review.allowed === true &&
-              review.activationAllowed === false
+              review.activationAllowed === false &&
+              exportSelf.ok === true &&
+              exportIntegration.ok === true &&
+              auditExport.allowed === true &&
+              auditExport.activationAllowed === false
           };
 
           console.log(JSON.stringify(result, null, 2));
