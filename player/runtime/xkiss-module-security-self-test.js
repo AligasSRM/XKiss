@@ -36,7 +36,8 @@ export function runXKissModuleSecuritySelfCheck() {
 
   const authorized = security.authorize("execute", "secure-base", "execute");
   const deniedUnknown = security.authorize("execute", "unknown-module");
-  const validInput = security.validateInput("normal user text", { type: "string", maxLength: 100 });\n  const dangerousInput = security.validateInput("<script>alert(1)</script>", { type: "string", maxLength: 100 });
+  const validInput = security.validateInput("normal user text", { type: "string", maxLength: 100 });
+  const dangerousInput = security.validateInput("<script>alert(1)</script>", { type: "string", maxLength: 100 });
   const invalidControl = security.validateInput("safe\u0000value", { type: "string" });
 
   const limited = [];
@@ -56,7 +57,8 @@ export function runXKissModuleSecuritySelfCheck() {
     authorized.ok === true &&
     deniedUnknown.ok === false &&
     deniedUnknown.error === "unknown-module" &&
-    invalidInput.ok === true &&
+    validInput.ok === true &&
+    dangerousInput.ok === false &&
     invalidControl.ok === false &&
     limited[0].ok === true &&
     limited[2].ok === true &&
@@ -74,7 +76,8 @@ export function runXKissModuleSecuritySelfCheck() {
     coreControlled: true,
     authorized,
     deniedUnknown,
-    invalidInput,
+    validInput,
+    dangerousInput,
     invalidControl,
     rateLimitResult: limited[3],
     integrityClean,
