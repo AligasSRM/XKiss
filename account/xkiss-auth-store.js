@@ -89,18 +89,33 @@ export async function loginAccount(env, input = {}) {
   if (!isAuthReady(env)) return { ok:false, status:"storage_unavailable" };
 
   const email = normalizeEmail(input.email);
-  const row = await env.XKISS_AUTH_DB.prepare(
-    `SELECT user_id, email, password_hash, role, account_state, email_verified, age_verified, creator_verified, created_at, updated_at
-     FROM users WHERE email = ? LIMIT 1`
-  ).bind(email).first();
+
+  let row;
+  try {
+    row = await env.XKISS_AUTH_DB.prepare(
+      `SELECT user_id, email, password_hash, role, account_state, email_verified, age_verified, creator_verified, created_at, updated_at
+       FROM users WHERE email = ? LIMIT 1`
+    ).bind(email).first();
+  } catch {
+    return { ok:false, status:"storage_error" };
+  }
 
   if (!row || row.account_state !== "active") {
     return { ok:false, status:"invalid_credentials" };
   }
 
   let storedPassword;
-  try { storedPassword = JSON.parse(row.password_hash); } catch { return { ok:false, status:"invalid_credentials" }; }
-  if (!(await verifyPassword(input.password, storedPassword))) {
+  try {
+    storedPassword = JSON.parse(row.password_hash);
+  } catch {
+    return { ok:false, status:"invalid_credentials" };
+  }
+
+  try {
+    if (!(await verifyPassword(input.password, storedPassword))) {
+      return { ok:false, status:"invalid_credentials" };
+    }
+  } catch {
     return { ok:false, status:"invalid_credentials" };
   }
 
@@ -108,15 +123,19 @@ export async function loginAccount(env, input = {}) {
   const tokenHash = await hashSessionToken(token);
   const expiresAt = Date.now() + SESSION_TTL_SECONDS * 1000;
 
-  await env.XKISS_AUTH_SESSIONS.put(
-    sessionKey(tokenHash),
-    JSON.stringify({
-      userId: row.user_id,
-      createdAt: new Date().toISOString(),
-      expiresAt
-    }),
-    { expirationTtl: SESSION_TTL_SECONDS }
-  );
+  try {
+    await env.XKISS_AUTH_SESSIONS.put(
+      sessionKey(tokenHash),
+      JSON.stringify({
+        userId: row.user_id,
+        createdAt: new Date().toISOString(),
+        expiresAt
+      }),
+      { expirationTtl: SESSION_TTL_SECONDS }
+    );
+  } catch {
+    return { ok:false, status:"storage_error" };
+  }
 
   return {
     ok:true,
@@ -130,22 +149,37 @@ export async function loginAccount(env, input = {}) {
 export async function getAuthenticatedUser(env, token) {
   if (!isAuthReady(env) || !token) return null;
 
-  const tokenHash = await hashSessionToken(token);
-  const session = await env.XKISS_AUTH_SESSIONS.get(sessionKey(tokenHash), "json");
+  let session;
+  try {
+    const tokenHash = await hashSessionToken(token);
+    session = await env.XKISS_AUTH_SESSIONS.get(sessionKey(tokenHash), "json");
+  } catch {
+    return null;
+  }
+
   if (!session || Number(session.expiresAt) <= Date.now()) return null;
 
-  const row = await env.XKISS_AUTH_DB.prepare(
-    `SELECT user_id, email, role, account_state, email_verified, age_verified, creator_verified, created_at, updated_at
-     FROM users WHERE user_id = ? LIMIT 1`
-  ).bind(session.userId).first();
+  try {
+    const row = await env.XKISS_AUTH_DB.prepare(
+      `SELECT user_id, email, role, account_state, email_verified, age_verified, creator_verified, created_at, updated_at
+       FROM users WHERE user_id = ? LIMIT 1`
+    ).bind(session.userId).first();
 
-  if (!row || row.account_state !== "active") return null;
-  return safeUser(row);
+    if (!row || row.account_state !== "active") return null;
+    return safeUser(row);
+  } catch {
+    return null;
+  }
 }
 
 export async function revokeSession(env, token) {
   if (!isAuthReady(env) || !token) return false;
-  const tokenHash = await hashSessionToken(token);
-  await env.XKISS_AUTH_SESSIONS.delete(sessionKey(tokenHash));
-  return true;
+
+  try {
+    const tokenHash = await hashSessionToken(token);
+    await env.XKISS_AUTH_SESSIONS.delete(sessionKey(tokenHash));
+    return true;
+  } catch {
+    return false;
+  }
 }
