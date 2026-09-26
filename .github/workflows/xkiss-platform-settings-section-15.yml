@@ -1,0 +1,33 @@
+name: XKiss Platform Settings Section 15
+
+on:
+  push:
+    paths:
+      - "settings/**"
+      - ".github/workflows/xkiss-platform-settings-section-15.yml"
+  workflow_dispatch:
+
+jobs:
+  section-15:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run Section 15 complete self-test
+        run: |
+          node --input-type=module <<'NODE'
+          import { runXKissPlatformSettingsSectionSelfTest } from "./settings/xkiss-platform-settings-section-self-test.js";
+
+          const result = runXKissPlatformSettingsSectionSelfTest();
+          console.log(JSON.stringify(result, null, 2));
+
+          if (!result.ok) {
+            process.exit(1);
+          }
+          NODE
