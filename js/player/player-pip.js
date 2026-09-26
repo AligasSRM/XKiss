@@ -8,6 +8,7 @@ if(pipBtn)pipBtn.addEventListener("click",async e=>{e.preventDefault();e.stopPro
 video.addEventListener("enterpictureinpicture",()=>{pipBtn?.classList.add("active");if(pipBtn)pipBtn.setAttribute("aria-pressed","true")});
 video.addEventListener("leavepictureinpicture",()=>{pipBtn?.classList.remove("active");if(pipBtn)pipBtn.setAttribute("aria-pressed","false")});
 if(pipBtn&&!isSupported()){pipBtn.disabled=true;pipBtn.title="Picture-in-Picture is not available on this device."}else if(pipBtn){pipBtn.disabled=false;pipBtn.title="Picture-in-Picture"}
+window.XKissPlayerCore?.registerModule("pip");
 window.XKissPlayerPiP={isSupported,enterPiP,exitPiP,togglePiP};console.log("XKiss Player PiP loaded.")}
 document.readyState==="loading"?document.addEventListener("DOMContentLoaded",init):init();
 })();
