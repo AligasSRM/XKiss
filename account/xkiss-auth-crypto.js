@@ -18,7 +18,7 @@ export function normalizeEmail(value) {
 }
 
 export function isValidEmail(value) {
-  return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(normalizeEmail(value));
+  return /^[^\s@]+@[^\s@]+\\.[^\s@]+$/.test(normalizeEmail(value));
 }
 
 export function validatePasswordPolicy(value) {
@@ -28,7 +28,7 @@ export function validatePasswordPolicy(value) {
       password.length >= 10 &&
       password.length <= 128 &&
       /[A-Za-z]/.test(password) &&
-      /\\d/.test(password),
+      /\d/.test(password),
     minLength: 10,
     maxLength: 128
   };
@@ -89,8 +89,8 @@ export async function verifyPassword(password, stored) {
 
 export function createSessionToken() {
   return bytesToBase64(crypto.getRandomValues(new Uint8Array(SESSION_BYTES)))
-    .replace(/\\+/g, "-")
-    .replace(/\\//g, "_")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
     .replace(/=+$/g, "");
 }
 
