@@ -1,0 +1,42 @@
+name: XKiss Player Runtime 15.20
+on:
+  push:
+    branches: [main]
+    paths:
+      - "player/runtime/*.js"
+      - "player.html"
+      - "js/player/player-core.js"
+      - "js/player.js"
+      - ".github/workflows/xkiss-player-runtime-15-20.yml"
+  workflow_dispatch:
+jobs:
+  observability:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Core self-test
+        run: |
+          node --input-type=module -e "import { runXKissPlayerRuntimeObservabilitySelfCheck } from './player/runtime/player-runtime-observability-self-test.js'; const r=runXKissPlayerRuntimeObservabilitySelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+      - name: Integration test
+        run: |
+          node --input-type=module -e "import { validateXKissPlayerRuntimeObservabilityIntegration } from './player/runtime/player-runtime-observability-integration.js'; const r=validateXKissPlayerRuntimeObservabilityIntegration(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+      - name: Real browser observability test
+        run: |
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install chrome
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/xkiss-http.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import { chromium } from "playwright";
+          const browser=await chromium.launch({channel:"chrome",headless:true});
+          const page=await browser.newPage();
+          await page.goto("http://127.0.0.1:4173/player.html?id=video-001",{waitUntil:"domcontentloaded"});
+          await page.waitForFunction(()=>window.XKissPlayerCore?.platformCore?.connected===true);
+          const r=await page.evaluate(()=>{const c=window.XKissPlayerCore,v=c.elements.video;c.registerModule("observability","ready");return{core:c.platformCore.connected===true,module:c.getModuleStatus().observability?.status==="ready",readyState:typeof v.readyState==="number",duration:typeof v.duration==="number",source:typeof v.currentSrc==="string"}});
+          console.log(JSON.stringify({stage:"15.20",...r},null,2));
+          if(!r.core||!r.module||!r.readyState||!r.duration||!r.source)process.exit(1);
+          await browser.close();
+          NODE
