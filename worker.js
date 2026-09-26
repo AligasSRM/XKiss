@@ -86,7 +86,11 @@ export default {
       let body;
       try { body = await request.json(); } catch { body = {}; }
       const result = await registerUser(env, body);
-      const status = result.ok ? 201 : result.status === "storage_unavailable" ? 503 : 400;
+      const status = result.ok
+        ? 201
+        : ["storage_unavailable", "storage_error"].includes(result.status)
+          ? 503
+          : 400;
       return json(result, status);
     }
 
@@ -157,16 +161,11 @@ export default {
 
     if (url.pathname === "/api/views/event/count-decision" && request.method === "POST") {
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid view count decision data."
-        }, 400);
+        return json({ ok: false, message: "Invalid view count decision data." }, 400);
       }
-
       return json({
         ok: true,
         service: "XKiss View Count Decision Engine",
@@ -176,16 +175,11 @@ export default {
 
     if (url.pathname === "/api/views/event/pipeline-check" && request.method === "POST") {
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid view pipeline data."
-        }, 400);
+        return json({ ok: false, message: "Invalid view pipeline data." }, 400);
       }
-
       return json({
         ok: true,
         service: "XKiss View Qualification Pipeline",
@@ -195,16 +189,11 @@ export default {
 
     if (url.pathname === "/api/wallet/payout/authorize" && request.method === "POST") {
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid payout authorization data."
-        }, 400);
+        return json({ ok: false, message: "Invalid payout authorization data." }, 400);
       }
-
       return json({
         ok: true,
         service: "XKiss Payout Authorization",
@@ -214,16 +203,11 @@ export default {
 
     if (url.pathname === "/api/wallet/payout/audit" && request.method === "POST") {
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid payout audit data."
-        }, 400);
+        return json({ ok: false, message: "Invalid payout audit data." }, 400);
       }
-
       return json({
         ok: true,
         service: "XKiss Payout Audit",
@@ -233,16 +217,11 @@ export default {
 
     if (url.pathname === "/api/wallet/payout/history" && request.method === "POST") {
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid payout history data."
-        }, 400);
+        return json({ ok: false, message: "Invalid payout history data." }, 400);
       }
-
       return json({
         ok: true,
         service: "XKiss Payout History",
@@ -252,16 +231,11 @@ export default {
 
     if (url.pathname === "/api/wallet/payout/request" && request.method === "POST") {
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid payout request data."
-        }, 400);
+        return json({ ok: false, message: "Invalid payout request data." }, 400);
       }
-
       return json({
         ok: true,
         service: "XKiss Payout Request",
@@ -271,16 +245,11 @@ export default {
 
     if (url.pathname === "/api/wallet/payout/status" && request.method === "POST") {
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid payout status data."
-        }, 400);
+        return json({ ok: false, message: "Invalid payout status data." }, 400);
       }
-
       return json({
         ok: true,
         service: "XKiss Payout Status",
@@ -290,16 +259,11 @@ export default {
 
     if (url.pathname === "/api/wallet/payout-eligibility" && request.method === "POST") {
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid payout eligibility data."
-        }, 400);
+        return json({ ok: false, message: "Invalid payout eligibility data." }, 400);
       }
-
       return json({
         ok: true,
         service: "XKiss Payout Eligibility",
@@ -309,16 +273,11 @@ export default {
 
     if (url.pathname === "/api/wallet/reversal-check" && request.method === "POST") {
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid wallet reversal data."
-        }, 400);
+        return json({ ok: false, message: "Invalid wallet reversal data." }, 400);
       }
-
       return json({
         ok: true,
         service: "XKiss Wallet Reversal",
@@ -328,16 +287,11 @@ export default {
 
     if (url.pathname === "/api/wallet/settlement-check" && request.method === "POST") {
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid wallet settlement data."
-        }, 400);
+        return json({ ok: false, message: "Invalid wallet settlement data." }, 400);
       }
-
       return json({
         ok: true,
         service: "XKiss Wallet Settlement",
@@ -347,16 +301,11 @@ export default {
 
     if (url.pathname === "/api/wallet/revenue-to-pending" && request.method === "POST") {
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid revenue-to-wallet data."
-        }, 400);
+        return json({ ok: false, message: "Invalid revenue-to-wallet data." }, 400);
       }
-
       return json({
         ok: true,
         service: "XKiss Revenue To Wallet",
@@ -385,25 +334,14 @@ export default {
           message: "Wallet ledger storage is not connected yet. The entry was not recorded."
         }, 503);
       }
-
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid wallet ledger data."
-        }, 400);
+        return json({ ok: false, message: "Invalid wallet ledger data." }, 400);
       }
-
       const result = await storeWalletEntry(env, body);
-
-      return json({
-        ok: true,
-        service: "XKiss Wallet Ledger",
-        result
-      });
+      return json({ ok: true, service: "XKiss Wallet Ledger", result });
     }
 
     if (url.pathname === "/api/wallet/ledger/get" && request.method === "POST") {
@@ -414,25 +352,14 @@ export default {
           message: "Wallet ledger storage is not connected yet."
         }, 503);
       }
-
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid wallet ledger lookup data."
-        }, 400);
+        return json({ ok: false, message: "Invalid wallet ledger lookup data." }, 400);
       }
-
       const result = await getWalletEntry(env, body);
-
-      return json({
-        ok: true,
-        service: "XKiss Wallet Ledger",
-        result
-      });
+      return json({ ok: true, service: "XKiss Wallet Ledger", result });
     }
 
     if (url.pathname === "/api/views/status" && request.method === "GET") {
@@ -452,49 +379,27 @@ export default {
           message: "Durable view event storage is not connected yet. The event was not stored."
         }, 503);
       }
-
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid view event data."
-        }, 400);
+        return json({ ok: false, message: "Invalid view event data." }, 400);
       }
-
       const validation = validateViewEvent(body);
-
       if (!validation.valid) {
-        return json({
-          ok: true,
-          service: "XKiss Durable View Event Store",
-          result: validation
-        });
+        return json({ ok: true, service: "XKiss Durable View Event Store", result: validation });
       }
-
       const result = await storeViewEvent(env, body);
-
-      return json({
-        ok: true,
-        service: "XKiss Durable View Event Store",
-        result
-      });
+      return json({ ok: true, service: "XKiss Durable View Event Store", result });
     }
 
     if (url.pathname === "/api/views/event/validate" && request.method === "POST") {
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid view event data."
-        }, 400);
+        return json({ ok: false, message: "Invalid view event data." }, 400);
       }
-
       return json({
         ok: true,
         service: "XKiss View Event Validator",
@@ -504,16 +409,11 @@ export default {
 
     if (url.pathname === "/api/views/event/count-check" && request.method === "POST") {
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid view count data."
-        }, 400);
+        return json({ ok: false, message: "Invalid view count data." }, 400);
       }
-
       return json({
         ok: true,
         service: "XKiss View Count Check",
@@ -523,16 +423,11 @@ export default {
 
     if (url.pathname === "/api/views/event/traffic-check" && request.method === "POST") {
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid traffic data."
-        }, 400);
+        return json({ ok: false, message: "Invalid traffic data." }, 400);
       }
-
       return json({
         ok: true,
         service: "XKiss Traffic Quality Check",
@@ -542,16 +437,11 @@ export default {
 
     if (url.pathname === "/api/views/event/qualified-check" && request.method === "POST") {
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid qualified view data."
-        }, 400);
+        return json({ ok: false, message: "Invalid qualified view data." }, 400);
       }
-
       return json({
         ok: true,
         service: "XKiss Qualified View Check",
@@ -561,16 +451,11 @@ export default {
 
     if (url.pathname === "/api/revenue/event/validate" && request.method === "POST") {
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid revenue event data."
-        }, 400);
+        return json({ ok: false, message: "Invalid revenue event data." }, 400);
       }
-
       return json({
         ok: true,
         service: "XKiss Revenue Event Validator",
@@ -593,41 +478,24 @@ export default {
     }
 
     if (url.pathname === "/api/monetization/rules" && request.method === "GET") {
-      return json({
-        ok: true,
-        service: "XKiss Monetization Rules",
-        rules: MONETIZATION_RULES
-      });
+      return json({ ok: true, service: "XKiss Monetization Rules", rules: MONETIZATION_RULES });
     }
 
     if (url.pathname === "/api/monetization/eligibility/rules" && request.method === "GET") {
-      return json({
-        ok: true,
-        service: "XKiss Creator Eligibility",
-        rules: CREATOR_ELIGIBILITY_RULES
-      });
+      return json({ ok: true, service: "XKiss Creator Eligibility", rules: CREATOR_ELIGIBILITY_RULES });
     }
 
     if (url.pathname === "/api/monetization/activation/rules" && request.method === "GET") {
-      return json({
-        ok: true,
-        service: "XKiss Creator Monetization Activation",
-        rules: CREATOR_ACTIVATION_RULES
-      });
+      return json({ ok: true, service: "XKiss Creator Monetization Activation", rules: CREATOR_ACTIVATION_RULES });
     }
 
     if (url.pathname === "/api/monetization/activation/evaluate" && request.method === "POST") {
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid activation data."
-        }, 400);
+        return json({ ok: false, message: "Invalid activation data." }, 400);
       }
-
       return json({
         ok: true,
         service: "XKiss Creator Monetization Activation",
@@ -636,25 +504,16 @@ export default {
     }
 
     if (url.pathname === "/api/monetization/policy/rules" && request.method === "GET") {
-      return json({
-        ok: true,
-        service: "XKiss Monetization Policy",
-        rules: MONETIZATION_POLICY_RULES
-      });
+      return json({ ok: true, service: "XKiss Monetization Policy", rules: MONETIZATION_POLICY_RULES });
     }
 
     if (url.pathname === "/api/monetization/policy/evaluate" && request.method === "POST") {
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid policy evaluation data."
-        }, 400);
+        return json({ ok: false, message: "Invalid policy evaluation data." }, 400);
       }
-
       return json({
         ok: true,
         service: "XKiss Monetization Policy",
@@ -664,16 +523,11 @@ export default {
 
     if (url.pathname === "/api/monetization/revenue/calculate" && request.method === "POST") {
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid revenue calculation data."
-        }, 400);
+        return json({ ok: false, message: "Invalid revenue calculation data." }, 400);
       }
-
       return json({
         ok: true,
         service: "XKiss Revenue Calculation",
@@ -683,16 +537,11 @@ export default {
 
     if (url.pathname === "/api/monetization/eligibility/evaluate" && request.method === "POST") {
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid eligibility data."
-        }, 400);
+        return json({ ok: false, message: "Invalid eligibility data." }, 400);
       }
-
       return json({
         ok: true,
         service: "XKiss Creator Eligibility",
@@ -720,27 +569,16 @@ export default {
           message: "Production storage is not activated yet. The video was not uploaded."
         }, 503);
       }
-
       let body;
-
       try {
         body = await request.json();
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid upload metadata."
-        }, 400);
+        return json({ ok: false, message: "Invalid upload metadata." }, 400);
       }
-
       if (!body.fileName || !body.contentType || !body.title) {
-        return json({
-          ok: false,
-          message: "fileName, contentType and title are required."
-        }, 400);
+        return json({ ok: false, message: "fileName, contentType and title are required." }, 400);
       }
-
       const key = createVideoKey(body.fileName);
-
       return json({
         ok: true,
         storageReady: true,
@@ -762,7 +600,6 @@ export default {
           message: "Production video storage is not activated yet. The video was not uploaded."
         }, 503);
       }
-
       if (!env.XKISS_UPLOAD_KEY) {
         return json({
           ok: false,
@@ -770,42 +607,22 @@ export default {
           message: "Upload authorization is not configured yet."
         }, 503);
       }
-
       const suppliedKey = request.headers.get("X-XKiss-Upload-Key");
-
       if (!suppliedKey || suppliedKey !== env.XKISS_UPLOAD_KEY) {
-        return json({
-          ok: false,
-          message: "Upload authorization failed."
-        }, 401);
+        return json({ ok: false, message: "Upload authorization failed." }, 401);
       }
-
       const fileName = request.headers.get("X-XKiss-File-Name");
       const contentType = request.headers.get("Content-Type") || "application/octet-stream";
-
       if (!fileName) {
-        return json({
-          ok: false,
-          message: "X-XKiss-File-Name is required."
-        }, 400);
+        return json({ ok: false, message: "X-XKiss-File-Name is required." }, 400);
       }
-
       if (!contentType.startsWith("video/")) {
-        return json({
-          ok: false,
-          message: "Only video content is accepted."
-        }, 415);
+        return json({ ok: false, message: "Only video content is accepted." }, 415);
       }
-
       if (!request.body) {
-        return json({
-          ok: false,
-          message: "Video request body is empty."
-        }, 400);
+        return json({ ok: false, message: "Video request body is empty." }, 400);
       }
-
       const key = createVideoKey(fileName);
-
       try {
         const stored = await storeVideo(env, key, request.body, {
           fileName,
@@ -816,11 +633,7 @@ export default {
           downloadPolicy: request.headers.get("X-XKiss-Download-Policy") || "disabled",
           visibility: request.headers.get("X-XKiss-Visibility") || "private"
         });
-
-        return json({
-          ...stored,
-          message: "Video uploaded successfully."
-        }, 201);
+        return json({ ...stored, message: "Video uploaded successfully." }, 201);
       } catch {
         return json({
           ok: false,
@@ -834,7 +647,6 @@ export default {
     if (url.pathname === "/api/creator/videos" && request.method === "GET") {
       try {
         const result = await listVideos(env);
-
         return json({
           ...result,
           message: storageReady
