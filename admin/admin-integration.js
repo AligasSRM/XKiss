@@ -10,8 +10,8 @@ import { getAdminAccessStatus } from "./admin-access.js";
 import { getAdminAuditStatus } from "./admin-audit.js";
 
 export const ADMIN_DASHBOARD_INTEGRATION = {
-  version: "1.0-draft",
-  status: "prepared",
+  version: "1.1",
+  status: "configured",
   enabled: false,
   activationRequiresBackend: true
 };
@@ -33,7 +33,7 @@ export function getAdminDashboardOverview() {
       access: getAdminAccessStatus(),
       audit: getAdminAuditStatus()
     },
-    reason: "Admin Dashboard modules are prepared and coordinated, but secure backend authentication, authorization, storage and audit services are not connected."
+    reason: "Admin Dashboard modules are fully configured and coordinated. Production administration remains disabled until secure backend authentication, authorization, storage and audit services are connected."
   };
 }
 
@@ -57,19 +57,19 @@ export function getAdminIntegrationSummary() {
   const moduleEntries = Object.entries(overview.modules);
 
   const modulesReady = moduleEntries.every(([, module]) => {
-    return module && module.ok === true && module.status === "prepared";
+    return module && module.ok === true && (module.status === "prepared" || module.status === "configured");
   });
 
   return {
     ok: modulesReady,
-    status: modulesReady ? "prepared" : "needs_review",
+    status: modulesReady ? "configured" : "needs_review",
     moduleCount: moduleEntries.length,
     modulesReady,
     enabled: ADMIN_DASHBOARD_INTEGRATION.enabled,
     backendRequiredForActivation:
       ADMIN_DASHBOARD_INTEGRATION.activationRequiresBackend,
     reason: modulesReady
-      ? "Admin Dashboard integration is structurally complete and all Section 14 modules are prepared. Production activation remains disabled until the secure backend is connected."
+      ? "Admin Dashboard integration is structurally complete and all administration modules are configured. Production activation remains disabled until the secure backend is connected."
       : "One or more Admin Dashboard modules require review."
   };
 }
