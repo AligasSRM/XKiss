@@ -46,8 +46,18 @@ export function runXKissModuleSecuritySelfCheck() {
   }
 
   const integrityClean = security.checkIntegrity();
-  core.moduleContracts.get("secure-base").capabilities.push("tampered");
+
+  const originalContracts = core.moduleContracts;
+  core.moduleContracts = {
+    get(name) {
+      return name ? { name, version: "tampered", dependencies: [], capabilities: ["execute"], registeredAt: 0 } : {};
+    },
+    list() {
+      return {};
+    }
+  };
   const integrityChanged = security.checkIntegrity();
+  core.moduleContracts = originalContracts;
 
   const locked = security.lockModule("secure-base", "self-test");
   const health = security.getHealth();
