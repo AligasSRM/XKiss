@@ -21,28 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /*
-   * Load modular player files.
-   * Order:
-   * Core → Controls → Quality → Speed → Fullscreen → PiP
-   */
-
-  const playerModules = [
-    "js/player/player-core.js",
-    "js/player/player-controls.js",
-    "js/player/player-quality.js",
-    "js/player/player-speed.js",
-    "js/player/player-fullscreen.js",
-    "js/player/player-pip.js"
-  ];
-
-  playerModules.forEach(src => {
-    const script = document.createElement("script");
-    script.src = src;
-    script.defer = false;
-    document.body.appendChild(script);
-  });
-
-  /*
    * Video ID
    */
 
