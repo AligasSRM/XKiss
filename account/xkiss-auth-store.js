@@ -60,8 +60,12 @@ export async function registerAccount(env, input = {}) {
       now,
       now
     ).run();
-  } catch {
-    return { ok:false, status:"email_exists" };
+  } catch (error) {
+    const message = String(error?.message || error || "").toLowerCase();
+    if (message.includes("unique") || message.includes("constraint") || message.includes("email")) {
+      return { ok:false, status:"email_exists" };
+    }
+    return { ok:false, status:"storage_error" };
   }
 
   return {
