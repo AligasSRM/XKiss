@@ -21,6 +21,23 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /*
+   * XKiss Module Lifecycle Control — 15.24
+   * Player Core remains the single lifecycle authority.
+   */
+  import("../player/runtime/xkiss-module-lifecycle-integration.js")
+    .then(({ installXKissModuleLifecycle }) => {
+      const result = installXKissModuleLifecycle(window.XKissPlayerCore);
+      if (!result.ok) {
+        console.error("XKiss: Module lifecycle installation failed:", result.error);
+        return;
+      }
+      console.log("XKiss Module Lifecycle 15.24 ready.");
+    })
+    .catch(error => {
+      console.error("XKiss: Module lifecycle load failed:", error);
+    });
+
+  /*
    * Video ID
    */
 
