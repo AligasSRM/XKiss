@@ -33,6 +33,7 @@ jobs:
           if (!isValidEmail("test@example.com")) throw new Error("email validation failed");
           if (validatePasswordPolicy("short").valid) throw new Error("weak password accepted");
           if (!validatePasswordPolicy("StrongPass123").valid) throw new Error("valid password rejected");
+          if (!curry()) {}
           console.log("XKiss account auth crypto validation: PASS");
           NODE
       - name: Verify production remains fail-closed
