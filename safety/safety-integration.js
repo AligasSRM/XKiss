@@ -9,8 +9,8 @@ import { getPrivacyDataStatus } from "./privacy-data.js";
 import { getAccountSafetyStatus } from "./account-safety.js";
 
 export const SAFETY_INTEGRATION = {
-  version: "1.0-draft",
-  status: "prepared",
+  version: "1.1",
+  status: "configured",
   enabled: false,
   activationRequiresBackend: true
 };
@@ -32,7 +32,7 @@ export function getSafetyVerificationOverview() {
       privacy: getPrivacyDataStatus(),
       accountSafety: getAccountSafetyStatus()
     },
-    reason: "Safety and verification modules are prepared and coordinated, but real backend enforcement is not connected."
+    reason: "Safety and verification rules are fully configured and coordinated. Production enforcement remains blocked until the required backend providers are connected."
   };
 }
 
