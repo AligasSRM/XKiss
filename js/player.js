@@ -55,6 +55,33 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
   /*
+   * XKiss Module Dependency Orchestration — 15.26
+   * Player Core remains the single orchestration authority.
+   */
+  Promise.all([
+    import("../player/runtime/xkiss-module-lifecycle-integration.js"),
+    import("../player/runtime/xkiss-module-contract-integration.js"),
+    import("../player/runtime/xkiss-module-orchestration-integration.js")
+  ])
+    .then(([lifecycleModule, contractModule, orchestrationModule]) => {
+      const lifecycle = lifecycleModule.installXKissModuleLifecycle(window.XKissPlayerCore);
+      const contracts = contractModule.installXKissModuleContractRegistry(window.XKissPlayerCore);
+      if (!lifecycle.ok || !contracts.ok) {
+        console.error("XKiss: Module orchestration prerequisites failed.");
+        return;
+      }
+      const result = orchestrationModule.installXKissModuleOrchestrator(window.XKissPlayerCore);
+      if (!result.ok) {
+        console.error("XKiss: Module orchestration installation failed:", result.error);
+        return;
+      }
+      console.log("XKiss Module Dependency Orchestration 15.26 ready.");
+    })
+    .catch(error => {
+      console.error("XKiss: Module orchestration load failed:", error);
+    });
+
+  /*
    * Video ID
    */
 
