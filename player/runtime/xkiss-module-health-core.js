@@ -29,10 +29,11 @@ export function createXKissModuleHealth(core) {
 
   function scan() {
     const statuses = lifecycle.getStatus();
-    const names = new Set([...Object.keys(statuses), ...Object.keys(contracts.get())]);
+    const coreStatuses = typeof core.getModuleStatus === "function" ? core.getModuleStatus() : {};
+    const names = new Set([...Object.keys(statuses), ...Object.keys(coreStatuses), ...Object.keys(contracts.get())]);
     const result = {};
     for (const name of names) {
-      const record = statuses[name] || null;
+      const record = statuses[name] || coreStatuses[name] || null;
       const existing = reports.get(name);
       const status = existing?.status === "LOCKED" ? "LOCKED" : deriveStatus(name, record);
       const report = { module: name, status, severity: severityForStatus(status), timestamp: Date.now() };
