@@ -18,7 +18,7 @@ export function normalizeEmail(value) {
 }
 
 export function isValidEmail(value) {
-  return /^[^\s@]+@[^\s@]+\\.[^\s@]+$/.test(normalizeEmail(value));
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizeEmail(value));
 }
 
 export function validatePasswordPolicy(value) {
