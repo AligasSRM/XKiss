@@ -1,0 +1,41 @@
+name: XKiss Production Readiness Audit
+
+on:
+  push:
+    paths:
+      - "core/xkiss-production-readiness-*.js"
+      - ".github/workflows/xkiss-production-readiness-audit.yml"
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run production readiness gate
+        run: |
+          node --input-type=module <<'NODE'
+          import { getXKissProductionReadiness, validateXKissProductionReadiness } from "./core/xkiss-production-readiness-core.js";
+          import { runXKissProductionReadinessSelfTest } from "./core/xkiss-production-readiness-self-test.js";
+
+          const status = getXKissProductionReadiness();
+          const validation = validateXKissProductionReadiness();
+          const selfTest = runXKissProductionReadinessSelfTest();
+
+          const result = {
+            status,
+            validation,
+            selfTest,
+            auditPassed:
+              validation.ok === true &&
+              selfTest.ok === true &&
+              status.productionActivationAllowed === false
+          };
+
+          console.log(JSON.stringify(result, null, 2));
+
+          if (!result.auditPassed) process.exit(1);
+          NODE
