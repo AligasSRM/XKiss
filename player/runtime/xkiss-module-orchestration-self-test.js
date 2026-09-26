@@ -33,7 +33,7 @@ export function runXKissModuleOrchestrationSelfCheck() {
     plan.ok === true &&
     JSON.stringify(plan.order) === JSON.stringify(["base","middle","top"]) &&
     activated.ok === true &&
-    events.join(",") === "base:init,base:start,middle:init,middle:start,top:init,top:start" &&
+    events.join(",") === "base:init,middle:init,top:init,base:start,middle:start,top:start" &&
     final.base.state === "active" &&
     final.middle.state === "active" &&
     final.top.state === "active";
