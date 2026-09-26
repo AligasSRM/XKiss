@@ -65,7 +65,8 @@ export function createXKissModuleSecurity(core) {
     if (type === "string") {
       if (typeof value !== "string") return { ok: false, error: "invalid-type" };
       if (value.length > maxLength) return { ok: false, error: "input-too-large" };
-      if (/[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F\\u007F]/.test(value)) return { ok: false, error: "control-character" };\n      if (options.rejectDangerous !== false && /<\\s*script\\b|javascript\\s*:|on[a-z]+\\s*=|<\\s*iframe\\b|<\\s*object\\b/i.test(value)) return { ok: false, error: "dangerous-input" };
+      if (/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/.test(value)) return { ok: false, error: "control-character" };
+      if (options.rejectDangerous !== false && /<\s*script\b|javascript\s*:|on[a-z]+\s*=|<\s*iframe\b|<\s*object\b/i.test(value)) return { ok: false, error: "dangerous-input" };
       return { ok: true, value };
     }
 
