@@ -38,6 +38,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
   /*
+   * XKiss Module Contract Registry — 15.25
+   * Player Core remains the single contract authority.
+   */
+  import("../player/runtime/xkiss-module-contract-integration.js")
+    .then(({ installXKissModuleContractRegistry }) => {
+      const result = installXKissModuleContractRegistry(window.XKissPlayerCore);
+      if (!result.ok) {
+        console.error("XKiss: Module contract registry installation failed:", result.error);
+        return;
+      }
+      console.log("XKiss Module Contract Registry 15.25 ready.");
+    })
+    .catch(error => {
+      console.error("XKiss: Module contract registry load failed:", error);
+    });
+
+  /*
    * Video ID
    */
 
