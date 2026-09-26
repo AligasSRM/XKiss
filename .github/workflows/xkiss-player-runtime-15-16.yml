@@ -99,17 +99,24 @@ jobs:
           const source = await page.locator("#videoSource").getAttribute("src");
           if (!source || !source.includes(".mp4")) throw new Error("Video source not configured");
 
-          await page.locator("#playPauseBtn").click();
+          await page.waitForFunction(() => document.getElementById("video")?.readyState >= 1, null, { timeout: 10000 }).catch(() => {});
+
+await page.locator("#playPauseBtn").click();
           await page.waitForTimeout(3000);
 
           const runtime = await page.locator("#video").evaluate(video => ({
             currentTime: video.currentTime,
             paused: video.paused,
             readyState: video.readyState,
-            source: document.getElementById("videoSource")?.src || ""
+            source: document.getElementById("videoSource")?.src || "",
+  error: video.error ? { code: video.error.code, message: video.error.message || "" } : null,
+  networkState: video.networkState,
+  duration: video.duration,
+  currentSrc: video.currentSrc,
+  canPlayMp4: video.canPlayType("video/mp4")
           }));
 
-          if (runtime.readyState < 1) throw new Error("Video did not reach metadata-ready state");
+          if (runtime.readyState < 1) throw new Error("Video did not reach metadata-ready state: " + JSON.stringify(runtime));
           if (!(runtime.currentTime > 0 || runtime.paused === false)) throw new Error("Video did not start playback");
           if (errors.length) throw new Error("Browser errors: " + errors.join(" | "));
 
