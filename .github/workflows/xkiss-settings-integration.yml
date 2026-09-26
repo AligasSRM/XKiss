@@ -8,6 +8,11 @@ on:
       - "worker.js"
       - "core/xkiss-platform-core.js"
       - "js/player/player-core.js"
+      - "js/player/player-pip.js"
+      - "js/player/player-fullscreen.js"
+      - "js/player/player-speed.js"
+      - "js/player/player-quality.js"
+      - "js/player/player-controls.js"
       - ".github/workflows/xkiss-settings-integration.yml"
   workflow_dispatch:
 
