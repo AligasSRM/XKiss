@@ -129,6 +129,7 @@ jobs:
             const denied = security.authorize("execute","unknown-regression-module");
             const valid = security.validateInput("normal text",{type:"string",maxLength:100});
             const dangerous = security.validateInput("<script>alert(1)</script>",{type:"string",maxLength:100});
+            security.captureIntegritySnapshot();
             const integrity = security.checkIntegrity();
 
             checks.securityGate =
