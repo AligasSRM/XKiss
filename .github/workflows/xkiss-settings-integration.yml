@@ -6,6 +6,7 @@ on:
       - "settings/system-settings-*.js"
       - "settings/xkiss-settings-runtime-core.js"
       - "worker.js"
+      - "core/xkiss-platform-core.js"
       - ".github/workflows/xkiss-settings-integration.yml"
   workflow_dispatch:
 
