@@ -1,18 +1,18 @@
 export const XKISS_PRODUCTION_READINESS = {
   stage: "AUDIT-02",
   name: "XKiss Production Readiness Gate",
-  version: "1.0.0",
+  version: "1.0.1",
   failClosed: true,
   productionActivationAllowed: false,
   blockers: [
-    { id: "SAFETY_BACKEND", section: 13, status: "backend_required" },
-    { id: "ADMIN_BACKEND", section: 14, status: "backend_required" },
-    { id: "SUPER_ADMIN_AUTH", section: "15.3", status: "backend_required" },
-    { id: "SETTINGS_BACKEND", section: "15.15", status: "backend_required" },
+    { id: "SAFETY_BACKEND", section: 12, status: "backend_required" },
+    { id: "ADMIN_BACKEND", section: 13, status: "backend_required" },
+    { id: "SUPER_ADMIN_AUTH", section: "14.3", status: "backend_required" },
+    { id: "SETTINGS_BACKEND", section: 15, status: "backend_required" },
     { id: "VIDEO_STORAGE", section: 7, status: "environment_required" },
-    { id: "MONETIZATION_ACTIVATION", section: 9, status: "not_enabled" },
-    { id: "WALLET_PAYOUT", section: 10, status: "not_enabled" },
-    { id: "VIEWS_REVENUE_PERSISTENCE", section: 10, status: "not_connected" }
+    { id: "MONETIZATION_ACTIVATION", section: 8, status: "not_enabled" },
+    { id: "VIEWS_REVENUE_PERSISTENCE", section: 9, status: "not_connected" },
+    { id: "WALLET_PAYOUT", section: 10, status: "not_enabled" }
   ]
 };
 
