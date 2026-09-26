@@ -62,6 +62,16 @@ jobs:
           python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/xkiss-http.log 2>&1 &
           sleep 2
 
+      - name: Diagnose MP4 asset
+        run: |
+          set -eux
+          ls -lh 20260923_234200-3.mp4
+          file 20260923_234200-3.mp4 || true
+          ffprobe -v error -show_entries format=format_name,duration,size -show_entries stream=codec_name,codec_type,width,height -of json 20260923_234200-3.mp4 || true
+          curl -sS -D /tmp/xkiss-mp4-headers.txt -o /tmp/xkiss-mp4.bin http://127.0.0.1:4173/20260923_234200-3.mp4 || true
+          cat /tmp/xkiss-mp4-headers.txt || true
+          ls -lh /tmp/xkiss-mp4.bin || true
+
       - name: Real Home and Player browser test
         run: |
           node --input-type=module <<'NODE'
