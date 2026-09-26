@@ -1,0 +1,26 @@
+name: XKiss Release Lock
+
+on:
+  push:
+    paths:
+      - "core/xkiss-release-lock.js"
+      - "core/xkiss-release-lock-self-test.js"
+      - ".github/workflows/xkiss-release-lock.yml"
+  workflow_dispatch:
+
+jobs:
+  release-lock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify release lock
+        run: |
+          node --input-type=module <<'NODE'
+          import { runXKissReleaseLockSelfTest } from "./core/xkiss-release-lock-self-test.js";
+          const result = runXKissReleaseLockSelfTest();
+          console.log(JSON.stringify(result, null, 2));
+          if (!result.ok) process.exit(1);
+          NODE
