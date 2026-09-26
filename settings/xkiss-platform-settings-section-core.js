@@ -15,8 +15,8 @@ import { runSystemSettingsRuntimeActivationSelfCheck } from "./system-settings-r
 export const XKISS_PLATFORM_SETTINGS_SECTION = {
   section: "15",
   name: "Platform Settings",
-  version: "1.0.0",
-  status: "in_review",
+  version: "1.1.0",
+  status: "configured",
   failClosed: true,
   productionActivationAllowed: false
 };
