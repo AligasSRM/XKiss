@@ -6,6 +6,7 @@ async function exit(){try{if(document.exitFullscreen){await document.exitFullscr
 b.addEventListener("click",async e=>{e.preventDefault();e.stopPropagation();full()?await exit():await enter()});
 function update(){const a=full();b.classList.toggle("active",a);b.setAttribute("aria-pressed",a?"true":"false");b.title=a?"Exit Fullscreen":"Fullscreen"}
 document.addEventListener("fullscreenchange",update);document.addEventListener("webkitfullscreenchange",update);update();
+window.XKissPlayerCore?.registerModule("fullscreen");
 window.XKissPlayerFullscreen={isFullscreen:full,enterFullscreen:enter,exitFullscreen:exit};console.log("XKiss Player Fullscreen loaded.")}
 document.readyState==="loading"?document.addEventListener("DOMContentLoaded",init):init();
 })();
