@@ -1,0 +1,31 @@
+name: XKiss Player Runtime 15.19
+on:
+  push:
+    branches:[main]
+    paths:["player/runtime/*.js","player.html","js/player/player-core.js","js/player.js",".github/workflows/xkiss-player-runtime-15-19.yml"]
+  workflow_dispatch:
+jobs:
+  diagnostics:
+    runs-on:ubuntu-latest
+    steps:
+      - uses:actions/checkout@v4
+      - uses:actions/setup-node@v4
+        with:{node-version:22}
+      - name: Core self-test
+        run: node --input-type=module -e "import{runXKissPlayerRuntimeDiagnosticsSelfCheck}from'./player/runtime/player-runtime-diagnostics-self-test.js';const r=runXKissPlayerRuntimeDiagnosticsSelfCheck();console.log(JSON.stringify(r,null,2));if(!r.ok)process.exit(1)"
+      - name: Integration test
+        run: node --input-type=module -e "import{validateXKissPlayerRuntimeDiagnosticsIntegration}from'./player/runtime/player-runtime-diagnostics-integration.js';const r=validateXKissPlayerRuntimeDiagnosticsIntegration();console.log(JSON.stringify(r,null,2));if(!r.ok)process.exit(1)"
+      - name: Install browser
+        run: npm init -y && npm install playwright@1.55.0 && npx playwright install chrome
+      - name: Start static server
+        run: python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/xkiss-http.log 2>&1 &
+      - name: Real diagnostics test
+        run: |
+          node --input-type=module <<'NODE'
+          import{chromium}from"playwright";
+          const b=await chromium.launch({channel:"chrome",headless:true}),p=await b.newPage();
+          await p.goto("http://127.0.0.1:4173/player.html?id=video-001",{waitUntil:"domcontentloaded"});
+          await p.waitForFunction(()=>window.XKissPlayerCore?.platformCore?.connected===true);
+          const r=await p.evaluate(()=>{const c=window.XKissPlayerCore,v=c.elements.video;c.registerModule("runtime-diagnostics","ready");return{core:c.platformCore.connected===true,module:c.getModuleStatus()["runtime-diagnostics"]?.status==="ready",state:typeof v.readyState==="number",source:typeof v.currentSrc==="string"}});
+          console.log(JSON.stringify({stage:"15.19",...r},null,2));if(!r.core||!r.module||!r.state||!r.source)process.exit(1);await b.close();
+          NODE
