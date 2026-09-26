@@ -1,0 +1,32 @@
+name: XKiss Player Runtime 15.29 Diagnostics & Fault Locator
+on:
+  push:
+    branches:[main]
+    paths:["player/runtime/xkiss-module-diagnostics-*.js","js/player.js",".github/workflows/xkiss-player-runtime-15-29.yml"]
+  workflow_dispatch:
+jobs:
+  diagnostics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses:actions/checkout@v4
+      - uses:actions/setup-node@v4
+        with:{node-version:22}
+      - name: Diagnostics self-test
+        run: node --input-type=module -e "import {runXKissModuleDiagnosticsSelfCheck} from './player/runtime/xkiss-module-diagnostics-self-test.js'; const r=runXKissModuleDiagnosticsSelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+      - name: Diagnostics integration test
+        run: node --input-type=module -e "import {installXKissModuleDiagnostics} from './player/runtime/xkiss-module-diagnostics-integration.js'; const core={moduleHealth:{get(){return {base:{module:'base',status:'HEALTHY',severity:'INFO',timestamp:Date.now()}}},getFaults(){return[]}},registerModule(){}}; const r=installXKissModuleDiagnostics(core); console.log(JSON.stringify({ok:r.ok,stage:r.stage,coreControlled:r.coreControlled,status:r.diagnostics?.getStatus()},null,2)); if(!r.ok||r.stage!=='15.29'||r.coreControlled!==true) process.exit(1)"
+      - name: Real Chrome diagnostics test
+        run: |
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install chrome
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/xkiss-http.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import {chromium} from "playwright";
+          const browser=await chromium.launch({channel:"chrome",headless:true}); const page=await browser.newPage(); const errors=[];
+          page.on("pageerror",e=>errors.push(String(e))); page.on("console",m=>{if(m.type()==="error")errors.push(m.text())});
+          await page.goto("http://127.0.0.1:4173/player.html?id=video-001",{waitUntil:"domcontentloaded"});
+          await page.waitForFunction(()=>window.XKissPlayerCore?.moduleDiagnostics);
+          const result=await page.evaluate(()=>{const c=window.XKissPlayerCore,d=c.moduleDiagnostics,s=d.scan(),v=d.record({module:"browser-diagnostics",error:"test diagnostic",severity:"HIGH",timestamp:Date.now()}),st=d.getStatus();return{stage:d.stage,coreControlled:c.moduleDiagnostics===d,scan:s.modules.length>=1,record:v.ok,statusReady:st.diagnosticReady===true}});
+          console.log(JSON.stringify({stage:"15.29",...result,errors},null,2)); if(!result.coreControlled||!result.scan||!result.record||!result.statusReady||errors.length)process.exit(1); await browser.close();
+          NODE
