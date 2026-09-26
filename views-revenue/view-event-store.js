@@ -16,7 +16,7 @@ export function createViewEventStorageKey(input = {}) {
   ].join(":");
 }
 
-export async function storeViewEvent(env, event) {
+export async function storeViewEvent(env, event, options = {}) {
   if (!isViewEventStoreReady(env)) {
     return {
       ok: false,
@@ -27,6 +27,8 @@ export async function storeViewEvent(env, event) {
   }
 
   const key = createViewEventStorageKey(event);
+  const qualified = Boolean(options.qualified);
+  const counted = Boolean(options.counted);
 
   const record = {
     eventId: clean(event.eventId),
@@ -35,20 +37,23 @@ export async function storeViewEvent(env, event) {
     creatorId: clean(event.creatorId),
     viewerSessionId: clean(event.viewerSessionId),
     playbackSignal: clean(event.playbackSignal),
+    watchSeconds: Number.isFinite(Number(event.watchSeconds)) ? Number(event.watchSeconds) : null,
+    watchPercent: Number.isFinite(Number(event.watchPercent)) ? Number(event.watchPercent) : null,
     occurredAt: event.occurredAt || null,
     storedAt: new Date().toISOString(),
-    counted: false,
-    qualified: false
+    counted,
+    qualified
   };
 
-  const existing = await env.XKISS_VIEW_EVENTS.get(key);
+  const existing = await env.XKISS_VIEW_EVENTS.get(key, "json");
 
   if (existing) {
     return {
       ok: true,
       storageReady: true,
       status: "duplicate",
-      counted: false,
+      counted: Boolean(existing.counted),
+      qualified: Boolean(existing.qualified),
       key
     };
   }
@@ -58,10 +63,18 @@ export async function storeViewEvent(env, event) {
   return {
     ok: true,
     storageReady: true,
-    status: "stored",
-    counted: false,
+    status: counted ? "counted" : "stored",
+    counted,
+    qualified,
     key
   };
+}
+
+export async function commitQualifiedView(env, event) {
+  return storeViewEvent(env, event, {
+    qualified: true,
+    counted: true
+  });
 }
 
 export async function getViewEvent(env, event) {
