@@ -80,10 +80,10 @@ jobs:
             const checks = {};
 
             checks.core = core.platformCore?.connected === true;
-            checks.lifecycle = lifecycle?.getStatus && core.getModuleStatus;
-            checks.contracts = contracts?.register && contracts?.hasCapability;
-            checks.orchestration = orchestrator?.plan && orchestrator?.activate;
-            checks.security = security?.authorize && security?.checkIntegrity;
+            checks.lifecycle = typeof lifecycle?.getStatus === "function" && typeof core.getModuleStatus === "function";
+            checks.contracts = typeof contracts?.register === "function" && typeof contracts?.hasCapability === "function";
+            checks.orchestration = typeof orchestrator?.plan === "function" && typeof orchestrator?.activate === "function";
+            checks.security = typeof security?.authorize === "function" && typeof security?.checkIntegrity === "function";
 
             const control = {
               pause: core.control("pause"),
