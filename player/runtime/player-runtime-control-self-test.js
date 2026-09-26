@@ -1,0 +1,2 @@
+import{controlXKissPlayerRuntime}from"./player-runtime-control-core.js";
+export function runXKissPlayerRuntimeControlSelfCheck(){const handler=(a,v)=>({ok:true,action:a,value:v});const good=controlXKissPlayerRuntime({action:"pause",playerCoreConnected:true,runtimeActive:true,control:handler});const bad=controlXKissPlayerRuntime({action:"pause",playerCoreConnected:true,runtimeActive:false,control:handler});const checks={stage:true,accepted:good.ok===true,blocked:bad.blocked===true};return{ok:Object.values(checks).every(Boolean),stage:"15.23",checks};}
