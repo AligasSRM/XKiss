@@ -73,3 +73,5 @@ jobs:
           if (!(result.stage==="15.27" && result.coreControlled && result.authorized && result.unknownDenied && result.dangerousDenied && result.rateBlocked && result.integrityClean)) process.exit(1);
           await browser.close();
           NODE
+
+# 15.27 security gate: rerun after validated self-test correction.
