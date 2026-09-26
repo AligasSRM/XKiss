@@ -1,0 +1,3 @@
+import{validateXKissPlayerRuntimeControlRequest}from"./player-runtime-control-rules.js";
+export const XKISS_PLAYER_RUNTIME_CONTROL_CORE={section:"15.23",name:"XKiss Player Runtime Control Core",version:"1.0.0",status:"connected",failClosed:true};
+export function controlXKissPlayerRuntime(request={}){const v=validateXKissPlayerRuntimeControlRequest(request);if(!v.allowed)return{ok:false,blocked:true,gates:v.gates};if(typeof request.control!=="function")return{ok:false,blocked:true,error:"control-handler-missing"};return request.control(request.action,request.value)||{ok:false,error:"control-failed"};}
