@@ -56,6 +56,7 @@ jobs:
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install chromium
+          npx playwright install chrome
 
       - name: Start local XKiss server
         run: |
@@ -79,7 +80,7 @@ jobs:
           node --input-type=module <<'NODE'
           import { chromium } from "playwright";
 
-          const browser = await chromium.launch({ headless: true });
+          const browser = await chromium.launch({ channel: "chrome", headless: true });
           const page = await browser.newPage();
           const errors = [];
           page.on("pageerror", error => errors.push(String(error)));
