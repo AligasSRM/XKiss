@@ -9,6 +9,13 @@ import {
 const SESSION_PREFIX = "session:";
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 30;
 
+const DUMMY_PASSWORD_RECORD = {
+  algorithm: "PBKDF2-SHA-256",
+  iterations: 100000,
+  salt: "AAAAAAAAAAAAAAAAAAAAAA==",
+  hash: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+};
+
 function sessionKey(tokenHash) {
   return SESSION_PREFIX + tokenHash;
 }
@@ -101,6 +108,7 @@ export async function loginAccount(env, input = {}) {
   }
 
   if (!row || row.account_state !== "active") {
+    try { await verifyPassword(input.password, DUMMY_PASSWORD_RECORD); } catch {}
     return { ok:false, status:"invalid_credentials" };
   }
 
