@@ -58,6 +58,26 @@ export function createPayoutRequest(input = {}) {
     };
   }
 
+  const availableBalance = Number(input.availableBalance);
+
+  if (!Number.isFinite(availableBalance) || availableBalance < 0) {
+    return {
+      ok: false,
+      status: "invalid",
+      reason: "Available balance must be a valid non-negative amount."
+    };
+  }
+
+  if (amount > availableBalance) {
+    return {
+      ok: false,
+      status: "insufficient_balance",
+      requestedAmount: amount,
+      availableBalance,
+      reason: "Payout amount cannot exceed the available wallet balance."
+    };
+  }
+
   return {
     ok: true,
     status: "requested",
@@ -65,7 +85,7 @@ export function createPayoutRequest(input = {}) {
     creatorId: clean(input.creatorId),
     amount,
     currency: clean(input.currency || "USD"),
-    availableBalance: Number(input.availableBalance),
+    availableBalance,
     createdAt: input.createdAt || new Date().toISOString(),
     reason: "Payout request created and awaiting review."
   };
