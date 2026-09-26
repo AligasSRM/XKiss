@@ -1,4 +1,5 @@
-const PASSWORD_ITERATIONS = 120000;
+const PASSWORD_ITERATIONS = 100000;
+const MAX_PASSWORD_ITERATIONS = 100000;
 const PASSWORD_KEY_LENGTH = 32;
 const SESSION_BYTES = 32;
 
@@ -67,6 +68,8 @@ function constantTimeEqual(a, b) {
 
 export async function verifyPassword(password, stored) {
   if (!stored || stored.algorithm !== "PBKDF2-SHA-256") return false;
+  const iterations = Number(stored.iterations);
+  if (!Number.isInteger(iterations) || iterations < 1 || iterations > MAX_PASSWORD_ITERATIONS) return false;
   const material = await crypto.subtle.importKey(
     "raw",
     new TextEncoder().encode(String(password)),
@@ -78,7 +81,7 @@ export async function verifyPassword(password, stored) {
     {
       name: "PBKDF2",
       salt: base64ToBytes(stored.salt),
-      iterations: Number(stored.iterations),
+      iterations,
       hash: "SHA-256"
     },
     material,
