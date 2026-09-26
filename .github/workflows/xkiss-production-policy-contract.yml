@@ -1,0 +1,25 @@
+name: XKiss Production Policy Contract
+
+on:
+  push:
+    paths:
+      - "core/xkiss-production-policy-contract*.js"
+      - ".github/workflows/xkiss-production-policy-contract.yml"
+  workflow_dispatch:
+
+jobs:
+  policy-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Production policy contract self-test
+        run: |
+          node --input-type=module <<'NODE'
+          import { runXKissProductionPolicyContractSelfTest } from "./core/xkiss-production-policy-contract-self-test.js";
+          const result = runXKissProductionPolicyContractSelfTest();
+          console.log(JSON.stringify(result, null, 2));
+          if (!result.ok) process.exit(1);
+          NODE
