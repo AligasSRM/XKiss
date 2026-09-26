@@ -132,7 +132,7 @@ export default {
       const response = json({ ok: true, status: "logged_out" });
       response.headers.append(
         "Set-Cookie",
-        "xkiss_session=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=Strict"
+        "xkiss_session=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=None"
       );
       return response;
     }
