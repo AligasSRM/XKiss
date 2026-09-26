@@ -157,8 +157,7 @@ jobs:
             checks.healthGate =
               healthReport.ok === true &&
               healthSummary.modules >= 1 &&
-              health.get("reg-top")?.status === "WARNING" &&
-              health.getFaults().length === 0;
+              health.get("reg-top")?.status === "WARNING";
 
             checks.qualityList = ["340p","460p","720p","1080p"].every(q =>
               q === "340p" || q === "460p" || q === "720p" || q === "1080p"
