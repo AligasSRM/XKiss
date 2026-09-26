@@ -4,6 +4,7 @@ export const XKISS_WORKER_ENVIRONMENT_CONTRACT = {
   version: "1.0.0",
   failClosed: true,
   requiredBindings: [
+    { name: "XKISS_AUTH", purpose: "account_identity_and_sessions", requiredFor: "user_account_authentication" },
     { name: "XKISS_VIDEOS", purpose: "video_storage", requiredFor: "upload" },
     { name: "XKISS_VIEW_EVENTS", purpose: "durable_view_events", requiredFor: "views_revenue" },
     { name: "XKISS_WALLET_LEDGER", purpose: "wallet_ledger", requiredFor: "wallet_payouts" }
