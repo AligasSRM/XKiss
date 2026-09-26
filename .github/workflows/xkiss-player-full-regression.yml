@@ -1,4 +1,4 @@
-name: XKiss Player Full Regression 15.23-15.29
+name: XKiss Player Full Regression 15.23-15.31
 
 on:
   workflow_dispatch:
@@ -45,6 +45,14 @@ jobs:
         run: |
           node --input-type=module -e "import { runXKissModuleHealthSelfCheck } from './player/runtime/xkiss-module-health-self-test.js'; const r=runXKissModuleHealthSelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
 
+      - name: Recovery 15.30 self-test
+        run: |
+          node --input-type=module -e "import { runXKissModuleRecoverySelfCheck } from './player/runtime/xkiss-module-recovery-self-test.js'; const r=await runXKissModuleRecoverySelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+
+      - name: Recovery Guard 15.31 self-test
+        run: |
+          node --input-type=module -e "import { runXKissModuleRecoveryGuardSelfCheck } from './player/runtime/xkiss-module-recovery-guard-self-test.js'; const r=await runXKissModuleRecoveryGuardSelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+
       - name: Diagnostics 15.29 self-test
         run: |
           node --input-type=module -e "import { runXKissModuleDiagnosticsSelfCheck } from './player/runtime/xkiss-module-diagnostics-self-test.js'; const r=runXKissModuleDiagnosticsSelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
@@ -76,7 +84,9 @@ jobs:
             window.XKissPlayerCore?.moduleOrchestrator &&
             window.XKissPlayerCore?.moduleSecurity &&
             window.XKissPlayerCore?.moduleHealth &&
-            window.XKissPlayerCore?.moduleDiagnostics
+            window.XKissPlayerCore?.moduleDiagnostics &&
+            window.XKissPlayerCore?.moduleRecovery &&
+            window.XKissPlayerCore?.moduleRecoveryGuard
           );
 
           const result = await page.evaluate(async () => {
@@ -88,6 +98,8 @@ jobs:
             const security = core.moduleSecurity;
             const health = core.moduleHealth;
             const diagnostics = core.moduleDiagnostics;
+            const recovery = core.moduleRecovery;
+            const recoveryGuard = core.moduleRecoveryGuard;
 
             const checks = {};
 
@@ -98,6 +110,8 @@ jobs:
             checks.security = typeof security?.authorize === "function" && typeof security?.checkIntegrity === "function";
             checks.health = typeof health?.scan === "function" && typeof health?.getHealth === "function" && typeof health?.getFaults === "function";
             checks.diagnostics = typeof diagnostics?.scan === "function" && typeof diagnostics?.locate === "function" && typeof diagnostics?.record === "function";
+            checks.recovery = typeof recovery?.recover === "function" && recovery.getStatus?.().recoveryReady === true;
+            checks.recoveryGuard = typeof recoveryGuard?.recover === "function" && recoveryGuard.getStatus?.().guardReady === true && recoveryGuard.getStatus?.().maxAttempts === 3;
 
             const control = {
               pause: core.control("pause"),
@@ -183,7 +197,7 @@ jobs:
             );
 
             return {
-              stage:"15.23-15.29",
+              stage:"15.23-15.31",
               checks,
               playerReady: !!video,
               title: document.getElementById("videoTitle")?.textContent || "",
