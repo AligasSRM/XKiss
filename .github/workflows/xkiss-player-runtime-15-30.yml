@@ -1,0 +1,33 @@
+name: XKiss Player Runtime 15.30 Self-Healing & Auto-Recovery
+on:
+  push:
+    branches: [main]
+    paths: ["player/runtime/xkiss-module-recovery-*.js","js/player.js",".github/workflows/xkiss-player-runtime-15-30.yml"]
+  workflow_dispatch:
+jobs:
+  recovery:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Recovery self-test
+        run: node --input-type=module -e "import {runXKissModuleRecoverySelfCheck} from './player/runtime/xkiss-module-recovery-self-test.js'; const r=await runXKissModuleRecoverySelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+      - name: Recovery integration test
+        run: node --input-type=module -e "import {installXKissModuleRecovery} from './player/runtime/xkiss-module-recovery-integration.js'; const core={moduleHealth:{get(){return{}},getFaults(){return[]},lock(){return{ok:true}},report(){return{ok:true}}},moduleDiagnostics:{locate(){return[]}},moduleLifecycle:{getStatus(){return{}},activate(){return{ok:true}}},moduleContracts:{has(){return true}},registerModule(){}}; const r=installXKissModuleRecovery(core); console.log(JSON.stringify({ok:r.ok,stage:r.stage,coreControlled:r.coreControlled,status:r.recovery?.getStatus()},null,2)); if(!r.ok||r.stage!=='15.30'||r.coreControlled!==true) process.exit(1)"
+      - name: Real Chrome recovery test
+        run: |
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install chrome
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/xkiss-http.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import {chromium} from "playwright";
+          const browser=await chromium.launch({channel:"chrome",headless:true}); const page=await browser.newPage(); const errors=[];
+          page.on("pageerror",e=>errors.push(String(e))); page.on("console",m=>{if(m.type()==="error")errors.push(m.text())});
+          await page.goto("http://127.0.0.1:4173/player.html?id=video-001",{waitUntil:"domcontentloaded"});
+          await page.waitForFunction(()=>window.XKissPlayerCore?.moduleRecovery);
+          const result=await page.evaluate(()=>{const c=window.XKissPlayerCore,r=c.moduleRecovery,s=r.getStatus();return{stage:r.stage,coreControlled:c.moduleRecovery===r,recoveryReady:s.recoveryReady===true,handlers:s.repairHandlers>=0}});
+          console.log(JSON.stringify({stage:"15.30",...result,errors},null,2)); if(!result.coreControlled||!result.recoveryReady||!result.handlers||errors.length)process.exit(1); await browser.close();
+          NODE
