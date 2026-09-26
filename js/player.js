@@ -305,11 +305,14 @@ document.addEventListener("DOMContentLoaded", () => {
   window.XKissPlayer = {
     id: videoData.id,
     data: videoData,
+    video,
     elements: {
       player,
       video
     }
   };
+
+  window.dispatchEvent(new CustomEvent("xkiss:player-ready"));
 
   console.log(
     "XKiss Player loaded:",
