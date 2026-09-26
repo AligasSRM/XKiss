@@ -1,0 +1,76 @@
+name: XKiss Player Runtime 15.24
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "player/runtime/xkiss-module-lifecycle-*.js"
+      - "js/player.js"
+      - ".github/workflows/xkiss-player-runtime-15-24.yml"
+  workflow_dispatch:
+
+jobs:
+  lifecycle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Module lifecycle self-test
+        run: |
+          node --input-type=module -e "import { runXKissModuleLifecycleSelfCheck } from './player/runtime/xkiss-module-lifecycle-self-test.js'; const r=runXKissModuleLifecycleSelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+
+      - name: Module lifecycle integration test
+        run: |
+          node --input-type=module -e "import { installXKissModuleLifecycle } from './player/runtime/xkiss-module-lifecycle-integration.js'; const core={modules:{},registerModule(name,status){this.modules[name]={status};return true;}}; const r=installXKissModuleLifecycle(core); console.log(JSON.stringify({ok:r.ok,stage:r.stage,coreControlled:r.coreControlled},null,2)); if(!r.ok || r.stage!=='15.24' || r.coreControlled!==true) process.exit(1)"
+
+      - name: Real Chrome lifecycle test
+        run: |
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install chrome
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/xkiss-http.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import { chromium } from "playwright";
+          const browser = await chromium.launch({channel:"chrome", headless:true});
+          const page = await browser.newPage();
+          await page.goto("http://127.0.0.1:4173/player.html?id=video-001",{waitUntil:"domcontentloaded"});
+          await page.waitForFunction(() => window.XKissPlayerCore?.moduleLifecycle);
+          const result = await page.evaluate(() => {
+            const core = window.XKissPlayerCore;
+            const lifecycle = core.moduleLifecycle;
+            const events = [];
+            const hooks = {
+              init: () => events.push("init"),
+              start: () => events.push("start"),
+              stop: () => events.push("stop"),
+              destroy: () => events.push("destroy")
+            };
+            const registered = lifecycle.register("browser-test", hooks);
+            const initialized = lifecycle.initialize("browser-test");
+            const active = lifecycle.activate("browser-test");
+            const inactive = lifecycle.deactivate("browser-test");
+            const destroyed = lifecycle.destroy("browser-test");
+            const final = lifecycle.getStatus("browser-test");
+            return {
+              stage: "15.24",
+              coreConnected: core.platformCore?.connected === true,
+              coreControlled: true,
+              registered: registered.ok === true,
+              initialized: initialized.ok === true,
+              active: active.ok === true,
+              inactive: inactive.ok === true,
+              destroyed: destroyed.ok === true,
+              finalState: final?.state,
+              hookSequence: events,
+              coreStatus: core.getModuleStatus()?.["browser-test"]?.status
+            };
+          });
+          console.log(JSON.stringify(result,null,2));
+          const expected = JSON.stringify(result.hookSequence) === JSON.stringify(["init","start","stop","destroy"]);
+          if (!(result.stage === "15.24" && result.coreConnected && result.coreControlled && result.registered && result.initialized && result.active && result.inactive && result.destroyed && result.finalState === "destroyed" && expected && result.coreStatus === "destroyed")) process.exit(1);
+          await browser.close();
+          NODE
