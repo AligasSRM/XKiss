@@ -1,4 +1,5 @@
 import { getXKissSettingsRuntimeStatus } from "./settings/xkiss-settings-runtime-core.js";
+import { getAccountRuntimeStatus, registerUser, loginUser, authenticateSession, logoutUser } from "./account/xkiss-account-core.js";
 import {
   createVideoKey,
   isStorageReady,
@@ -42,9 +43,18 @@ import {
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "https://aligassrm.github.io",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, X-XKiss-Upload-Key, X-XKiss-File-Name, X-XKiss-Title, X-XKiss-Description, X-XKiss-Category, X-XKiss-Download-Policy, X-XKiss-Visibility",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-XKiss-Upload-Key, X-XKiss-File-Name, X-XKiss-Title, X-XKiss-Description, X-XKiss-Category, X-XKiss-Download-Policy, X-XKiss-Visibility",
+  "Access-Control-Allow-Credentials": "true",
   "Vary": "Origin"
 };
+
+function readXKissSessionToken(request) {
+  const cookie = request.headers.get("Cookie") || "";
+  const match = cookie.split(";").map(value => value.trim()).find(value => value.startsWith("xkiss_session="));
+  if (match) return decodeURIComponent(match.slice("xkiss_session=".length));
+  const authorization = request.headers.get("Authorization") || "";
+  return authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+}
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -66,6 +76,58 @@ export default {
         status: 204,
         headers: CORS_HEADERS
       });
+    }
+
+    if (url.pathname === "/api/account/status" && request.method === "GET") {
+      return json(getAccountRuntimeStatus(env));
+    }
+
+    if (url.pathname === "/api/account/register" && request.method === "POST") {
+      let body;
+      try { body = await request.json(); } catch { body = {}; }
+      const result = await registerUser(env, body);
+      const status = result.ok ? 201 : result.status === "storage_unavailable" ? 503 : 400;
+      return json(result, status);
+    }
+
+    if (url.pathname === "/api/account/login" && request.method === "POST") {
+      let body;
+      try { body = await request.json(); } catch { body = {}; }
+      const result = await loginUser(env, body);
+      if (!result.ok) {
+        const status = result.status === "storage_unavailable" ? 503 : 401;
+        return json(result, status);
+      }
+      const response = json({
+        ok: true,
+        status: result.status,
+        user: result.user,
+        expiresAt: result.expiresAt
+      });
+      response.headers.append(
+        "Set-Cookie",
+        "xkiss_session=" + encodeURIComponent(result.sessionToken) + "; Max-Age=2592000; Path=/; HttpOnly; Secure; SameSite=Strict"
+      );
+      return response;
+    }
+
+    if (url.pathname === "/api/account/me" && request.method === "GET") {
+      const token = readXKissSessionToken(request);
+      const user = await authenticateSession(env, token);
+      return user
+        ? json({ ok: true, status: "authenticated", user })
+        : json({ ok: false, status: "unauthenticated" }, 401);
+    }
+
+    if (url.pathname === "/api/account/logout" && request.method === "POST") {
+      const token = readXKissSessionToken(request);
+      await logoutUser(env, token);
+      const response = json({ ok: true, status: "logged_out" });
+      response.headers.append(
+        "Set-Cookie",
+        "xkiss_session=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=Strict"
+      );
+      return response;
     }
 
     if (url.pathname === "/api/settings/status" && request.method === "GET") {
