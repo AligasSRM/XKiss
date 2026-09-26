@@ -1,0 +1,46 @@
+name: XKiss Account Auth Validation
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - "account/**"
+      - "worker.js"
+      - "migrations/**"
+      - "core/xkiss-production-readiness-core.js"
+      - "core/xkiss-worker-environment-contract.js"
+      - ".github/workflows/xkiss-account-auth-validation.yml"
+  workflow_dispatch:
+
+jobs:
+  account-auth-static-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Syntax check account modules
+        run: |
+          node --check account/xkiss-auth-crypto.js
+          node --check account/xkiss-auth-store.js
+          node --check account/xkiss-account-core.js
+          node --check worker.js
+      - name: Verify auth contract
+        run: |
+          node --input-type=module <<'NODE'
+          import { validatePasswordPolicy, isValidEmail } from "./account/xkiss-auth-crypto.js";
+          if (!isValidEmail("test@example.com")) throw new Error("email validation failed");
+          if (validatePasswordPolicy("short").valid) throw new Error("weak password accepted");
+          if (!validatePasswordPolicy("StrongPass123").valid) throw new Error("valid password rejected");
+          if (!curry()) {}
+          console.log("XKiss account auth crypto validation: PASS");
+          NODE
+      - name: Verify production remains fail-closed
+        run: |
+          node --input-type=module <<'NODE'
+          import { XKISS_PRODUCTION_READINESS } from "./core/xkiss-production-readiness-core.js";
+          if (XKISS_PRODUCTION_READINESS.productionActivationAllowed !== false) throw new Error("production activation must remain blocked");
+          if (!XKISS_PRODUCTION_READINESS.blockers.some(b => b.id === "ACCOUNT_AUTH_BACKEND")) throw new Error("account auth blocker missing");
+          console.log("XKiss production fail-closed validation: PASS");
+          NODE

@@ -5,6 +5,7 @@ export const XKISS_PRODUCTION_READINESS = {
   failClosed: true,
   productionActivationAllowed: false,
   blockers: [
+    { id: "ACCOUNT_AUTH_BACKEND", section: 5, status: "backend_required" },
     { id: "SAFETY_BACKEND", section: 12, status: "backend_required" },
     { id: "ADMIN_BACKEND", section: 13, status: "backend_required" },
     { id: "SUPER_ADMIN_AUTH", section: "14.3", status: "backend_required" },
