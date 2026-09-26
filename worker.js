@@ -99,7 +99,7 @@ export default {
       try { body = await request.json(); } catch { body = {}; }
       const result = await loginUser(env, body);
       if (!result.ok) {
-        const status = result.status === "storage_unavailable" ? 503 : 401;
+        const status = ["storage_unavailable", "storage_error"].includes(result.status) ? 503 : 401;
         return json(result, status);
       }
       const response = json({
