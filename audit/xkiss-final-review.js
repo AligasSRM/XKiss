@@ -59,8 +59,10 @@ for (const file of htmlFiles) {
   const content = read(file);
   for (const m of content.matchAll(assetRe)) {
     const target = m[1];
-    if (/^(https?:|data:|mailto:|#|javascript:)/i.test(target)) continue;
-    const resolved = path.posix.normalize(path.posix.join(path.posix.dirname(file),target));
+    if (/^(https?:|data:|mailto:|javascript:)/i.test(target)) continue;
+    const pathOnly = target.split("#")[0].split("?")[0];
+    if (!pathOnly) continue;
+    const resolved = path.posix.normalize(path.posix.join(path.posix.dirname(file),pathOnly));
     if (!exists(resolved)) htmlAssetErrors.push({file,target:resolved});
   }
 }
