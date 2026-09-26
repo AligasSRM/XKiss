@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="theme-color" content="#07080b">
+<title>XKiss — Live Room</title>
+<link rel="stylesheet" href="live/live.css">
+</head>
+<body>
+<header class="live-header">
+  <nav class="live-nav">
+    <a class="brand" href="index.html" aria-label="XKiss Home"><span class="brand-x">X</span><span class="brand-kiss">kiss</span></a>
+    <div class="nav-links" aria-label="Primary navigation">
+      <a href="index.html">Home</a>
+      <a href="videos.html">Videos</a>
+      <a href="live.html">Live</a>
+      <a href="index.html#creators">Creators</a>
+      <a href="index.html#categories">Categories</a>
+      <a href="index.html#account">Account</a>
+    </div>
+    <a class="login" href="index.html#account">Login</a>
+  </nav>
+</header>
+<main class="live-page">
+  <section class="live-hero">
+    <div class="live-copy">
+      <span class="eyebrow">XKISS LIVE ROOM</span>
+      <h1 id="room-title">Live Room</h1>
+      <p id="room-status">Loading live room…</p>
+    </div>
+  </section>
+  <section class="live-info-section">
+    <div class="info-card">
+      <span class="info-kicker">LIVE ROOM</span>
+      <h2 id="room-creator">XKiss Creator</h2>
+      <p id="room-message">The live room is ready for the real-time streaming provider. No external stream is started by this static client.</p>
+      <div class="info-points">
+        <div><strong>ROOM</strong><span id="room-id">—</span></div>
+        <div><strong>STATUS</strong><span id="room-state">Not Connected</span></div>
+        <div><strong>VIEWERS</strong><span id="room-viewers">0</span></div>
+        <div><strong>ACCESS</strong><span>Public room shell</span></div>
+      </div>
+    </div>
+  </section>
+  <p style="margin-top:20px"><a href="live.html" style="color:#ff88aa">← Back to Live</a></p>
+</main>
+<script src="live/live-data.js"></script>
+<script src="live/live-room-core.js"></script>
+</body>
+</html>
