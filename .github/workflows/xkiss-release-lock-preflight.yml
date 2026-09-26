@@ -1,0 +1,25 @@
+name: XKiss Release Lock Preflight
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "core/xkiss-release-lock-preflight*.js"
+      - ".github/workflows/xkiss-release-lock-preflight.yml"
+
+jobs:
+  release-lock-preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Release lock preflight self-test
+        run: |
+          node --input-type=module <<'NODE'
+          import { runXKissReleaseLockPreflightSelfTest } from "./core/xkiss-release-lock-preflight-self-test.js";
+          const result = runXKissReleaseLockPreflightSelfTest();
+          console.log(JSON.stringify(result, null, 2));
+          if (!result.ok) process.exit(1);
+          NODE
