@@ -1,0 +1,25 @@
+name: XKiss Backend Provider Contract
+
+on:
+  push:
+    paths:
+      - "core/xkiss-backend-provider-contract*.js"
+      - ".github/workflows/xkiss-backend-provider-contract.yml"
+  workflow_dispatch:
+
+jobs:
+  provider-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Backend provider contract self-test
+        run: |
+          node --input-type=module <<'NODE'
+          import { runXKissBackendProviderContractSelfTest } from "./core/xkiss-backend-provider-contract-self-test.js";
+          const result = runXKissBackendProviderContractSelfTest();
+          console.log(JSON.stringify(result, null, 2));
+          if (!result.ok) process.exit(1);
+          NODE
