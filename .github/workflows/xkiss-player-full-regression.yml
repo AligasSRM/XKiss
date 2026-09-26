@@ -1,4 +1,4 @@
-name: XKiss Player Full Regression 15.23-15.28
+name: XKiss Player Full Regression 15.23-15.29
 
 on:
   workflow_dispatch:
@@ -45,6 +45,10 @@ jobs:
         run: |
           node --input-type=module -e "import { runXKissModuleHealthSelfCheck } from './player/runtime/xkiss-module-health-self-test.js'; const r=runXKissModuleHealthSelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
 
+      - name: Diagnostics 15.29 self-test
+        run: |
+          node --input-type=module -e "import { runXKissModuleDiagnosticsSelfCheck } from './player/runtime/xkiss-module-diagnostics-self-test.js'; const r=runXKissModuleDiagnosticsSelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+
       - name: Full integration and Chrome regression
         run: |
           npm init -y
@@ -71,7 +75,8 @@ jobs:
             window.XKissPlayerCore?.moduleContracts &&
             window.XKissPlayerCore?.moduleOrchestrator &&
             window.XKissPlayerCore?.moduleSecurity &&
-            window.XKissPlayerCore?.moduleHealth
+            window.XKissPlayerCore?.moduleHealth &&
+            window.XKissPlayerCore?.moduleDiagnostics
           );
 
           const result = await page.evaluate(async () => {
@@ -82,6 +87,7 @@ jobs:
             const orchestrator = core.moduleOrchestrator;
             const security = core.moduleSecurity;
             const health = core.moduleHealth;
+            const diagnostics = core.moduleDiagnostics;
 
             const checks = {};
 
@@ -91,6 +97,7 @@ jobs:
             checks.orchestration = typeof orchestrator?.plan === "function" && typeof orchestrator?.activate === "function";
             checks.security = typeof security?.authorize === "function" && typeof security?.checkIntegrity === "function";
             checks.health = typeof health?.scan === "function" && typeof health?.getHealth === "function" && typeof health?.getFaults === "function";
+            checks.diagnostics = typeof diagnostics?.scan === "function" && typeof diagnostics?.locate === "function" && typeof diagnostics?.record === "function";
 
             const control = {
               pause: core.control("pause"),
@@ -159,12 +166,24 @@ jobs:
               healthSummary.modules >= 1 &&
               health.get("reg-top")?.status === "WARNING";
 
+            const diagnosticScan = diagnostics.scan();
+            const diagnosticRecord = diagnostics.record({
+              module: "reg-top",
+              error: "regression diagnostic",
+              severity: "LOW",
+              timestamp: Date.now()
+            });
+            checks.diagnosticsGate =
+              diagnosticScan.modules.length >= 1 &&
+              diagnosticRecord.ok === true &&
+              diagnostics.getStatus().diagnosticReady === true;
+
             checks.qualityList = ["340p","460p","720p","1080p"].every(q =>
               q === "340p" || q === "460p" || q === "720p" || q === "1080p"
             );
 
             return {
-              stage:"15.23-15.28",
+              stage:"15.23-15.29",
               checks,
               playerReady: !!video,
               title: document.getElementById("videoTitle")?.textContent || "",
