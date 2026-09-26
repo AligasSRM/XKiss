@@ -4,6 +4,7 @@ function update(){if(speedBtn)speedBtn.textContent=current+"x"}
 function setSpeed(s){s=Number(s);if(!Number.isFinite(s)||!speeds.includes(s))return;current=s;video.playbackRate=s;update();speedMenu?.classList.remove("show")}
 if(speedBtn&&speedMenu)speedBtn.addEventListener("click",e=>{e.stopPropagation();speedMenu.classList.toggle("show");document.getElementById("qualityMenu")?.classList.remove("show");settingsMenu?.classList.remove("show")});
 speedMenu?.querySelectorAll("[data-speed]").forEach(b=>{const s=Number(b.dataset.speed);if(!speeds.includes(s)){b.style.display="none";return}b.addEventListener("click",()=>setSpeed(s))});
-video.playbackRate=current;update();console.log("XKiss Player Speed loaded:",current)}
+video.playbackRate=current;update();window.XKissPlayerCore?.registerModule("speed", current);
+console.log("XKiss Player Speed loaded:",current)}
 document.readyState==="loading"?document.addEventListener("DOMContentLoaded",init):init();
 })();
