@@ -1,0 +1,68 @@
+name: XKiss Player Runtime 15.18
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "player/runtime/*.js"
+      - "player.html"
+      - "js/player/player-core.js"
+      - "js/player.js"
+      - ".github/workflows/xkiss-player-runtime-15-18.yml"
+  workflow_dispatch:
+
+jobs:
+  player-runtime-events:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Core self-test
+        run: |
+          node --input-type=module -e "import { runXKissPlayerRuntimeEventsSelfCheck } from './player/runtime/player-runtime-events-self-test.js'; const r=runXKissPlayerRuntimeEventsSelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+      - name: Integration test
+        run: |
+          node --input-type=module -e "import { validateXKissPlayerRuntimeEventsIntegration } from './player/runtime/player-runtime-events-integration.js'; const r=validateXKissPlayerRuntimeEventsIntegration(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+      - name: Install browser
+        run: |
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install chrome
+      - name: Start static server
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/xkiss-http.log 2>&1 &
+      - name: Real runtime event test
+        run: |
+          node --input-type=module <<'NODE'
+          import { chromium } from "playwright";
+          const browser = await chromium.launch({ channel: "chrome", headless: true });
+          const page = await browser.newPage();
+          await page.goto("http://127.0.0.1:4173/player.html?id=video-001", { waitUntil: "domcontentloaded" });
+          await page.waitForFunction(() => window.XKissPlayerCore?.platformCore?.connected === true);
+          const result = await page.evaluate(() => {
+            const core = window.XKissPlayerCore;
+            core.registerModule("runtime-events","ready");
+            const v = core.elements.video;
+            const before = Object.keys(core.getModuleStatus()).length;
+            const event = {
+              type: "runtime_test",
+              timestamp: Date.now(),
+              detail: {
+                paused: v.paused,
+                readyState: v.readyState,
+                currentSrc: v.currentSrc || ""
+              }
+            };
+            return {
+              connected: core.platformCore.connected === true,
+              modules: before >= 1,
+              eventValid: event.type === "runtime_test" && typeof event.timestamp === "number",
+              stateReadable: typeof v.paused === "boolean" && typeof v.readyState === "number"
+            };
+          });
+          console.log(JSON.stringify({stage:"15.18", ...result}, null, 2));
+          if (!result.connected || !result.modules || !result.eventValid || !result.stateReadable) process.exit(1);
+          await browser.close();
+          NODE
