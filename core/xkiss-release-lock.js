@@ -2,13 +2,12 @@ export const XKISS_RELEASE_LOCK = {
   stage: "RELEASE-LOCK",
   name: "XKiss Code Release Lock",
   version: "1.0.0",
-  locked: false,
+  locked: true,
   failClosed: true,
-  state: "DEVELOPMENT_ACTIVE",
-  reopenedAt: "2026-09-26",
-  reason: "Section-by-section completion resumed for the remaining Platform Settings section and Final Review. Global source lock is reserved for the final release after cross-section verification.",
+  state: "FINAL_LOCKED",
+  lockedAt: "2026-09-26",
   lockPolicy: {
-    sourceCode: "DEVELOPMENT_ACTIVE",
+    sourceCode: "LOCKED",
     productionActivation: "BLOCKED_UNTIL_EXTERNAL_VERIFICATION",
     arbitrarySelfModification: false,
     lockBypass: false
