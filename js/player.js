@@ -65,9 +65,10 @@ document.addEventListener("DOMContentLoaded", () => {
     import("../player/runtime/xkiss-module-security-integration.js"),
     import("../player/runtime/xkiss-module-health-integration.js"),
     import("../player/runtime/xkiss-module-diagnostics-integration.js"),
-    import("../player/runtime/xkiss-module-recovery-integration.js")
+    import("../player/runtime/xkiss-module-recovery-integration.js"),
+    import("../player/runtime/xkiss-module-recovery-guard-integration.js")
   ])
-    .then(([lifecycleModule, contractModule, orchestrationModule, securityModule, healthModule, diagnosticsModule, recoveryModule]) => {
+    .then(([lifecycleModule, contractModule, orchestrationModule, securityModule, healthModule, diagnosticsModule, recoveryModule, recoveryGuardModule]) => {
       const lifecycle = lifecycleModule.installXKissModuleLifecycle(window.XKissPlayerCore);
       const contracts = contractModule.installXKissModuleContractRegistry(window.XKissPlayerCore);
       if (!lifecycle.ok || !contracts.ok) {
@@ -110,6 +111,13 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       console.log("XKiss Module Self-Healing & Auto-Recovery 15.30 ready.");
+
+      const recoveryGuard = recoveryGuardModule.installXKissModuleRecoveryGuard(window.XKissPlayerCore);
+      if (!recoveryGuard.ok) {
+        console.error("XKiss: Recovery Guard installation failed:", recoveryGuard.error);
+        return;
+      }
+      console.log("XKiss Recovery Guard & Anti-Loop Protection 15.31 ready.");
     })
     .catch(error => {
       console.error("XKiss: Runtime security/orchestration load failed:", error);
