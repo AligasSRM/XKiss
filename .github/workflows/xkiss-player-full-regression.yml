@@ -9,6 +9,7 @@ on:
       - "js/player.js"
       - "js/player/**"
       - "player.html"
+      - "core/xkiss-*-contract*.js"
       - ".github/workflows/xkiss-player-full-regression.yml"
 
 jobs:
@@ -56,6 +57,18 @@ jobs:
       - name: Diagnostics 15.29 self-test
         run: |
           node --input-type=module -e "import { runXKissModuleDiagnosticsSelfCheck } from './player/runtime/xkiss-module-diagnostics-self-test.js'; const r=runXKissModuleDiagnosticsSelfCheck(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+
+      - name: Worker environment contract self-test
+        run: |
+          node --input-type=module -e "import { runXKissWorkerEnvironmentContractSelfTest } from './core/xkiss-worker-environment-contract-self-test.js'; const r=runXKissWorkerEnvironmentContractSelfTest(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+
+      - name: Backend provider contract self-test
+        run: |
+          node --input-type=module -e "import { runXKissBackendProviderContractSelfTest } from './core/xkiss-backend-provider-contract-self-test.js'; const r=runXKissBackendProviderContractSelfTest(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
+
+      - name: Production policy contract self-test
+        run: |
+          node --input-type=module -e "import { runXKissProductionPolicyContractSelfTest } from './core/xkiss-production-policy-contract-self-test.js'; const r=runXKissProductionPolicyContractSelfTest(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1)"
 
       - name: Full integration and Chrome regression
         run: |
