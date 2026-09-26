@@ -1,3 +1,4 @@
+import { getXKissSettingsRuntimeStatus } from "./settings/xkiss-settings-runtime-core.js";
 import {
   createVideoKey,
   isStorageReady,
@@ -67,7 +68,11 @@ export default {
       });
     }
 
-    if (url.pathname === "/api/settings/status" && request.method === "GET") {\n      return json(getXKissSettingsRuntimeStatus());\n    }\n\n    if (url.pathname === "/api/health") {
+    if (url.pathname === "/api/settings/status" && request.method === "GET") {
+      return json(getXKissSettingsRuntimeStatus());
+    }
+
+    if (url.pathname === "/api/health") {
       return json({
         service: "XKiss Worker",
         status: "online",
