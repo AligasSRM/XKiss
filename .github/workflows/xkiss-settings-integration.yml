@@ -5,6 +5,7 @@ on:
     paths:
       - "settings/system-settings-*.js"
       - "settings/xkiss-settings-runtime-core.js"
+      - "worker.js"
       - ".github/workflows/xkiss-settings-integration.yml"
   workflow_dispatch:
 
