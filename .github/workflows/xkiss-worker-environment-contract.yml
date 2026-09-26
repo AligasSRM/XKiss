@@ -1,0 +1,25 @@
+name: XKiss Worker Environment Contract
+
+on:
+  push:
+    paths:
+      - "core/xkiss-worker-environment-contract*.js"
+      - ".github/workflows/xkiss-worker-environment-contract.yml"
+  workflow_dispatch:
+
+jobs:
+  environment-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Worker environment contract self-test
+        run: |
+          node --input-type=module <<'NODE'
+          import { runXKissWorkerEnvironmentContractSelfTest } from "./core/xkiss-worker-environment-contract-self-test.js";
+          const result = runXKissWorkerEnvironmentContractSelfTest();
+          console.log(JSON.stringify(result, null, 2));
+          if (!result.ok) process.exit(1);
+          NODE
