@@ -149,6 +149,27 @@ export async function storeJsonObject(env, key, value) {
   return { ok: true, storageReady: true, status: "stored", key, storage: "IDrive e2" };
 }
 
+export async function deleteJsonObject(env, key) {
+  if (!isStorageReady(env)) {
+    return { ok: false, storageReady: false, status: "storage-not-ready" };
+  }
+
+  const response = await signedRequest(env, "DELETE", key);
+
+  if (!response.ok && response.status !== 404) {
+    const detail = await response.text().catch(() => "");
+    throw new Error("IDrive e2 JSON object delete failed (" + response.status + "): " + detail.slice(0, 500));
+  }
+
+  return {
+    ok: true,
+    storageReady: true,
+    status: response.status === 404 ? "not-found" : "deleted",
+    key,
+    storage: "IDrive e2"
+  };
+}
+
 export async function getJsonObject(env, key) {
   if (!isStorageReady(env)) {
     return { ok: false, storageReady: false, status: "storage-not-ready", value: null };
