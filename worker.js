@@ -309,7 +309,7 @@ export default {
         storageReady: isWalletLedgerReady(env),
         storage: "XKISS_WALLET_LEDGER",
         message: isWalletLedgerReady(env)
-          ? "Wallet ledger storage is connected."
+          ? "Wallet ledger storage is connected and ready."
           : "Wallet ledger storage is prepared but not connected yet."
       });
     }
