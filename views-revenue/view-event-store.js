@@ -1,7 +1,9 @@
-const VIEW_EVENT_PREFIX = "view-events:";
+import { isStorageReady, storeJsonObject, getJsonObject } from "../storage/r2-adapter.js";
+
+const VIEW_EVENT_PREFIX = "view-events/";
 
 export function isViewEventStoreReady(env) {
-  return Boolean(env && env.XKISS_VIEW_EVENTS);
+  return Boolean(env && (env.XKISS_VIEW_EVENTS || isStorageReady(env)));
 }
 
 function clean(value) {
@@ -45,20 +47,48 @@ export async function storeViewEvent(env, event, options = {}) {
     qualified
   };
 
-  const existing = await env.XKISS_VIEW_EVENTS.get(key, "json");
+  if (env.XKISS_VIEW_EVENTS) {
+    const existing = await env.XKISS_VIEW_EVENTS.get(key, "json");
 
-  if (existing) {
+    if (existing) {
+      return {
+        ok: true,
+        storageReady: true,
+        status: "duplicate",
+        counted: Boolean(existing.counted),
+        qualified: Boolean(existing.qualified),
+        key
+      };
+    }
+
+    await env.XKISS_VIEW_EVENTS.put(key, JSON.stringify(record));
+
+    return {
+      ok: true,
+      storageReady: true,
+      status: counted ? "counted" : "stored",
+      counted,
+      qualified,
+      key,
+      storage: "XKISS_VIEW_EVENTS"
+    };
+  }
+
+  const existing = await getJsonObject(env, key);
+
+  if (existing.value) {
     return {
       ok: true,
       storageReady: true,
       status: "duplicate",
-      counted: Boolean(existing.counted),
-      qualified: Boolean(existing.qualified),
-      key
+      counted: Boolean(existing.value.counted),
+      qualified: Boolean(existing.value.qualified),
+      key,
+      storage: "IDrive e2"
     };
   }
 
-  await env.XKISS_VIEW_EVENTS.put(key, JSON.stringify(record));
+  await storeJsonObject(env, key, record);
 
   return {
     ok: true,
@@ -66,7 +96,8 @@ export async function storeViewEvent(env, event, options = {}) {
     status: counted ? "counted" : "stored",
     counted,
     qualified,
-    key
+    key,
+    storage: "IDrive e2"
   };
 }
 
@@ -87,13 +118,28 @@ export async function getViewEvent(env, event) {
   }
 
   const key = createViewEventStorageKey(event);
-  const value = await env.XKISS_VIEW_EVENTS.get(key, "json");
+
+  if (env.XKISS_VIEW_EVENTS) {
+    const value = await env.XKISS_VIEW_EVENTS.get(key, "json");
+
+    return {
+      ok: true,
+      storageReady: true,
+      status: value ? "found" : "not-found",
+      key,
+      event: value || null,
+      storage: "XKISS_VIEW_EVENTS"
+    };
+  }
+
+  const result = await getJsonObject(env, key);
 
   return {
     ok: true,
     storageReady: true,
-    status: value ? "found" : "not-found",
+    status: result.value ? "found" : "not-found",
     key,
-    event: value || null
+    event: result.value || null,
+    storage: "IDrive e2"
   };
 }
