@@ -128,6 +128,47 @@ async function signedRequest(env, method, key = "", body = null, extraHeaders = 
   });
 }
 
+export async function storeJsonObject(env, key, value) {
+  if (!isStorageReady(env)) {
+    return { ok: false, storageReady: false, status: "storage-not-ready" };
+  }
+
+  const response = await signedRequest(
+    env,
+    "PUT",
+    key,
+    JSON.stringify(value),
+    { "content-type": "application/json; charset=UTF-8" }
+  );
+
+  if (!response.ok) {
+    const detail = await response.text().catch(() => "");
+    throw new Error("IDrive e2 JSON object store failed (" + response.status + "): " + detail.slice(0, 500));
+  }
+
+  return { ok: true, storageReady: true, status: "stored", key, storage: "IDrive e2" };
+}
+
+export async function getJsonObject(env, key) {
+  if (!isStorageReady(env)) {
+    return { ok: false, storageReady: false, status: "storage-not-ready", value: null };
+  }
+
+  const response = await signedRequest(env, "GET", key);
+
+  if (response.status === 404) {
+    return { ok: true, storageReady: true, status: "not-found", value: null };
+  }
+
+  if (!response.ok) {
+    const detail = await response.text().catch(() => "");
+    throw new Error("IDrive e2 JSON object read failed (" + response.status + "): " + detail.slice(0, 500));
+  }
+
+  const value = await response.json();
+  return { ok: true, storageReady: true, status: "found", value };
+}
+
 export async function storeVideo(env, key, body, metadata = {}) {
   if (!isStorageReady(env)) {
     return { ok: false, storageReady: false, status: "storage-not-ready" };
@@ -176,7 +217,7 @@ export async function listVideos(env) {
   }
 
   const xml = await response.text();
-  const blocks = xml.match(/<Contents>[\s\S]*?<\/Contents>/g) || [];
+  const blocks = xml.match(/<Contents>[\\s\\S]*?<\/Contents>/g) || [];
   const videos = blocks
     .map(block => {
       const key = xmlTag(block, "Key");
