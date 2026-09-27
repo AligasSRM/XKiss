@@ -454,7 +454,9 @@ export default {
         ok: true,
         service: "XKiss Views & Revenue",
         rules: VIEWS_REVENUE_RULES,
-        message: isViewEventStoreReady(env)\n          ? "Views and revenue event storage is connected and active."\n          : "Views and revenue event architecture is prepared. Durable event storage is not connected yet."
+        message: isViewEventStoreReady(env)
+          ? "Views and revenue event storage is connected and active."
+          : "Views and revenue event architecture is prepared. Durable event storage is not connected yet."
       });
     }
 
