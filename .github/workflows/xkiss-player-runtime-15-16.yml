@@ -153,7 +153,6 @@ jobs:
           if (!(runtime.currentTime > 0 || runtime.paused === false)) throw new Error("Video did not start playback");
           const unexpectedErrors = errors.filter(error =>
             !error.includes("Watch progress module could not find player state") &&
-            !error.includes("Access to fetch at 'https://xkiss.srourr-ali73.workers.dev/api/views/event/validate'") &&
             !error.includes("Response to preflight request doesn't pass access control check") &&
             !error.includes("ERR_FAILED") &&
             !error.includes("XKiss: View event failed: TypeError: Failed to fetch") &&
