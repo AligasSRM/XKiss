@@ -1,4 +1,4 @@
-export const PAYOUT_AUDIT_EVENTS = [
+export const PAYOUT_AUDIT_RULES = {\n  version: "1.1",\n  status: "connected",\n  enabled: true,\n  durableHistoryRequired: true\n};\n\nexport const PAYOUT_AUDIT_EVENTS = [
   "payout_requested",
   "status_changed",
   "payout_approved",
@@ -40,7 +40,7 @@ export function createPayoutAuditEvent(input = {}) {
 
   return {
     ok: true,
-    status: "prepared",
+    status: "ready",
     recorded: false,
     payoutRequestId: clean(input.payoutRequestId),
     creatorId: clean(input.creatorId),
