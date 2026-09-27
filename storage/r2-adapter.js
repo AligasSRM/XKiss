@@ -176,7 +176,7 @@ export async function listVideos(env) {
   }
 
   const xml = await response.text();
-  const blocks = xml.match(/<Contents>[\\s\\S]*?<\\/Contents>/g) || [];
+  const blocks = xml.match(/<Contents>[\s\S]*?<\/Contents>/g) || [];
   const videos = blocks
     .map(block => {
       const key = xmlTag(block, "Key");
