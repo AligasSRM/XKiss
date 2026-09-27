@@ -1,7 +1,7 @@
 export const WALLET_RULES = {
-  version: "1.0-draft",
-  status: "prepared",
-  enabled: false,
+  version: "1.1",
+  status: "connected",
+  enabled: true,
   currency: "USD",
   walletModel: "ledger_based",
   balances: {
@@ -70,7 +70,7 @@ export function createWalletEntry(input = {}) {
     currency: WALLET_RULES.currency,
     referenceId: clean(input.referenceId),
     occurredAt: input.occurredAt || null,
-    reason: "Wallet entry is structurally valid but is not recorded until the wallet ledger is connected."
+    reason: "Wallet entry is structurally valid and can be recorded by the connected wallet ledger."
   };
 }
 
