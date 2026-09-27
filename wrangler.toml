@@ -1,3 +1,8 @@
 name = "xkiss"
 main = "worker.js"
 compatibility_date = "2026-09-25"
+
+[vars]
+XKISS_IDRIVE_ENDPOINT = "https://s3.eu-west-1.idrivee2.com"
+XKISS_IDRIVE_REGION = "eu-west-1"
+XKISS_IDRIVE_BUCKET = "xkissvideos"
