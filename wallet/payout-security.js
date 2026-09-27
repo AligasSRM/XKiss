@@ -1,7 +1,7 @@
 export const PAYOUT_SECURITY_RULES = {
-  version: "1.0-draft",
-  status: "prepared",
-  enabled: false,
+  version: "1.1",
+  status: "connected",
+  enabled: true,
   requiredChecks: [
     "authenticated_creator",
     "creator_owns_payout_request",
