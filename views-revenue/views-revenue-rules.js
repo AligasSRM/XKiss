@@ -1,7 +1,7 @@
 export const VIEWS_REVENUE_RULES = {
   version: "1.4",
   status: "configured",
-  persistence: "not_connected",
+  persistence: "connected",
   counting: "server_side",
   revenueEvents: "server_side",
   duplicateProtection: true,
@@ -27,7 +27,7 @@ export const VIEWS_REVENUE_RULES = {
     "invalid_creator_attribution",
     "invalid_video_attribution"
   ],
-  storageLayer: "future_durable_event_store"
+  storageLayer: "IDrive e2 durable event store"
 };
 
 function clean(value) {
