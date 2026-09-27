@@ -250,6 +250,7 @@
       ok: checks.every(check => check.ok),
       service: "XKiss Search & Categories",
       version: "1.0",
+      status: "connected",
       checks,
       restoredState: true
     };
