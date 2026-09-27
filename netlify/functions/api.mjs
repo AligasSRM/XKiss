@@ -13,7 +13,7 @@ function buildRequest(event) {
     body = event.isBase64Encoded ? decodeBase64(event.body) : event.body;
   }
 
-  const url = `https://netlify.local${event.rawUrl || event.path || "/"}`;
+  const url = event.rawUrl || `https://netlify.local${event.path || "/"}`;
 
   return new Request(url, {
     method: event.httpMethod || "GET",
