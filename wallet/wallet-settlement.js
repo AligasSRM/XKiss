@@ -1,9 +1,9 @@
 import { WALLET_RULES } from "./wallet-rules.js";
 
 export const WALLET_SETTLEMENT_RULES = {
-  version: "1.0-draft",
-  status: "prepared",
-  enabled: false,
+  version: "1.1",
+  status: "connected",
+  enabled: true,
   settlementRequires: [
     "qualified_revenue",
     "settlement_confirmation",
