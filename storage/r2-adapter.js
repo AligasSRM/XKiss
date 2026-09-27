@@ -6,81 +6,196 @@ function sanitizeFileName(fileName) {
     .slice(-180);
 }
 
+function getConfig(env) {
+  const endpoint = String(env?.XKISS_IDRIVE_ENDPOINT || "https://s3.eu-west-1.idrivee2.com").replace(/\/$/, "");
+  const bucket = String(env?.XKISS_IDRIVE_BUCKET || "xkissvideos");
+  const region = String(env?.XKISS_IDRIVE_REGION || "eu-west-1");
+  const accessKey = String(env?.XKISS_IDRIVE_ACCESS_KEY || "");
+  const secretKey = String(env?.XKISS_IDRIVE_SECRET_KEY || "");
+  return { endpoint, bucket, region, accessKey, secretKey };
+}
+
 export function isStorageReady(env) {
-  return Boolean(env && env.XKISS_VIDEOS);
+  const c = getConfig(env);
+  return Boolean(c.endpoint && c.bucket && c.region && c.accessKey && c.secretKey);
 }
 
 export function createVideoKey(fileName) {
   return VIDEO_PREFIX + crypto.randomUUID() + "-" + sanitizeFileName(fileName);
 }
 
+async function sha256Hex(value) {
+  const bytes = value instanceof ArrayBuffer ? value : new TextEncoder().encode(String(value));
+  const hash = await crypto.subtle.digest("SHA-256", bytes);
+  return [...new Uint8Array(hash)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function hmac(key, data) {
+  return crypto.subtle.sign(
+    "HMAC",
+    await crypto.subtle.importKey(
+      "raw",
+      key,
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["sign"]
+    ),
+    new TextEncoder().encode(data)
+  );
+}
+
+function toBytes(value) {
+  return value instanceof ArrayBuffer ? value : new TextEncoder().encode(String(value));
+}
+
+function hex(bytes) {
+  return [...new Uint8Array(bytes)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function signingKey(secret, date, region, service) {
+  const kDate = await hmac(toBytes("AWS4" + secret), date);
+  const kRegion = await hmac(kDate, region);
+  const kService = await hmac(kRegion, service);
+  return hmac(kService, "aws4_request");
+}
+
+function amzDateParts(date = new Date()) {
+  const iso = date.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+  return { amzDate: iso, date: iso.slice(0, 8) };
+}
+
+function encodePath(path) {
+  return path.split("/").map(segment => encodeURIComponent(segment)).join("/");
+}
+
+async function signedRequest(env, method, key = "", body = null, extraHeaders = {}) {
+  const c = getConfig(env);
+  if (!isStorageReady(env)) throw new Error("IDrive e2 storage credentials are not configured.");
+
+  const { amzDate, date } = amzDateParts();
+  const service = "s3";
+  const path = "/" + encodePath(c.bucket) + (key ? "/" + encodePath(key) : "");
+  const url = c.endpoint + path;
+
+  const headers = {
+    host: new URL(c.endpoint).host,
+    "x-amz-content-sha256": "UNSIGNED-PAYLOAD",
+    "x-amz-date": amzDate,
+    ...extraHeaders
+  };
+
+  const signedHeaderNames = Object.keys(headers)
+    .map(k => k.toLowerCase())
+    .sort();
+
+  const canonicalHeaders = signedHeaderNames
+    .map(k => k + ":" + String(headers[k]).trim().replace(/\s+/g, " ") + "\n")
+    .join("");
+
+  const canonicalRequest = [
+    method,
+    path,
+    "",
+    canonicalHeaders,
+    signedHeaderNames.join(";"),
+    "UNSIGNED-PAYLOAD"
+  ].join("\n");
+
+  const credentialScope = date + "/" + c.region + "/" + service + "/aws4_request";
+  const stringToSign = [
+    "AWS4-HMAC-SHA256",
+    amzDate,
+    credentialScope,
+    await sha256Hex(canonicalRequest)
+  ].join("\n");
+
+  const keyBytes = await signingKey(c.secretKey, date, c.region, service);
+  const signature = hex(await hmac(keyBytes, stringToSign));
+
+  const authorization =
+    "AWS4-HMAC-SHA256 Credential=" + c.accessKey + "/" + credentialScope +
+    ", SignedHeaders=" + signedHeaderNames.join(";") +
+    ", Signature=" + signature;
+
+  const requestHeaders = new Headers();
+  Object.entries(headers).forEach(([k, v]) => requestHeaders.set(k, v));
+  requestHeaders.set("Authorization", authorization);
+
+  return fetch(url, {
+    method,
+    headers: requestHeaders,
+    body
+  });
+}
+
 export async function storeVideo(env, key, body, metadata = {}) {
   if (!isStorageReady(env)) {
-    return {
-      ok: false,
-      storageReady: false,
-      status: "storage-not-ready"
-    };
+    return { ok: false, storageReady: false, status: "storage-not-ready" };
   }
 
-  await env.XKISS_VIDEOS.put(key, body, {
-    httpMetadata: {
-      contentType: String(metadata.contentType || "application/octet-stream")
-    },
-    customMetadata: {
-      originalFileName: String(metadata.fileName || "video"),
-      title: String(metadata.title || ""),
-      description: String(metadata.description || ""),
-      category: String(metadata.category || ""),
-      downloadPolicy: String(metadata.downloadPolicy || "disabled"),
-      visibility: String(metadata.visibility || "private"),
-      status: "Ready"
-    }
-  });
+  const headers = {
+    "content-type": String(metadata.contentType || "application/octet-stream"),
+    "x-amz-meta-originalfilename": String(metadata.fileName || "video"),
+    "x-amz-meta-title": String(metadata.title || ""),
+    "x-amz-meta-description": String(metadata.description || ""),
+    "x-amz-meta-category": String(metadata.category || ""),
+    "x-amz-meta-downloadpolicy": String(metadata.downloadPolicy || "disabled"),
+    "x-amz-meta-visibility": String(metadata.visibility || "private"),
+    "x-amz-meta-status": "Ready"
+  };
+
+  const response = await signedRequest(env, "PUT", key, body, headers);
+
+  if (!response.ok) {
+    const detail = await response.text().catch(() => "");
+    throw new Error("IDrive e2 upload failed (" + response.status + "): " + detail.slice(0, 500));
+  }
 
   return {
     ok: true,
     storageReady: true,
     status: "stored",
-    key
+    key,
+    storage: "IDrive e2"
   };
+}
+
+function xmlTag(xml, tag) {
+  const match = xml.match(new RegExp("<" + tag + ">([\\s\\S]*?)</" + tag + ">"));
+  return match ? match[1] : "";
 }
 
 export async function listVideos(env) {
   if (!isStorageReady(env)) {
-    return {
-      ok: true,
-      storageReady: false,
-      videos: []
-    };
+    return { ok: true, storageReady: false, videos: [] };
   }
 
-  const listed = await env.XKISS_VIDEOS.list({
-    prefix: VIDEO_PREFIX,
-    limit: 1000
-  });
+  const response = await signedRequest(env, "GET");
+  if (!response.ok) {
+    throw new Error("IDrive e2 list failed (" + response.status + ").");
+  }
 
-  const videos = listed.objects.map(object => {
-    const metadata = object.customMetadata || {};
+  const xml = await response.text();
+  const blocks = xml.match(/<Contents>[\\s\\S]*?<\\/Contents>/g) || [];
+  const videos = blocks
+    .map(block => {
+      const key = xmlTag(block, "Key");
+      if (!key || !key.startsWith(VIDEO_PREFIX)) return null;
+      return {
+        key,
+        size: Number(xmlTag(block, "Size") || 0),
+        uploaded: xmlTag(block, "LastModified") || null,
+        etag: xmlTag(block, "ETag") || null,
+        title: key.split("/").pop() || "Untitled video",
+        description: "",
+        category: "Uncategorized",
+        downloadPolicy: "disabled",
+        visibility: "private",
+        status: "Ready",
+        storage: "IDrive e2"
+      };
+    })
+    .filter(Boolean);
 
-    return {
-      key: object.key,
-      size: object.size,
-      uploaded: object.uploaded ? object.uploaded.toISOString() : null,
-      etag: object.etag || null,
-      title: metadata.title || metadata.originalFileName || "Untitled video",
-      description: metadata.description || "",
-      category: metadata.category || "Uncategorized",
-      downloadPolicy: metadata.downloadPolicy || "disabled",
-      visibility: metadata.visibility || "private",
-      status: metadata.status || "Ready",
-      storage: "R2"
-    };
-  });
-
-  return {
-    ok: true,
-    storageReady: true,
-    videos
-  };
+  return { ok: true, storageReady: true, videos };
 }
