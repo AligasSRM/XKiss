@@ -91,6 +91,14 @@ export default {
       return json(runSafetySelfTest());
     }
 
+    if (url.pathname === "/api/safety/backend/status" && request.method === "GET") {
+      return json(getSafetyBackendStatus(env));
+    }
+
+    if (url.pathname === "/api/safety/backend/self-test" && request.method === "GET") {
+      return json(runSafetyBackendSelfTest(env));
+    }
+
     if (url.pathname === "/api/views/storage/status" && request.method === "GET") {
       return json({
         ok: true,
