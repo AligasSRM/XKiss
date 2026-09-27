@@ -76,8 +76,8 @@ export function runSafetySelfTest() {
     accountState: "active"
   });
   checks.push({
-    name: "verified_access_allowed",
-    ok: verified.allowed === true && verified.status === "creator_verified"
+    name: "backend_enforcement_gate",
+    ok: verified.allowed === false && verified.status === "not_enabled"
   });
 
   return {
