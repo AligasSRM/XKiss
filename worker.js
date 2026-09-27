@@ -38,6 +38,7 @@ import {
   evaluateTrafficQuality,
   validateRevenueEvent
 } from "./views-revenue/views-revenue-rules.js";
+import { runSafetySelfTest, getSafetyVerificationOverview } from "./safety/safety-integration.js";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "https://aligassrm.github.io",
@@ -79,6 +80,14 @@ export default {
         storageReady,
         uploadEndpoint: true
       });
+    }
+
+    if (url.pathname === "/api/safety/status" && request.method === "GET") {
+      return json(getSafetyVerificationOverview());
+    }
+
+    if (url.pathname === "/api/safety/self-test" && request.method === "GET") {
+      return json(runSafetySelfTest());
     }
 
     if (url.pathname === "/api/views/storage/status" && request.method === "GET") {
