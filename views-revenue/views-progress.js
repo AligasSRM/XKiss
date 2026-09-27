@@ -1,13 +1,12 @@
 (() => {
   "use strict";
 
-  const API_BASE = "https://xkiss.srourr-ali73.workers.dev";
   const REPORT_INTERVAL_SECONDS = 10;
 
   async function sendWatchProgress(event) {
     try {
       const response = await fetch(
-        API_BASE + "/api/views/event/pipeline-check",
+        "/api/views/event/pipeline-check",
         {
           method: "POST",
           headers: {
