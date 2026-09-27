@@ -302,6 +302,45 @@ export default {
       });
     }
 
+    if (url.pathname === "/api/wallet/settlement/status" && request.method === "GET") {
+      return json({
+        ok: true,
+        service: "XKiss Wallet Settlement",
+        walletLedgerReady: isWalletLedgerReady(env),
+        settlementReady: isWalletLedgerReady(env) && WALLET_SETTLEMENT_RULES.enabled,
+        rulesVersion: WALLET_SETTLEMENT_RULES.version,
+        status: WALLET_SETTLEMENT_RULES.status,
+        message: isWalletLedgerReady(env) && WALLET_SETTLEMENT_RULES.enabled
+          ? "Wallet settlement checks are connected and ready."
+          : "Wallet settlement checks are not ready."
+      });
+    }
+
+    if (url.pathname === "/api/wallet/settlement/self-test" && request.method === "GET") {
+      const result = evaluatePendingSettlement({
+        creatorId: "production-settlement-self-test-creator",
+        revenueEventId: "production-settlement-self-test-revenue",
+        amount: 1,
+        revenueQualified: true,
+        settlementConfirmed: true,
+        refundOrChargebackHold: false
+      });
+
+      return json({
+        ok: true,
+        service: "XKiss Wallet Settlement",
+        test: "qualification-check",
+        result,
+        verified: Boolean(
+          result.ok === true &&
+          result.status === "settlement_ready" &&
+          result.settled === true &&
+          result.fromBalanceType === "pending" &&
+          result.toBalanceType === "available"
+        )
+      });
+    }
+
     if (url.pathname === "/api/wallet/ledger/status" && request.method === "GET") {
       return json({
         ok: true,
