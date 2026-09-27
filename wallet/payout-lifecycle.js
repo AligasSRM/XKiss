@@ -1,4 +1,12 @@
-export const PAYOUT_LIFECYCLE_RULES = {\n  version: "1.1",\n  status: "connected",\n  enabled: true,\n  terminalStatuses: ["paid", "rejected", "cancelled", "failed"],\n  serverSideTransitionsRequired: true\n};\n\nexport const PAYOUT_STATUSES = [
+export const PAYOUT_LIFECYCLE_RULES = {
+  version: "1.1",
+  status: "connected",
+  enabled: true,
+  terminalStatuses: ["paid", "rejected", "cancelled", "failed"],
+  serverSideTransitionsRequired: true
+};
+
+export const PAYOUT_STATUSES = [
   "requested",
   "under_review",
   "approved",
