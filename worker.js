@@ -314,6 +314,43 @@ export default {
       });
     }
 
+    if (url.pathname === "/api/wallet/ledger/self-test" && request.method === "GET") {
+      const entry = {
+        entryId: "production-wallet-self-test-entry",
+        creatorId: "production-wallet-self-test-creator",
+        type: "earning",
+        amount: 1,
+        currency: "USD",
+        balanceType: "pending",
+        referenceId: "production-wallet-self-test-reference",
+        occurredAt: new Date().toISOString()
+      };
+
+      if (!isWalletLedgerReady(env)) {
+        return json({ ok: false, storageReady: false, verified: false }, 503);
+      }
+
+      try {
+        const write = await storeWalletEntry(env, entry);
+        const read = await getWalletEntry(env, entry);
+        return json({
+          ok: true,
+          service: "XKiss Wallet Ledger",
+          test: "write-read",
+          write,
+          read,
+          verified: write.ok === true && read.status === "found" && Boolean(read.entry)
+        });
+      } catch {
+        return json({
+          ok: false,
+          service: "XKiss Wallet Ledger",
+          test: "write-read",
+          verified: false
+        }, 500);
+      }
+    }
+
     if (url.pathname === "/api/wallet/ledger/store" && request.method === "POST") {
       if (!isWalletLedgerReady(env)) {
         return json({
