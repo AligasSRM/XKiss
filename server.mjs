@@ -23,7 +23,7 @@ const server = createServer(async (req, res) => {
     const request = new Request(url, {
       method: req.method,
       headers,
-      body: hasBody ? Readable.toWeb(req),
+      body: hasBody ? Readable.toWeb(req) : undefined,
       duplex: hasBody ? "half" : undefined
     });
 
