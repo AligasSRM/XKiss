@@ -1,4 +1,11 @@
-export const PAYOUT_AUDIT_RULES = {\n  version: "1.1",\n  status: "connected",\n  enabled: true,\n  durableHistoryRequired: true\n};\n\nexport const PAYOUT_AUDIT_EVENTS = [
+export const PAYOUT_AUDIT_RULES = {
+  version: "1.1",
+  status: "connected",
+  enabled: true,
+  durableHistoryRequired: true
+};
+
+export const PAYOUT_AUDIT_EVENTS = [
   "payout_requested",
   "status_changed",
   "payout_approved",
