@@ -24,7 +24,7 @@ import { evaluateViewPipeline } from "./views-revenue/view-pipeline.js";
 import { evaluateViewCountDecision } from "./views-revenue/view-count-decision.js";
 import { isWalletLedgerReady, storeWalletEntry, getWalletEntry } from "./wallet/wallet-ledger-store.js";
 import { evaluateRevenueToWallet } from "./wallet/revenue-to-wallet.js";
-import { evaluatePendingSettlement } from "./wallet/wallet-settlement.js";
+import { evaluatePendingSettlement, WALLET_SETTLEMENT_RULES } from "./wallet/wallet-settlement.js";
 import { evaluateWalletReversal } from "./wallet/wallet-reversals.js";
 import { evaluatePayoutEligibility } from "./wallet/payout-eligibility.js";
 import { createPayoutRequest, transitionPayoutStatus } from "./wallet/payout-lifecycle.js";
