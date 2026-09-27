@@ -1,7 +1,6 @@
 (() => {
   "use strict";
 
-  const API_BASE = "https://xkiss.srourr-ali73.workers.dev";
   const SESSION_KEY = "xkiss_viewer_session_id";
 
   function getViewerSessionId() {
@@ -28,7 +27,7 @@
   }
 
   async function validateViewEvent(event) {
-    const response = await fetch(API_BASE + "/api/views/event/validate", {
+    const response = await fetch("/api/views/event/validate", {
       method: "POST",
       headers: {
         "Accept": "application/json",
