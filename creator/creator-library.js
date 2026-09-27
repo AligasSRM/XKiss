@@ -1,8 +1,6 @@
 (() => {
   "use strict";
 
-  const API_BASE = "https://xkiss.srourr-ali73.workers.dev";
-
   function escapeHtml(value) {
     return String(value ?? "")
       .replace(/&/g,"&amp;").replace(/</g,"&lt;")
@@ -16,7 +14,7 @@
     const empty = document.getElementById("library-empty");
 
     try {
-      const response = await fetch(API_BASE + "/api/creator/videos", {
+      const response = await fetch("/api/creator/videos", {
         headers: {"Accept":"application/json"}
       });
       const data = await response.json();
