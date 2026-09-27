@@ -27,9 +27,9 @@ import { evaluateRevenueToWallet } from "./wallet/revenue-to-wallet.js";
 import { evaluatePendingSettlement, WALLET_SETTLEMENT_RULES } from "./wallet/wallet-settlement.js";
 import { evaluateWalletReversal } from "./wallet/wallet-reversals.js";
 import { evaluatePayoutEligibility } from "./wallet/payout-eligibility.js";
-import { createPayoutRequest, transitionPayoutStatus } from "./wallet/payout-lifecycle.js";
-import { createPayoutAuditEvent, buildPayoutHistory } from "./wallet/payout-audit.js";
-import { evaluatePayoutAuthorization } from "./wallet/payout-security.js";
+import { createPayoutRequest, transitionPayoutStatus, PAYOUT_LIFECYCLE_RULES } from "./wallet/payout-lifecycle.js";
+import { createPayoutAuditEvent, buildPayoutHistory, PAYOUT_AUDIT_RULES } from "./wallet/payout-audit.js";
+import { evaluatePayoutAuthorization, PAYOUT_SECURITY_RULES } from "./wallet/payout-security.js";
 import {
   VIEWS_REVENUE_RULES,
   validateViewEvent,
@@ -128,6 +128,87 @@ export default {
         ok: true,
         service: "XKiss View Qualification Pipeline",
         result: evaluateViewPipeline(body)
+      });
+    }
+
+    if (url.pathname === "/api/wallet/payout/status" && request.method === "GET") {
+      return json({
+        ok: true,
+        service: "XKiss Payout Lifecycle",
+        lifecycleReady: PAYOUT_LIFECYCLE_RULES.enabled,
+        rulesVersion: PAYOUT_LIFECYCLE_RULES.version,
+        status: PAYOUT_LIFECYCLE_RULES.status,
+        payoutEnabled: false,
+        message: PAYOUT_LIFECYCLE_RULES.enabled
+          ? "Payout lifecycle rules are connected and ready. Real payouts remain disabled."
+          : "Payout lifecycle rules are not ready."
+      });
+    }
+
+    if (url.pathname === "/api/wallet/payout/security/status" && request.method === "GET") {
+      return json({
+        ok: true,
+        service: "XKiss Payout Security",
+        securityReady: PAYOUT_SECURITY_RULES.enabled,
+        rulesVersion: PAYOUT_SECURITY_RULES.version,
+        status: PAYOUT_SECURITY_RULES.status,
+        payoutEnabled: false,
+        clientCannotAuthorize: PAYOUT_SECURITY_RULES.clientCannotAuthorize,
+        secretsServerSideOnly: PAYOUT_SECURITY_RULES.secretsServerSideOnly,
+        message: PAYOUT_SECURITY_RULES.enabled
+          ? "Payout security rules are connected and ready. Real payouts remain disabled."
+          : "Payout security rules are not ready."
+      });
+    }
+
+    if (url.pathname === "/api/wallet/payout/self-test" && request.method === "GET") {
+      const requestResult = createPayoutRequest({
+        creatorId: "production-payout-self-test-creator",
+        payoutRequestId: "production-payout-self-test-request",
+        amount: 10,
+        availableBalance: 25,
+        currency: "USD"
+      });
+      const transition = transitionPayoutStatus({
+        currentStatus: "requested",
+        nextStatus: "under_review"
+      });
+      const authorization = evaluatePayoutAuthorization({
+        authenticated: true,
+        creatorId: "production-payout-self-test-creator",
+        requestCreatorId: "production-payout-self-test-creator",
+        creatorVerified: true,
+        payoutProfileReady: true,
+        sensitiveAction: true,
+        reauthenticated: true
+      });
+      const audit = createPayoutAuditEvent({
+        payoutRequestId: "production-payout-self-test-request",
+        creatorId: "production-payout-self-test-creator",
+        eventType: "payout_requested",
+        amount: 10,
+        currency: "USD",
+        referenceId: "production-payout-self-test-reference"
+      });
+
+      return json({
+        ok: true,
+        service: "XKiss Payout Lifecycle & Security",
+        test: "request-transition-authorization-audit",
+        payoutEnabled: false,
+        request: requestResult,
+        transition,
+        authorization,
+        audit,
+        verified: Boolean(
+          requestResult.ok === true &&
+          requestResult.status === "requested" &&
+          transition.ok === true &&
+          transition.to === "under_review" &&
+          authorization.authorized === true &&
+          audit.ok === true &&
+          audit.status === "ready"
+        )
       });
     }
 
