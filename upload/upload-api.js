@@ -1,10 +1,8 @@
 (() => {
   "use strict";
 
-  const API_BASE = "https://xkiss.srourr-ali73.workers.dev";
-
   async function request(path, options = {}) {
-    const response = await fetch(API_BASE + path, {
+    const response = await fetch(path, {
       ...options,
       headers: {
         "Accept": "application/json",
@@ -20,7 +18,7 @@
     }
 
     if (!response.ok) {
-      const error = new Error(data.message || "XKiss Worker request failed.");
+      const error = new Error(data.message || "XKiss request failed.");
       error.status = response.status;
       error.data = data;
       throw error;
