@@ -39,6 +39,7 @@ import {
   validateRevenueEvent
 } from "./views-revenue/views-revenue-rules.js";
 import { runSafetySelfTest, getSafetyVerificationOverview } from "./safety/safety-integration.js";
+import { getSafetyBackendStatus, runSafetyBackendSelfTest, recordSafetyBackendEvent } from "./safety/safety-backend.js";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "https://aligassrm.github.io",
