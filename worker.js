@@ -382,6 +382,44 @@ export default {
       });
     }
 
+    if (url.pathname === "/api/views/storage/self-test" && request.method === "GET") {
+      const event = {
+        videoId: "production-self-test-video",
+        creatorId: "production-self-test-creator",
+        viewerSessionId: "production-self-test-session",
+        eventId: "production-self-test-event",
+        eventType: "view",
+        playbackSignal: "playing",
+        watchSeconds: 10,
+        watchPercent: 20,
+        occurredAt: new Date().toISOString()
+      };
+
+      if (!isViewEventStoreReady(env)) {
+        return json({ ok: false, storageReady: false, verified: false }, 503);
+      }
+
+      try {
+        const write = await storeViewEvent(env, event);
+        const read = await getViewEvent(env, event);
+        return json({
+          ok: true,
+          service: "XKiss Durable View Event Store",
+          test: "write-read",
+          write,
+          read,
+          verified: write.ok === true && read.status === "found" && Boolean(read.event)
+        });
+      } catch {
+        return json({
+          ok: false,
+          service: "XKiss Durable View Event Store",
+          test: "write-read",
+          verified: false
+        }, 500);
+      }
+    }
+
     if (url.pathname === "/api/views/event/store" && request.method === "POST") {
       if (!isViewEventStoreReady(env)) {
         return json({
