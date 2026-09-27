@@ -195,6 +195,66 @@
     };
   }
 
+  function runSelfTest() {
+    const originalQuery = state.query;
+    const originalCategory = state.category;
+    const originalResults = [...state.results];
+
+    const checks = [];
+    state.query = "";
+    state.category = "All";
+    apply();
+    checks.push({ name: "all_results", ok: state.results.length === state.allVideos.length });
+
+    if (state.allVideos.length > 0) {
+      const sample = state.allVideos[0];
+      const titleToken = clean(sample.title).split(/\s+/).find(Boolean);
+      if (titleToken) {
+        state.query = titleToken;
+        state.category = "All";
+        apply();
+        checks.push({
+          name: "title_search",
+          ok: state.results.some(video => video.id === sample.id)
+        });
+      } else {
+        checks.push({ name: "title_search", ok: false });
+      }
+
+      const sampleCategory = clean(sample.category);
+      if (sampleCategory) {
+        state.query = "";
+        state.category = sampleCategory;
+        apply();
+        checks.push({
+          name: "category_filter",
+          ok: state.results.every(video =>
+            normalize(video.category) === normalize(sampleCategory) ||
+            (Array.isArray(video.tags) &&
+              video.tags.map(normalize).includes(normalize(sampleCategory)))
+          )
+        });
+      } else {
+        checks.push({ name: "category_filter", ok: true, skipped: true });
+      }
+    } else {
+      checks.push({ name: "title_search", ok: true, skipped: true });
+      checks.push({ name: "category_filter", ok: true, skipped: true });
+    }
+
+    state.query = originalQuery;
+    state.category = originalCategory;
+    state.results = originalResults;
+
+    return {
+      ok: checks.every(check => check.ok),
+      service: "XKiss Search & Categories",
+      version: "1.0",
+      checks,
+      restoredState: true
+    };
+  }
+
   function initialize() {
     state.allVideos = loadVideos();
     readUrlState();
@@ -207,7 +267,8 @@
       setQuery,
       setCategory,
       clear,
-      syncFromUrl
+      syncFromUrl,
+      runSelfTest
     };
 
     window.addEventListener("popstate", syncFromUrl);
