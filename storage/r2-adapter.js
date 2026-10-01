@@ -45,8 +45,16 @@ async function signedRequest(env, method, key = "", body = null, extraHeaders = 
   const url = c.endpoint + path;
   const headers = new Headers(extraHeaders);
   if (!headers.has("content-type") && body != null) headers.set("content-type", "application/octet-stream");
+
+  // For an empty S3 GET/DELETE payload, SigV4 expects the SHA-256 of the empty
+  // payload unless UNSIGNED-PAYLOAD is used consistently by the signer.
+  // aws4fetch signs the request using the actual empty body, so keep the
+  // corresponding header value explicit and consistent.
   if ((method === "GET" || method === "DELETE") && !headers.has("x-amz-content-sha256")) {
-    headers.set("x-amz-content-sha256", "UNSIGNED-PAYLOAD");
+    headers.set(
+      "x-amz-content-sha256",
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    );
   }
 
   const client = new AwsClient({
