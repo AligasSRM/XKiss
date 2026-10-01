@@ -27,6 +27,10 @@ export function isStorageReady(env) {
   return Boolean(c.endpoint && c.bucket && c.region && c.accessKey && c.secretKey);
 }
 
+function encodePath(path) {
+  return path.split("/").map(segment => encodeURIComponent(segment).replace(/%3A/gi, ":")).join("/");
+}
+
 export function createVideoKey(fileName) {
   return VIDEO_PREFIX + crypto.randomUUID() + "-" + sanitizeFileName(fileName);
 }
