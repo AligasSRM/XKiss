@@ -24,7 +24,7 @@ export async function storeViewEvent(env, event, options = {}) {
       ok: false,
       storageReady: false,
       status: "storage-not-ready",
-      message: "IDrive e2 durable view event storage is not connected yet."
+      message: "Backblaze B2 durable view event storage is not connected yet."
     };
   }
 
@@ -57,7 +57,7 @@ export async function storeViewEvent(env, event, options = {}) {
       counted: Boolean(existing.value.counted),
       qualified: Boolean(existing.value.qualified),
       key,
-      storage: "IDrive e2"
+      storage: "Backblaze B2"
     };
   }
 
@@ -93,7 +93,7 @@ export async function getViewEvent(env, event) {
     status: result.value ? "found" : "not-found",
     key,
     event: result.value || null,
-    storage: "IDrive e2"
+    storage: "Backblaze B2"
   };
 }
 
