@@ -27,7 +27,7 @@ export const VIEWS_REVENUE_RULES = {
     "invalid_creator_attribution",
     "invalid_video_attribution"
   ],
-  storageLayer: "IDrive e2 durable event store"
+  storageLayer: "Backblaze B2 durable event store"
 };
 
 function clean(value) {
