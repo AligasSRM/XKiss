@@ -26,7 +26,7 @@ export function evaluateStorageProductionGate(env = {}) {
     stage: XKISS_STORAGE_PRODUCTION_GATE.stage,
     status: configurationPresent ? "READY_FOR_STORAGE_TEST" : "BLOCKED",
     configurationPresent,
-    activationAllowed: configurationPresent,
+    activationAllowed: false,
     failClosed: true,
     provider: XKISS_STORAGE_PRODUCTION_GATE.provider,
     missingConfiguration: XKISS_STORAGE_PRODUCTION_GATE.requiredConfiguration.filter(
@@ -41,7 +41,7 @@ export function validateStorageProductionGate(env = {}) {
     ok:
       result.failClosed === true &&
       result.status === (result.configurationPresent ? "READY_FOR_STORAGE_TEST" : "BLOCKED") &&
-      result.activationAllowed === result.configurationPresent &&
+      result.activationAllowed === false &&
       Array.isArray(result.missingConfiguration)
   };
 }
