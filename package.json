@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "build": "echo \"No build required\""
+    "build": "node build.mjs"
   },
   "engines": {
     "node": ">=22"
