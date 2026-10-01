@@ -2,13 +2,13 @@ export const XKISS_STORAGE_PRODUCTION_GATE = {
   stage: "AUDIT-03",
   name: "Video Storage Production Gate",
   failClosed: true,
-  provider: "IDrive e2",
+  provider: "Backblaze B2",
   requiredConfiguration: [
-    "XKISS_IDRIVE_ENDPOINT",
-    "XKISS_IDRIVE_BUCKET",
-    "XKISS_IDRIVE_REGION",
-    "XKISS_IDRIVE_ACCESS_KEY",
-    "XKISS_IDRIVE_SECRET_KEY"
+    "XKISS_B2_ENDPOINT",
+    "XKISS_B2_BUCKET",
+    "XKISS_B2_REGION",
+    "XKISS_B2_ACCESS_KEY",
+    "XKISS_B2_SECRET_KEY"
   ]
 };
 
