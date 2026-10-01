@@ -45,6 +45,9 @@ async function signedRequest(env, method, key = "", body = null, extraHeaders = 
   const url = c.endpoint + path;
   const headers = new Headers(extraHeaders);
   if (!headers.has("content-type") && body != null) headers.set("content-type", "application/octet-stream");
+  if ((method === "GET" || method === "DELETE") && !headers.has("x-amz-content-sha256")) {
+    headers.set("x-amz-content-sha256", "UNSIGNED-PAYLOAD");
+  }
 
   const client = new AwsClient({
     accessKeyId: c.accessKey,
