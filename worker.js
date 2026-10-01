@@ -105,10 +105,10 @@ export default {
         ok: true,
         service: "XKiss Durable View Event Store",
         storageReady: isViewEventStoreReady(env),
-        storage: "IDrive e2",
+        storage: "Backblaze B2",
         message: isViewEventStoreReady(env)
-          ? "IDrive e2 durable view event storage is connected."
-          : "IDrive e2 durable view event storage is not connected yet."
+          ? "Backblaze B2 durable view event storage is connected."
+          : "Backblaze B2 durable view event storage is not connected yet."
       });
     }
 
@@ -585,7 +585,7 @@ export default {
         return json({
           ok: true,
           service: "XKiss Durable View Event Store",
-          storage: "IDrive e2",
+          storage: "Backblaze B2",
           test: "write-read-delete",
           write,
           read,
@@ -596,7 +596,7 @@ export default {
         return json({
           ok: false,
           service: "XKiss Durable View Event Store",
-          storage: "IDrive e2",
+          storage: "Backblaze B2",
           test: "write-read-delete",
           verified: false,
           diagnostic: String(error?.message || error || "Unknown storage error").slice(0, 1000)
