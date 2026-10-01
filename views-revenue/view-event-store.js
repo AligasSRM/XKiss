@@ -1,9 +1,9 @@
-import { isStorageReady, storeJsonObject, getJsonObject } from "../storage/r2-adapter.js";
+import { isStorageReady, storeJsonObject, getJsonObject, deleteJsonObject } from "../storage/r2-adapter.js";
 
 const VIEW_EVENT_PREFIX = "view-events/";
 
 export function isViewEventStoreReady(env) {
-  return Boolean(env && (env.XKISS_VIEW_EVENTS || isStorageReady(env)));
+  return Boolean(env && isStorageReady(env));
 }
 
 function clean(value) {
@@ -24,7 +24,7 @@ export async function storeViewEvent(env, event, options = {}) {
       ok: false,
       storageReady: false,
       status: "storage-not-ready",
-      message: "Durable view event storage is not connected yet."
+      message: "IDrive e2 durable view event storage is not connected yet."
     };
   }
 
@@ -47,33 +47,6 @@ export async function storeViewEvent(env, event, options = {}) {
     qualified
   };
 
-  if (env.XKISS_VIEW_EVENTS) {
-    const existing = await env.XKISS_VIEW_EVENTS.get(key, "json");
-
-    if (existing) {
-      return {
-        ok: true,
-        storageReady: true,
-        status: "duplicate",
-        counted: Boolean(existing.counted),
-        qualified: Boolean(existing.qualified),
-        key
-      };
-    }
-
-    await env.XKISS_VIEW_EVENTS.put(key, JSON.stringify(record));
-
-    return {
-      ok: true,
-      storageReady: true,
-      status: counted ? "counted" : "stored",
-      counted,
-      qualified,
-      key,
-      storage: "XKISS_VIEW_EVENTS"
-    };
-  }
-
   const existing = await getJsonObject(env, key);
 
   if (existing.value) {
@@ -88,16 +61,10 @@ export async function storeViewEvent(env, event, options = {}) {
     };
   }
 
-  await storeJsonObject(env, key, record);
-
   return {
-    ok: true,
-    storageReady: true,
-    status: counted ? "counted" : "stored",
+    ...(await storeJsonObject(env, key, record)),
     counted,
-    qualified,
-    key,
-    storage: "IDrive e2"
+    qualified
   };
 }
 
@@ -118,20 +85,6 @@ export async function getViewEvent(env, event) {
   }
 
   const key = createViewEventStorageKey(event);
-
-  if (env.XKISS_VIEW_EVENTS) {
-    const value = await env.XKISS_VIEW_EVENTS.get(key, "json");
-
-    return {
-      ok: true,
-      storageReady: true,
-      status: value ? "found" : "not-found",
-      key,
-      event: value || null,
-      storage: "XKISS_VIEW_EVENTS"
-    };
-  }
-
   const result = await getJsonObject(env, key);
 
   return {
@@ -142,4 +95,17 @@ export async function getViewEvent(env, event) {
     event: result.value || null,
     storage: "IDrive e2"
   };
+}
+
+export async function deleteViewEvent(env, event) {
+  if (!isViewEventStoreReady(env)) {
+    return {
+      ok: false,
+      storageReady: false,
+      status: "storage-not-ready"
+    };
+  }
+
+  const key = createViewEventStorageKey(event);
+  return deleteJsonObject(env, key);
 }
