@@ -6,12 +6,17 @@ function sanitizeFileName(fileName) {
     .slice(-180);
 }
 
+function cleanEnvValue(value, fallback = "") {
+  const raw = String(value ?? fallback).trim();
+  return raw.replace(/^["']|["']$/g, "").trim();
+}
+
 function getConfig(env) {
-  const endpoint = String(env?.XKISS_IDRIVE_ENDPOINT || "https://s3.eu-west-1.idrivee2.com").replace(/\/$/, "");
-  const bucket = String(env?.XKISS_IDRIVE_BUCKET || "xkissvideos");
-  const region = String(env?.XKISS_IDRIVE_REGION || "eu-west-1");
-  const accessKey = String(env?.XKISS_IDRIVE_ACCESS_KEY || "");
-  const secretKey = String(env?.XKISS_IDRIVE_SECRET_KEY || "");
+  const endpoint = cleanEnvValue(env?.XKISS_IDRIVE_ENDPOINT, "https://s3.eu-west-1.idrivee2.com").replace(/\/$/, "");
+  const bucket = cleanEnvValue(env?.XKISS_IDRIVE_BUCKET, "xkissvideos");
+  const region = cleanEnvValue(env?.XKISS_IDRIVE_REGION, "eu-west-1");
+  const accessKey = cleanEnvValue(env?.XKISS_IDRIVE_ACCESS_KEY);
+  const secretKey = cleanEnvValue(env?.XKISS_IDRIVE_SECRET_KEY);
   return { endpoint, bucket, region, accessKey, secretKey };
 }
 
