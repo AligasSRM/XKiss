@@ -28,7 +28,7 @@ export function isStorageReady(env) {
 }
 
 function encodePath(path) {
-  return path.split("/").map(segment => encodeURIComponent(segment).replace(/%3A/gi, ":")).join("/");
+  return path.split("/").map(segment => encodeURIComponent(segment)).join("/");
 }
 
 export function createVideoKey(fileName) {
