@@ -26,13 +26,17 @@ Date: 2026-10-01
   - XKISS_IDRIVE_SECRET_KEY
 - Fail-closed behavior preserved.
 
-## IMPORTANT: Not yet verified
-- Real IDrive e2 production Write -> Read verification has NOT been completed.
+## AUDIT-03 replacement completed
+- The broken `XKISS_VIEW_EVENTS` binding path was removed from the view-event store.
+- A dedicated IDrive e2 implementation is now the single view-event storage path.
+- Worker environment contract/self-test no longer require the obsolete `XKISS_VIEW_EVENTS` binding.
+- View storage self-test is now `write -> read -> delete` with a unique test event.
+- Real Hostless/IDrive production verification is still NOT completed.
 - Do not claim storage is production-ready or connected until that real verification passes.
 - No credentials/secrets are stored in source code.
 
 ## Next exact step
-AUDIT-03 — Storage Production Verification:
+AUDIT-03 — Deploy the replacement and perform real Storage Production Verification:
 1. Verify production configuration exists securely.
 2. Perform a real safe test object Write.
 3. Read the same object back.
@@ -40,6 +44,12 @@ AUDIT-03 — Storage Production Verification:
 5. Delete the test object.
 6. Record the result.
 7. Keep activation blocked if any step fails.
+
+Current code replacement commits:
+- View event store: 3353d7c4eaf9842af291a8b0337bb22fa91a6922
+- Worker environment contract: 1cf6a00229975d288a3f3edf5b10d6e72798ffca
+- Worker self-test: a3f98059b7b20eb25a3f3edf5b10d6e72798ffca
+- Contract self-test: 8acfd94a04187a689360bed5785b0061f3ed9ff3
 
 ## After AUDIT-03
 AUDIT-04 Worker Environment
