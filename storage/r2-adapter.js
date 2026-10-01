@@ -84,9 +84,10 @@ async function signedRequest(env, method, key = "", body = null, extraHeaders = 
   const path = "/" + encodePath(c.bucket) + (key ? "/" + encodePath(key) : "");
   const url = c.endpoint + path;
 
+  const payloadHash = await sha256Hex(body == null ? "" : body);
   const headers = {
     host: new URL(c.endpoint).host,
-    "x-amz-content-sha256": "UNSIGNED-PAYLOAD",
+    "x-amz-content-sha256": payloadHash,
     "x-amz-date": amzDate,
     ...extraHeaders
   };
@@ -105,7 +106,7 @@ async function signedRequest(env, method, key = "", body = null, extraHeaders = 
     "",
     canonicalHeaders,
     signedHeaderNames.join(";"),
-    "UNSIGNED-PAYLOAD"
+    payloadHash
   ].join("\n");
 
   const credentialScope = date + "/" + c.region + "/" + service + "/aws4_request";
