@@ -5,7 +5,6 @@ export const XKISS_WORKER_ENVIRONMENT_CONTRACT = {
   failClosed: true,
   requiredBindings: [
     { name: "XKISS_VIDEOS", purpose: "video_storage", requiredFor: "upload" },
-    { name: "XKISS_VIEW_EVENTS", purpose: "durable_view_events", requiredFor: "views_revenue" },
     { name: "XKISS_WALLET_LEDGER", purpose: "wallet_ledger", requiredFor: "wallet_payouts" }
   ],
   providerBoundary: "Cloudflare Worker environment",
