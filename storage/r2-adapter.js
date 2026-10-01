@@ -12,7 +12,9 @@ function cleanEnvValue(value, fallback = "") {
 }
 
 function getConfig(env) {
-  const endpoint = cleanEnvValue(env?.XKISS_IDRIVE_ENDPOINT, "https://s3.eu-west-1.idrivee2.com").replace(/\/$/, "");
+  let endpoint = cleanEnvValue(env?.XKISS_IDRIVE_ENDPOINT, "https://s3.eu-west-1.idrivee2.com");
+  if (endpoint && !/^https?:\/\//i.test(endpoint)) endpoint = "https://" + endpoint;
+  endpoint = endpoint.replace(/\/$/, "");
   const bucket = cleanEnvValue(env?.XKISS_IDRIVE_BUCKET, "xkissvideos");
   const region = cleanEnvValue(env?.XKISS_IDRIVE_REGION, "eu-west-1");
   const accessKey = cleanEnvValue(env?.XKISS_IDRIVE_ACCESS_KEY);
