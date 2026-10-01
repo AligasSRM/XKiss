@@ -21,7 +21,6 @@ export function runXKissWorkerEnvironmentContractSelfTest() {
       validateWorkerEnvironmentContract({}).ok === true &&
       validateWorkerEnvironmentContract({
         XKISS_VIDEOS: {},
-        XKISS_VIEW_EVENTS: {},
         XKISS_WALLET_LEDGER: {}
       }).ok === true
   };
