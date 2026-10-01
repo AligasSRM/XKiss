@@ -105,7 +105,7 @@
 
     if (!state.storageReady) {
       setResult(
-        "Video is validated and ready for production storage. IDrive e2 is not activated yet, so no file was uploaded or stored.",
+        "Video is validated and ready for production storage. Backblaze B2 is not activated yet, so no file was uploaded or stored.",
         "error"
       );
       setProgress(0, "Waiting for production storage");
