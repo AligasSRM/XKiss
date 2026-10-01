@@ -31,109 +31,25 @@ export function createVideoKey(fileName) {
   return VIDEO_PREFIX + crypto.randomUUID() + "-" + sanitizeFileName(fileName);
 }
 
-async function sha256Hex(value) {
-  const bytes = value instanceof ArrayBuffer ? value : new TextEncoder().encode(String(value));
-  const hash = await crypto.subtle.digest("SHA-256", bytes);
-  return [...new Uint8Array(hash)].map(b => b.toString(16).padStart(2, "0")).join("");
-}
-
-async function hmac(key, data) {
-  return crypto.subtle.sign(
-    "HMAC",
-    await crypto.subtle.importKey(
-      "raw",
-      key,
-      { name: "HMAC", hash: "SHA-256" },
-      false,
-      ["sign"]
-    ),
-    new TextEncoder().encode(data)
-  );
-}
-
-function toBytes(value) {
-  return value instanceof ArrayBuffer ? value : new TextEncoder().encode(String(value));
-}
-
-function hex(bytes) {
-  return [...new Uint8Array(bytes)].map(b => b.toString(16).padStart(2, "0")).join("");
-}
-
-async function signingKey(secret, date, region, service) {
-  const kDate = await hmac(toBytes("AWS4" + secret), date);
-  const kRegion = await hmac(kDate, region);
-  const kService = await hmac(kRegion, service);
-  return hmac(kService, "aws4_request");
-}
-
-function amzDateParts(date = new Date()) {
-  const iso = date.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
-  return { amzDate: iso, date: iso.slice(0, 8) };
-}
-
-function encodePath(path) {
-  return path.split("/").map(segment => encodeURIComponent(segment).replace(/%3A/gi, ":")).join("/");
-}
+import { AwsClient } from "aws4fetch";
 
 async function signedRequest(env, method, key = "", body = null, extraHeaders = {}) {
   const c = getConfig(env);
   if (!isStorageReady(env)) throw new Error("IDrive e2 storage credentials are not configured.");
 
-  const { amzDate, date } = amzDateParts();
-  const service = "s3";
   const path = "/" + encodePath(c.bucket) + (key ? "/" + encodePath(key) : "");
   const url = c.endpoint + path;
+  const headers = new Headers(extraHeaders);
+  if (!headers.has("content-type") && body != null) headers.set("content-type", "application/octet-stream");
 
-  const payloadHash = await sha256Hex(body == null ? "" : body);
-  const headers = {
-    host: new URL(c.endpoint).host,
-    "x-amz-content-sha256": payloadHash,
-    "x-amz-date": amzDate,
-    ...extraHeaders
-  };
-
-  const signedHeaderNames = Object.keys(headers)
-    .map(k => k.toLowerCase())
-    .sort();
-
-  const canonicalHeaders = signedHeaderNames
-    .map(k => k + ":" + String(headers[k]).trim().replace(/\s+/g, " ") + "\n")
-    .join("");
-
-  const canonicalRequest = [
-    method,
-    path,
-    "",
-    canonicalHeaders,
-    signedHeaderNames.join(";"),
-    payloadHash
-  ].join("\n");
-
-  const credentialScope = date + "/" + c.region + "/" + service + "/aws4_request";
-  const stringToSign = [
-    "AWS4-HMAC-SHA256",
-    amzDate,
-    credentialScope,
-    await sha256Hex(canonicalRequest)
-  ].join("\n");
-
-  const keyBytes = await signingKey(c.secretKey, date, c.region, service);
-  const signature = hex(await hmac(keyBytes, stringToSign));
-
-  const authorization =
-    "AWS4-HMAC-SHA256 Credential=" + c.accessKey + "/" + credentialScope +
-    ", SignedHeaders=" + signedHeaderNames.join(";") +
-    ", Signature=" + signature;
-
-  const requestHeaders = new Headers();
-  Object.entries(headers).forEach(([k, v]) => requestHeaders.set(k, v));
-  requestHeaders.set("Authorization", authorization);
-
-  return fetch(url, {
-    method,
-    headers: requestHeaders,
-    body
+  const client = new AwsClient({
+    accessKeyId: c.accessKey,
+    secretAccessKey: c.secretKey,
+    region: c.region,
+    service: "s3"
   });
+
+  return client.fetch(url, { method, headers, body });
 }
 
 export async function storeJsonObject(env, key, value) {
