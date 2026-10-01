@@ -1,6 +1,6 @@
 # XKiss — Continuation Checkpoint
 
-Status: CLOSED / PAUSED AT CHECKPOINT
+Status: SUPERSEDED / REPLACED BY AUDIT-03 FRESH BASELINE
 Date: 2026-10-01
 
 ## Project
@@ -26,7 +26,7 @@ Date: 2026-10-01
   - XKISS_IDRIVE_SECRET_KEY
 - Fail-closed behavior preserved.
 
-## AUDIT-03 replacement completed
+## AUDIT-03 historical work
 - The broken `XKISS_VIEW_EVENTS` binding path was removed from the view-event store.
 - A dedicated IDrive e2 implementation is now the single view-event storage path.
 - Worker environment contract/self-test no longer require the obsolete `XKISS_VIEW_EVENTS` binding.
@@ -36,7 +36,7 @@ Date: 2026-10-01
 - No credentials/secrets are stored in source code.
 
 ## Next exact step
-AUDIT-03 — Deploy the replacement and perform real Storage Production Verification:
+Continue from `audit/xkiss-audit-03-fresh-baseline.md`. The old AUDIT-03 checkpoint is historical.
 1. Verify production configuration exists securely.
 2. Perform a real safe test object Write.
 3. Read the same object back.
@@ -59,7 +59,7 @@ AUDIT-04 Worker Environment
 -> Production Activation Readiness
 
 ## Resume instruction
-When continuing in a new chat, load this checkpoint first and continue from AUDIT-03. Do not restart completed locked stages and do not mix XKiss with AC.
+Load `audit/xkiss-audit-03-fresh-baseline.md` first. Do not restart completed locked stages and do not mix XKiss with AC.
 
 ## Last known main commit
-7928ec70212e1498928172020f75bfbf2d408b4a
+8b63820202f2658fa1176570af82bbe767fdf954
