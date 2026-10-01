@@ -12,13 +12,13 @@ function cleanEnvValue(value, fallback = "") {
 }
 
 function getConfig(env) {
-  let endpoint = cleanEnvValue(env?.XKISS_IDRIVE_ENDPOINT, "https://s3.eu-west-1.idrivee2.com");
+  let endpoint = cleanEnvValue(env?.XKISS_B2_ENDPOINT, "https://s3.eu-central-003.backblazeb2.com");
   if (endpoint && !/^https?:\/\//i.test(endpoint)) endpoint = "https://" + endpoint;
   endpoint = endpoint.replace(/\/$/, "");
-  const bucket = cleanEnvValue(env?.XKISS_IDRIVE_BUCKET, "xkissvideos");
-  const region = cleanEnvValue(env?.XKISS_IDRIVE_REGION, "eu-west-1");
-  const accessKey = cleanEnvValue(env?.XKISS_IDRIVE_ACCESS_KEY);
-  const secretKey = cleanEnvValue(env?.XKISS_IDRIVE_SECRET_KEY);
+  const bucket = cleanEnvValue(env?.XKISS_B2_BUCKET, "xkiss-videos");
+  const region = cleanEnvValue(env?.XKISS_B2_REGION, "eu-central-003");
+  const accessKey = cleanEnvValue(env?.XKISS_B2_ACCESS_KEY);
+  const secretKey = cleanEnvValue(env?.XKISS_B2_SECRET_KEY);
   return { endpoint, bucket, region, accessKey, secretKey };
 }
 
@@ -39,7 +39,7 @@ import { AwsClient } from "aws4fetch";
 
 async function signedRequest(env, method, key = "", body = null, extraHeaders = {}) {
   const c = getConfig(env);
-  if (!isStorageReady(env)) throw new Error("IDrive e2 storage credentials are not configured.");
+  if (!isStorageReady(env)) throw new Error("Backblaze B2 storage credentials are not configured.");
 
   const path = "/" + encodePath(c.bucket) + (key ? "/" + encodePath(key) : "");
   const url = c.endpoint + path;
@@ -57,6 +57,7 @@ async function signedRequest(env, method, key = "", body = null, extraHeaders = 
     );
   }
 
+  // Backblaze B2 exposes an S3-compatible endpoint and uses SigV4.
   const client = new AwsClient({
     accessKeyId: c.accessKey,
     secretAccessKey: c.secretKey,
@@ -82,10 +83,10 @@ export async function storeJsonObject(env, key, value) {
 
   if (!response.ok) {
     const detail = await response.text().catch(() => "");
-    throw new Error("IDrive e2 JSON object store failed (" + response.status + "): " + detail.slice(0, 500));
+    throw new Error("Backblaze B2 JSON object store failed (" + response.status + "): " + detail.slice(0, 500));
   }
 
-  return { ok: true, storageReady: true, status: "stored", key, storage: "IDrive e2" };
+  return { ok: true, storageReady: true, status: "stored", key, storage: "Backblaze B2" };
 }
 
 export async function deleteJsonObject(env, key) {
@@ -97,7 +98,7 @@ export async function deleteJsonObject(env, key) {
 
   if (!response.ok && response.status !== 404) {
     const detail = await response.text().catch(() => "");
-    throw new Error("IDrive e2 JSON object delete failed (" + response.status + "): " + detail.slice(0, 500));
+    throw new Error("Backblaze B2 JSON object delete failed (" + response.status + "): " + detail.slice(0, 500));
   }
 
   return {
@@ -105,7 +106,7 @@ export async function deleteJsonObject(env, key) {
     storageReady: true,
     status: response.status === 404 ? "not-found" : "deleted",
     key,
-    storage: "IDrive e2"
+    storage: "Backblaze B2"
   };
 }
 
@@ -122,7 +123,7 @@ export async function getJsonObject(env, key) {
 
   if (!response.ok) {
     const detail = await response.text().catch(() => "");
-    throw new Error("IDrive e2 JSON object read failed (" + response.status + "): " + detail.slice(0, 500));
+    throw new Error("Backblaze B2 JSON object read failed (" + response.status + "): " + detail.slice(0, 500));
   }
 
   const value = await response.json();
@@ -149,7 +150,7 @@ export async function storeVideo(env, key, body, metadata = {}) {
 
   if (!response.ok) {
     const detail = await response.text().catch(() => "");
-    throw new Error("IDrive e2 upload failed (" + response.status + "): " + detail.slice(0, 500));
+    throw new Error("Backblaze B2 upload failed (" + response.status + "): " + detail.slice(0, 500));
   }
 
   return {
@@ -157,7 +158,7 @@ export async function storeVideo(env, key, body, metadata = {}) {
     storageReady: true,
     status: "stored",
     key,
-    storage: "IDrive e2"
+    storage: "Backblaze B2"
   };
 }
 
@@ -173,7 +174,7 @@ export async function listVideos(env) {
 
   const response = await signedRequest(env, "GET");
   if (!response.ok) {
-    throw new Error("IDrive e2 list failed (" + response.status + ").");
+    throw new Error("Backblaze B2 list failed (" + response.status + ").");
   }
 
   const xml = await response.text();
@@ -193,7 +194,7 @@ export async function listVideos(env) {
         downloadPolicy: "disabled",
         visibility: "private",
         status: "Ready",
-        storage: "IDrive e2"
+        storage: "Backblaze B2"
       };
     })
     .filter(Boolean);
