@@ -592,12 +592,14 @@ export default {
           cleanup,
           verified: verified && cleanup.ok === true
         });
-      } catch {
+      } catch (error) {
         return json({
           ok: false,
           service: "XKiss Durable View Event Store",
-          test: "write-read",
-          verified: false
+          storage: "IDrive e2",
+          test: "write-read-delete",
+          verified: false,
+          diagnostic: String(error?.message || error || "Unknown storage error").slice(0, 1000)
         }, 500);
       }
     }
