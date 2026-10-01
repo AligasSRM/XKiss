@@ -4,17 +4,17 @@ import {
 } from "./xkiss-storage-production-gate.js";
 
 const complete = {
-  XKISS_IDRIVE_ENDPOINT: "https://s3.eu-west-1.idrivee2.com",
-  XKISS_IDRIVE_BUCKET: "xkissvideos",
-  XKISS_IDRIVE_REGION: "eu-west-1",
-  XKISS_IDRIVE_ACCESS_KEY: "test-access-key",
-  XKISS_IDRIVE_SECRET_KEY: "test-secret-key"
+  XKISS_B2_ENDPOINT: "https://s3.eu-central-003.backblazeb2.com",
+  XKISS_B2_BUCKET: "xkiss-videos",
+  XKISS_B2_REGION: "eu-central-003",
+  XKISS_B2_ACCESS_KEY: "test-access-key",
+  XKISS_B2_SECRET_KEY: "test-secret-key"
 };
 
 export function runXKissStorageProductionGateSelfTest() {
   const missing = evaluateStorageProductionGate({});
   const partial = evaluateStorageProductionGate({
-    XKISS_IDRIVE_ENDPOINT: complete.XKISS_IDRIVE_ENDPOINT
+    XKISS_B2_ENDPOINT: complete.XKISS_B2_ENDPOINT
   });
   const present = evaluateStorageProductionGate(complete);
 
@@ -27,7 +27,7 @@ export function runXKissStorageProductionGateSelfTest() {
       partial.activationAllowed === false &&
       partial.missingConfiguration.length === 4 &&
       present.status === "READY_FOR_STORAGE_TEST" &&
-      present.activationAllowed === true &&
+      present.activationAllowed === false &&
       present.missingConfiguration.length === 0 &&
       validateStorageProductionGate({}).ok === true &&
       validateStorageProductionGate(complete).ok === true
