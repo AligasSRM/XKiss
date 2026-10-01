@@ -18,7 +18,8 @@ import {
 import {
   isViewEventStoreReady,
   storeViewEvent,
-  getViewEvent
+  getViewEvent,
+  deleteViewEvent
 } from "./views-revenue/view-event-store.js";
 import { evaluateViewPipeline } from "./views-revenue/view-pipeline.js";
 import { evaluateViewCountDecision } from "./views-revenue/view-count-decision.js";
@@ -104,10 +105,10 @@ export default {
         ok: true,
         service: "XKiss Durable View Event Store",
         storageReady: isViewEventStoreReady(env),
-        storage: "XKISS_VIEW_EVENTS",
+        storage: "IDrive e2",
         message: isViewEventStoreReady(env)
-          ? "Durable view event storage is connected."
-          : "Durable view event storage is prepared but not connected yet."
+          ? "IDrive e2 durable view event storage is connected."
+          : "IDrive e2 durable view event storage is not connected yet."
       });
     }
 
@@ -564,7 +565,7 @@ export default {
         videoId: "production-self-test-video",
         creatorId: "production-self-test-creator",
         viewerSessionId: "production-self-test-session",
-        eventId: "production-self-test-event",
+        eventId: crypto.randomUUID(),
         eventType: "view",
         playbackSignal: "playing",
         watchSeconds: 10,
@@ -579,13 +580,17 @@ export default {
       try {
         const write = await storeViewEvent(env, event);
         const read = await getViewEvent(env, event);
+        const verified = write.ok === true && read.status === "found" && Boolean(read.event);
+        const cleanup = await deleteViewEvent(env, event);
         return json({
           ok: true,
           service: "XKiss Durable View Event Store",
-          test: "write-read",
+          storage: "IDrive e2",
+          test: "write-read-delete",
           write,
           read,
-          verified: write.ok === true && read.status === "found" && Boolean(read.event)
+          cleanup,
+          verified: verified && cleanup.ok === true
         });
       } catch {
         return json({
