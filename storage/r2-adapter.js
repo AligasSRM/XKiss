@@ -72,7 +72,7 @@ function amzDateParts(date = new Date()) {
 }
 
 function encodePath(path) {
-  return path.split("/").map(segment => encodeURIComponent(segment)).join("/");
+  return path.split("/").map(segment => encodeURIComponent(segment).replace(/%3A/gi, ":")).join("/");
 }
 
 async function signedRequest(env, method, key = "", body = null, extraHeaders = {}) {
