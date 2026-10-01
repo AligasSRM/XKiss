@@ -2,20 +2,36 @@ export const XKISS_STORAGE_PRODUCTION_GATE = {
   stage: "AUDIT-03",
   name: "Video Storage Production Gate",
   failClosed: true,
-  requiredBinding: "XKISS_VIDEOS",
-  allowedProvider: "Cloudflare R2"
+  provider: "IDrive e2",
+  requiredConfiguration: [
+    "XKISS_IDRIVE_ENDPOINT",
+    "XKISS_IDRIVE_BUCKET",
+    "XKISS_IDRIVE_REGION",
+    "XKISS_IDRIVE_ACCESS_KEY",
+    "XKISS_IDRIVE_SECRET_KEY"
+  ]
 };
 
+function storageConfigPresent(env = {}) {
+  return XKISS_STORAGE_PRODUCTION_GATE.requiredConfiguration.every(
+    (name) => Boolean(env && env[name])
+  );
+}
+
 export function evaluateStorageProductionGate(env = {}) {
-  const bindingPresent = Boolean(env && env.XKISS_VIDEOS);
+  const configurationPresent = storageConfigPresent(env);
+
   return {
     ok: true,
     stage: XKISS_STORAGE_PRODUCTION_GATE.stage,
-    status: bindingPresent ? "READY_FOR_STORAGE_TEST" : "BLOCKED",
-    bindingPresent,
-    activationAllowed: bindingPresent,
+    status: configurationPresent ? "READY_FOR_STORAGE_TEST" : "BLOCKED",
+    configurationPresent,
+    activationAllowed: configurationPresent,
     failClosed: true,
-    provider: XKISS_STORAGE_PRODUCTION_GATE.allowedProvider
+    provider: XKISS_STORAGE_PRODUCTION_GATE.provider,
+    missingConfiguration: XKISS_STORAGE_PRODUCTION_GATE.requiredConfiguration.filter(
+      (name) => !Boolean(env && env[name])
+    )
   };
 }
 
@@ -24,7 +40,8 @@ export function validateStorageProductionGate(env = {}) {
   return {
     ok:
       result.failClosed === true &&
-      result.status === (result.bindingPresent ? "READY_FOR_STORAGE_TEST" : "BLOCKED") &&
-      result.activationAllowed === result.bindingPresent
+      result.status === (result.configurationPresent ? "READY_FOR_STORAGE_TEST" : "BLOCKED") &&
+      result.activationAllowed === result.configurationPresent &&
+      Array.isArray(result.missingConfiguration)
   };
 }
