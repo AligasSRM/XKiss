@@ -108,7 +108,7 @@
   </main>
 
   <script type="module">
-    import { getSection13FinalStatus } from "./admin/section-14-status.js";
+    import { getSection13FinalStatus } from "./admin/section-13-status.js";
     import { validateUserManagementAction } from "./admin/admin-user-management.js";
     import { validateContentAction } from "./admin/admin-content-management.js";
     import { validateReportAction } from "./admin/admin-reports.js";
@@ -154,7 +154,7 @@
 
       $("overall").textContent =
         Object.values(checks).every(Boolean)
-          ? "PASS — Section 14 is structurally ready"
+          ? "PASS — Section 13 is structurally ready"
           : "REVIEW REQUIRED";
 
       $("overall").className =
