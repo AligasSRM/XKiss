@@ -22,7 +22,7 @@ const sections = [
   ["13","Admin Dashboard",["admin.html","admin/admin-integration.js"]],
   ["14","Super Admin & Security",["security/super-admin-security-core.js","security/super-admin-mfa.js"]],
   ["15","Platform Settings",["settings/xkiss-platform-settings-section-core.js","settings/xkiss-platform-settings-section-self-test.js"]],
-  ["16","Enterprise Content & Partners",["partners/xkiss-enterprise-content-partners-core.js","partners/xkiss-enterprise-content-partners-self-test.js","partners/xkiss-enterprise-content-partners-integration.js"]]
+  ["16","Enterprise Content & Partners",["partners/xkiss-enterprise-content-partners-core.js","partners/xkiss-enterprise-content-partners-self-test.js","partners/xkiss-enterprise-content-partners-integration.js","partners/xkiss-section-16-external-dependencies.js","partners/xkiss-section-16-regression.js","partners/xkiss-section-16-lock.js"]]
 ];
 
 const jsFiles = [];
