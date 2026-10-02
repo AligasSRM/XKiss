@@ -54,7 +54,7 @@ async function signedRequest(env, method, key = "", body = null, extraHeaders = 
     service: "s3"
   });
 
-  return client.fetch(url, { method, headers, body, aws: { singleEncode: false } });
+  return client.fetch(url, { method, headers, body, aws: { singleEncode: true } });
 }
 
 export async function storeJsonObject(env, key, value) {
