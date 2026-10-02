@@ -1,0 +1,2 @@
+export const XKISS_TIPS_GIFTING={section:"17.4",status:"GREEN_CLOSED",failClosed:true,productionActivationAllowed:false,backendRequired:true};
+export function validateTip(input={}){const creatorId=typeof input.creatorId==="string"&&input.creatorId.trim();const amount=Number.isFinite(input.amount)&&input.amount>0;return {ok:Boolean(creatorId&&amount),creatorId:creatorId||null,amount:amount?input.amount:null,settlementAllowed:false,failClosed:true};}
