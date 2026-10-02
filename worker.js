@@ -42,6 +42,8 @@ import {
 import { runSafetySelfTest, getSafetyVerificationOverview } from "./safety/safety-integration.js";
 import { getSafetyBackendStatus, runSafetyBackendSelfTest, recordSafetyBackendEvent } from "./safety/safety-backend.js";
 import { registerMember, loginMember, authenticateSession, logoutMember, AUTH_SECURITY_INVARIANTS } from "./security/xkiss-auth-backend.js";
+import { adminBackendStatus, authorizeAdminAction, ADMIN_BACKEND_SECURITY } from "./admin/xkiss-admin-backend.js";
+import { settingsBackendStatus, validateSettingsBackendAction, SETTINGS_BACKEND_SECURITY } from "./settings/xkiss-settings-backend.js";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "https://aligassrm.github.io",
@@ -104,6 +106,27 @@ export default {
       const authorization = request.headers.get("Authorization") || "";
       const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
       return json(await logoutMember(env, token));
+    }
+
+    if (url.pathname === "/api/admin/backend/status" && request.method === "GET") {
+      return json(adminBackendStatus(env));
+    }
+    if (url.pathname === "/api/admin/authorize" && request.method === "POST") {
+      let body; try { body = await request.json(); } catch { return json({ok:false,status:"invalid_input"},400); }
+      return json(authorizeAdminAction(body.user, body.permission));
+    }
+    if (url.pathname === "/api/admin/security" && request.method === "GET") {
+      return json({ok:true,service:"XKiss Admin Security",security:ADMIN_BACKEND_SECURITY});
+    }
+    if (url.pathname === "/api/settings/backend/status" && request.method === "GET") {
+      return json(settingsBackendStatus(env));
+    }
+    if (url.pathname === "/api/settings/backend/action" && request.method === "POST") {
+      let body; try { body = await request.json(); } catch { return json({ok:false,status:"invalid_input"},400); }
+      return json(validateSettingsBackendAction(body));
+    }
+    if (url.pathname === "/api/settings/backend/security" && request.method === "GET") {
+      return json({ok:true,service:"XKiss Settings Backend Security",security:SETTINGS_BACKEND_SECURITY});
     }
 
     if (url.pathname === "/api/settings/status" && request.method === "GET") {
