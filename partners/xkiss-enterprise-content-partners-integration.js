@@ -9,9 +9,15 @@ import {XKISS_DISTRIBUTION_GEO_POLICY} from "./xkiss-distribution-geo-policy-cor
 import {XKISS_ENTERPRISE_ANALYTICS_AUDIT} from "./xkiss-enterprise-analytics-audit-core.js";
 import {XKISS_CONTRACT_REVENUE_SETTLEMENT} from "./xkiss-contract-revenue-settlement-core.js";
 import {XKISS_PARTNER_API_SECURITY} from "./xkiss-partner-api-security-core.js";
+import {validateSection16ExternalDependencies} from "./xkiss-section-16-external-dependencies.js";
+import {runSection16Regression} from "./xkiss-section-16-regression.js";
+import {validateSection16Lock} from "./xkiss-section-16-lock.js";
 const MODULES=[XKISS_PARTNER_ACCOUNTS,XKISS_ORGANIZATION_VERIFICATION,XKISS_RIGHTS_CONSENT,XKISS_ENTERPRISE_INGESTION,XKISS_MEDIA_PROCESSING_DELIVERY,XKISS_MODERATION_COPYRIGHT,XKISS_DISTRIBUTION_GEO_POLICY,XKISS_ENTERPRISE_ANALYTICS_AUDIT,XKISS_CONTRACT_REVENUE_SETTLEMENT,XKISS_PARTNER_API_SECURITY];
 export function runEnterpriseContentPartnersIntegration(){
   const foundation=validateEnterpriseContentPartnersFoundation();
+  const external=validateSection16ExternalDependencies();
+  const regression=runSection16Regression();
+  const lock=validateSection16Lock();
   const modulesGreen=MODULES.every(m=>m.status==="GREEN_CLOSED"&&m.failClosed===true&&m.productionActivationAllowed===false&&m.backendRequired===true);
-  return {ok:foundation.ok&&modulesGreen,section:"16",status:"GREEN_CLOSED",locked:false,failClosed:true,productionActivationAllowed:false,externalActivationRequired:true,modules:MODULES.map(m=>({section:m.section,status:m.status})),foundation};
+  return {ok:foundation.ok&&modulesGreen&&external.ok&&regression.ok&&lock.ok,section:"16",status:"GREEN_CLOSED",locked:false,failClosed:true,productionActivationAllowed:false,externalActivationRequired:true,modules:MODULES.map(m=>({section:m.section,status:m.status})),foundation,external,regression,lock};
 }
