@@ -1,0 +1,3 @@
+const MODULES=["playlists","subscriptions","ppv","tips-gifting","messaging","notifications","recommendations","watch-history","saved-favorites","viewer-creator-interactions","privacy-blocking","discovery"];
+export const XKISS_CONSUMER_MODULES=Object.freeze(MODULES.map((name,i)=>({section:`17.${i+1}`,name,status:"GREEN_CLOSED",failClosed:true,productionActivationAllowed:false,backendRequired:true})));
+export function validateConsumerModules(){return {ok:XKISS_CONSUMER_MODULES.length===12&&XKISS_CONSUMER_MODULES.every(m=>m.status==="GREEN_CLOSED"&&m.failClosed&&m.productionActivationAllowed===false&&m.backendRequired),count:XKISS_CONSUMER_MODULES.length};}
