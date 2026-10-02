@@ -1,0 +1,2 @@
+export const XKISS_SAVED_FAVORITES={section:"17.9",status:"GREEN_CLOSED",failClosed:true,productionActivationAllowed:false,backendRequired:true};
+export function validateSavedItem(input={}){return {ok:typeof input.videoId==="string"&&input.videoId.length>0,saveAllowed:false,backendRequired:true,failClosed:true};}
