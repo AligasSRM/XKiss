@@ -1,0 +1,1 @@
+export function evaluateHealth({pages,worker,auth,storage}={}){const checks={pages:Boolean(pages?.ok),worker:Boolean(worker?.ok),auth:Boolean(auth?.ok),storage:storage===undefined?true:Boolean(storage?.ok)};return {ok:Object.values(checks).every(Boolean),section:"18",checks,failClosed:true};}
