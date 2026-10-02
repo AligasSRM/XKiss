@@ -1,0 +1,5 @@
+const ALLOWED_GROUPS=Object.freeze(["platform","content","users","security","payments","storage","notifications"]);
+const PROTECTED=Object.freeze(["platform_age_requirement","admin_roles","admin_permissions","payment_provider","storage_provider","security_policy"]);
+export function settingsBackendStatus(env={}){return{ok:Boolean(env.XKISS_DB),service:"XKiss Settings Backend",databaseConfigured:Boolean(env.XKISS_DB),protectedSettings:[...PROTECTED],auditRequired:true,reauthenticationRequired:true,failClosed:true};}
+export function validateSettingsBackendAction({group,setting,action}={}){if(!ALLOWED_GROUPS.includes(group)||!setting||!["view","propose","update","rollback"].includes(action))return{ok:false,allowed:false,status:"invalid"};return{ok:true,allowed:false,status:PROTECTED.includes(setting)?"reauthentication_required":"authorization_required",group,setting,action};}
+export const SETTINGS_BACKEND_SECURITY=Object.freeze({frontendCannotAuthorize:true,frontendCannotChangeProtectedSettings:true,frontendCannotGrantPermissions:true,failClosed:true});
