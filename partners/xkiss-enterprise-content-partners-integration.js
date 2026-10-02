@@ -19,5 +19,5 @@ export function runEnterpriseContentPartnersIntegration(){
   const regression=runSection16Regression();
   const lock=validateSection16Lock();
   const modulesGreen=MODULES.every(m=>m.status==="GREEN_CLOSED"&&m.failClosed===true&&m.productionActivationAllowed===false&&m.backendRequired===true);
-  return {ok:foundation.ok&&modulesGreen&&external.ok&&regression.ok&&lock.ok,section:"16",status:"GREEN_CLOSED",locked:false,failClosed:true,productionActivationAllowed:false,externalActivationRequired:true,modules:MODULES.map(m=>({section:m.section,status:m.status})),foundation,external,regression,lock};
+  return {ok:foundation.ok&&modulesGreen&&external.ok&&regression.ok&&lock.ok,section:"16",status:"GREEN_CLOSED",locked:lock.ok,failClosed:true,productionActivationAllowed:false,externalActivationRequired:true,modules:MODULES.map(m=>({section:m.section,status:m.status})),foundation,external,regression,lock};
 }
