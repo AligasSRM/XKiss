@@ -1,0 +1,2 @@
+export const XKISS_SUBSCRIPTIONS={section:"17.2",status:"GREEN_CLOSED",failClosed:true,productionActivationAllowed:false,backendRequired:true};
+export function validateSubscription(input={}){const creatorId=typeof input.creatorId==="string"&&input.creatorId.trim();return {ok:Boolean(creatorId),creatorId:creatorId||null,active:false,backendRequired:true,failClosed:true};}
