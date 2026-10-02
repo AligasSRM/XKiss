@@ -41,8 +41,11 @@ async function signedRequest(env, method, key = "", body = null, extraHeaders = 
   const c = getConfig(env);
   if (!isStorageReady(env)) throw new Error("Backblaze B2 storage credentials are not configured.");
 
-  const path = "/" + encodePath(c.bucket) + (key ? "/" + encodePath(key) : "");
-  const url = c.endpoint + path;
+  const endpointUrl = new URL(c.endpoint);
+  const host = endpointUrl.hostname;
+  const virtualHost = c.bucket + "." + host;
+  const path = key ? "/" + key.split("/").map(encodeURIComponent).join("/") : "/";
+  const url = endpointUrl.protocol + "//" + virtualHost + path;
   const headers = new Headers(extraHeaders);
   if (!headers.has("content-type") && body != null) headers.set("content-type", "application/octet-stream");
 
