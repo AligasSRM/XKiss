@@ -1,0 +1,23 @@
+name: XKiss Section 16 Complete Self-Test
+
+on:
+  push:
+    paths:
+      - "partners/**"
+      - "audit/xkiss-section-16-master-spec.md"
+      - ".github/workflows/xkiss-section-16.yml"
+  workflow_dispatch:
+
+jobs:
+  section-16:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run Section 16 self-test
+        run: |
+          node --input-type=module -e "import('./partners/xkiss-enterprise-content-partners-self-test.js').then(m => { const r=m.runEnterpriseContentPartnersSectionSelfTest(); console.log(JSON.stringify(r,null,2)); if(!r.ok) process.exit(1); })"
+      - name: Run final review
+        run: node audit/xkiss-final-review.js
