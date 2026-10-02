@@ -1,0 +1,2 @@
+export const XKISS_PRIVACY_BLOCKING={section:"17.11",status:"GREEN_CLOSED",failClosed:true,productionActivationAllowed:false,backendRequired:true};
+export function validatePrivacyAction(input={}){const target=typeof input.targetId==="string"&&input.targetId.trim();return {ok:Boolean(target),actionAllowed:false,backendRequired:true,failClosed:true};}
