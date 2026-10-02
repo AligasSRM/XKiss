@@ -1,10 +1,6 @@
 const VIDEO_PREFIX = "videos/";
 
-function sanitizeFileName(fileName) {
-  return String(fileName || "video")
-    .replace(/[^a-zA-Z0-9._-]/g, "_")
-    .slice(-180);
-}
+import { AwsClient } from "aws4fetch";
 
 function cleanEnvValue(value, fallback = "") {
   const raw = String(value ?? fallback).trim();
@@ -12,52 +8,102 @@ function cleanEnvValue(value, fallback = "") {
 }
 
 function getConfig(env) {
-  let endpoint = cleanEnvValue(env?.XKISS_B2_ENDPOINT, "https://s3.eu-central-003.backblazeb2.com");
-  if (endpoint && !/^https?:\/\//i.test(endpoint)) endpoint = "https://" + endpoint;
+  let endpoint = cleanEnvValue(
+    env?.XKISS_B2_ENDPOINT,
+    "https://s3.eu-central-003.backblazeb2.com"
+  );
+
+  if (endpoint && !/^https?:\/\//i.test(endpoint)) {
+    endpoint = "https://" + endpoint;
+  }
+
   endpoint = endpoint.replace(/\/$/, "");
-  const bucket = cleanEnvValue(env?.XKISS_B2_BUCKET, "xkiss-videos");
-  const region = cleanEnvValue(env?.XKISS_B2_REGION, "eu-central-003");
-  const accessKey = cleanEnvValue(env?.XKISS_B2_ACCESS_KEY);
-  const secretKey = cleanEnvValue(env?.XKISS_B2_SECRET_KEY);
-  return { endpoint, bucket, region, accessKey, secretKey };
+
+  return {
+    endpoint,
+    bucket: cleanEnvValue(env?.XKISS_B2_BUCKET, "xkiss-videos"),
+    region: cleanEnvValue(env?.XKISS_B2_REGION, "eu-central-003"),
+    accessKey: cleanEnvValue(env?.XKISS_B2_ACCESS_KEY),
+    secretKey: cleanEnvValue(env?.XKISS_B2_SECRET_KEY)
+  };
 }
 
 export function isStorageReady(env) {
   const c = getConfig(env);
-  return Boolean(c.endpoint && c.bucket && c.region && c.accessKey && c.secretKey);
+  return Boolean(
+    c.endpoint &&
+    c.bucket &&
+    c.region &&
+    c.accessKey &&
+    c.secretKey
+  );
 }
 
-function encodePath(path) {
-  return path.split("/").map(segment => encodeURIComponent(segment)).join("/");
+function sanitizeFileName(fileName) {
+  return String(fileName || "video")
+    .replace(/[^a-zA-Z0-9._-]/g, "_")
+    .slice(-180);
 }
 
 export function createVideoKey(fileName) {
   return VIDEO_PREFIX + crypto.randomUUID() + "-" + sanitizeFileName(fileName);
 }
 
-import { AwsClient } from "aws4fetch";
+function encodeObjectKey(key) {
+  return String(key || "")
+    .split("/")
+    .map((segment) => encodeURIComponent(segment))
+    .join("/");
+}
 
 async function signedRequest(env, method, key = "", body = null, extraHeaders = {}) {
   const c = getConfig(env);
-  if (!isStorageReady(env)) throw new Error("Backblaze B2 storage credentials are not configured.");
+
+  if (!isStorageReady(env)) {
+    throw new Error("Backblaze B2 storage credentials are not configured.");
+  }
 
   const endpointUrl = new URL(c.endpoint);
-  const host = endpointUrl.hostname;
-  const virtualHost = c.bucket + "." + host;
-  const path = key ? "/" + key.split("/").map(encodeURIComponent).join("/") : "/";
+  const virtualHost = c.bucket + "." + endpointUrl.hostname;
+  const path = key ? "/" + encodeObjectKey(key) : "/";
   const url = endpointUrl.protocol + "//" + virtualHost + path;
-  const headers = new Headers(extraHeaders);
-  if (!headers.has("content-type") && body != null) headers.set("content-type", "application/octet-stream");
 
-  // Backblaze B2 exposes an S3-compatible endpoint and uses SigV4.
+  const headers = new Headers(extraHeaders);
+
+  if (!headers.has("content-type") && body != null) {
+    headers.set("content-type", "application/octet-stream");
+  }
+
+  // Backblaze B2 S3-compatible API uses SigV4.
+  // Keep signing aligned with Backblaze's Cloudflare Worker example:
+  // virtual-hosted endpoint + aws4fetch signing + native fetch.
   const client = new AwsClient({
     accessKeyId: c.accessKey,
     secretAccessKey: c.secretKey,
-    region: c.region,
     service: "s3"
   });
 
-  return client.fetch(url, { method, headers, body, aws: { singleEncode: false } });
+  const signed = await client.sign(url, {
+    method,
+    headers,
+    body
+  });
+
+  return fetch(signed);
+}
+
+async function throwStorageError(action, response) {
+  if (response.ok) return;
+
+  const detail = await response.text().catch(() => "");
+  throw new Error(
+    "Backblaze B2 " +
+      action +
+      " failed (" +
+      response.status +
+      "): " +
+      detail.slice(0, 500)
+  );
 }
 
 export async function storeJsonObject(env, key, value) {
@@ -73,12 +119,48 @@ export async function storeJsonObject(env, key, value) {
     { "content-type": "application/json; charset=UTF-8" }
   );
 
-  if (!response.ok) {
-    const detail = await response.text().catch(() => "");
-    throw new Error("Backblaze B2 JSON object store failed (" + response.status + "): " + detail.slice(0, 500));
+  await throwStorageError("JSON object store", response);
+
+  return {
+    ok: true,
+    storageReady: true,
+    status: "stored",
+    key,
+    storage: "Backblaze B2"
+  };
+}
+
+export async function getJsonObject(env, key) {
+  if (!isStorageReady(env)) {
+    return {
+      ok: false,
+      storageReady: false,
+      status: "storage-not-ready",
+      value: null
+    };
   }
 
-  return { ok: true, storageReady: true, status: "stored", key, storage: "Backblaze B2" };
+  const response = await signedRequest(env, "GET", key);
+
+  if (response.status === 404) {
+    return {
+      ok: true,
+      storageReady: true,
+      status: "not-found",
+      value: null
+    };
+  }
+
+  await throwStorageError("JSON object read", response);
+
+  const value = await response.json();
+
+  return {
+    ok: true,
+    storageReady: true,
+    status: "found",
+    value
+  };
 }
 
 export async function deleteJsonObject(env, key) {
@@ -89,8 +171,7 @@ export async function deleteJsonObject(env, key) {
   const response = await signedRequest(env, "DELETE", key);
 
   if (!response.ok && response.status !== 404) {
-    const detail = await response.text().catch(() => "");
-    throw new Error("Backblaze B2 JSON object delete failed (" + response.status + "): " + detail.slice(0, 500));
+    await throwStorageError("JSON object delete", response);
   }
 
   return {
@@ -100,26 +181,6 @@ export async function deleteJsonObject(env, key) {
     key,
     storage: "Backblaze B2"
   };
-}
-
-export async function getJsonObject(env, key) {
-  if (!isStorageReady(env)) {
-    return { ok: false, storageReady: false, status: "storage-not-ready", value: null };
-  }
-
-  const response = await signedRequest(env, "GET", key);
-
-  if (response.status === 404) {
-    return { ok: true, storageReady: true, status: "not-found", value: null };
-  }
-
-  if (!response.ok) {
-    const detail = await response.text().catch(() => "");
-    throw new Error("Backblaze B2 JSON object read failed (" + response.status + "): " + detail.slice(0, 500));
-  }
-
-  const value = await response.json();
-  return { ok: true, storageReady: true, status: "found", value };
 }
 
 export async function storeVideo(env, key, body, metadata = {}) {
@@ -133,17 +194,16 @@ export async function storeVideo(env, key, body, metadata = {}) {
     "x-amz-meta-title": String(metadata.title || ""),
     "x-amz-meta-description": String(metadata.description || ""),
     "x-amz-meta-category": String(metadata.category || ""),
-    "x-amz-meta-downloadpolicy": String(metadata.downloadPolicy || "disabled"),
+    "x-amz-meta-downloadpolicy": String(
+      metadata.downloadPolicy || "disabled"
+    ),
     "x-amz-meta-visibility": String(metadata.visibility || "private"),
     "x-amz-meta-status": "Ready"
   };
 
   const response = await signedRequest(env, "PUT", key, body, headers);
 
-  if (!response.ok) {
-    const detail = await response.text().catch(() => "");
-    throw new Error("Backblaze B2 upload failed (" + response.status + "): " + detail.slice(0, 500));
-  }
+  await throwStorageError("upload", response);
 
   return {
     ok: true,
@@ -155,7 +215,9 @@ export async function storeVideo(env, key, body, metadata = {}) {
 }
 
 function xmlTag(xml, tag) {
-  const match = xml.match(new RegExp("<" + tag + ">([\\s\\S]*?)</" + tag + ">"));
+  const match = xml.match(
+    new RegExp("<" + tag + ">([\\s\\S]*?)</" + tag + ">")
+  );
   return match ? match[1] : "";
 }
 
@@ -165,16 +227,18 @@ export async function listVideos(env) {
   }
 
   const response = await signedRequest(env, "GET");
-  if (!response.ok) {
-    throw new Error("Backblaze B2 list failed (" + response.status + ").");
-  }
+
+  await throwStorageError("list", response);
 
   const xml = await response.text();
-  const blocks = xml.match(/<Contents>[\\s\\S]*?<\/Contents>/g) || [];
+  const blocks = xml.match(/<Contents>[\\s\\S]*?<\\/Contents>/g) || [];
+
   const videos = blocks
-    .map(block => {
+    .map((block) => {
       const key = xmlTag(block, "Key");
+
       if (!key || !key.startsWith(VIDEO_PREFIX)) return null;
+
       return {
         key,
         size: Number(xmlTag(block, "Size") || 0),
@@ -191,5 +255,9 @@ export async function listVideos(env) {
     })
     .filter(Boolean);
 
-  return { ok: true, storageReady: true, videos };
+  return {
+    ok: true,
+    storageReady: true,
+    videos
+  };
 }
