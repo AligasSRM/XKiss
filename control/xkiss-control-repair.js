@@ -1,0 +1,1 @@
+export function planSafeRepair({drift=false,repairable=false}={}){if(!drift)return {allowed:false,reason:"NO_DRIFT"};if(!repairable)return {allowed:false,reason:"REQUIRES_ESCALATION",failClosed:true};return {allowed:true,action:"SAFE_REPAIR_THEN_VERIFY",failClosed:true};}
