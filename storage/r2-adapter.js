@@ -46,12 +46,6 @@ async function signedRequest(env, method, key = "", body = null, extraHeaders = 
   const headers = new Headers(extraHeaders);
   if (!headers.has("content-type") && body != null) headers.set("content-type", "application/octet-stream");
 
-  // Backblaze B2 S3-compatible GET/DELETE requests are signed with an
-  // explicit UNSIGNED-PAYLOAD marker, matching B2's SigV4-compatible flow.
-  if ((method === "GET" || method === "DELETE") && !headers.has("x-amz-content-sha256")) {
-    headers.set("x-amz-content-sha256", "UNSIGNED-PAYLOAD");
-  }
-
   // Backblaze B2 exposes an S3-compatible endpoint and uses SigV4.
   const client = new AwsClient({
     accessKeyId: c.accessKey,
@@ -60,7 +54,7 @@ async function signedRequest(env, method, key = "", body = null, extraHeaders = 
     service: "s3"
   });
 
-  return client.fetch(url, { method, headers, body, aws: { singleEncode: true } });
+  return client.fetch(url, { method, headers, body, aws: { singleEncode: false } });
 }
 
 export async function storeJsonObject(env, key, value) {
