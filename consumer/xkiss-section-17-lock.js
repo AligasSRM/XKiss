@@ -1,0 +1,2 @@
+export const XKISS_SECTION_17_LOCK=Object.freeze({section:"17",state:"FINAL_LOCKED",locked:true,failClosed:true,productionActivationAllowed:false,externalActivationRequired:true,lockPolicy:{sourceCode:"LOCKED",productionActivation:"BLOCKED_UNTIL_EXTERNAL_VERIFICATION",bypass:false},protectedSections:["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"]});
+export function validateSection17Lock(){return {ok:XKISS_SECTION_17_LOCK.locked&&XKISS_SECTION_17_LOCK.failClosed&&!XKISS_SECTION_17_LOCK.productionActivationAllowed,section:"17",state:"FINAL_LOCKED"};}
