@@ -86,3 +86,11 @@ Section 16 is only FINAL_LOCKED after:
 - no regression in Sections 1–15,
 - external production dependencies are explicitly identified,
 - productionActivationAllowed remains false until those dependencies are verified.
+
+## Final Section 16 Lock
+- Status: GREEN_CLOSED
+- Locked: true
+- Production activation: BLOCKED
+- External provider activation: REQUIRED
+- Sections 1–15: unchanged
+- Complete self-test: required and integrated
