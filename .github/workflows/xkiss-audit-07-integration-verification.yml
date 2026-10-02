@@ -1,0 +1,38 @@
+name: XKiss AUDIT-07 Integration Verification
+
+on:
+  workflow_dispatch:
+
+jobs:
+  integration-verification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify all production integration endpoints
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="https://xkiss.srourr-ali73.workers.dev"
+          endpoints=(
+            "/api/health"
+            "/api/settings/status"
+            "/api/safety/status"
+            "/api/safety/self-test"
+            "/api/views/storage/status"
+            "/api/views/status"
+            "/api/views/storage/self-test"
+            "/api/wallet/ledger/status"
+            "/api/wallet/settlement/status"
+            "/api/wallet/payout/status"
+            "/api/wallet/payout/security/status"
+            "/api/wallet/payout/self-test"
+          )
+          failed=0
+          for path in "${endpoints[@]}"; do
+            echo "=== $path ==="
+            body="$(curl --fail-with-body --silent --show-error --max-time 30 -w '\nHTTP_STATUS:%{http_code}' "$BASE$path")" || failed=1
+            printf '%s\n' "$body"
+            status="$(printf '%s\n' "$body" | sed -n 's/^HTTP_STATUS://p' | tail -1)"
+            [ "$status" = "200" ] || failed=1
+          done
+          [ "$failed" -eq 0 ]
+          echo "AUDIT-07: GREEN"
