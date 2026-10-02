@@ -1,0 +1,1 @@
+export function createControlAudit(event={}){return Object.freeze({timestamp:event.timestamp||new Date().toISOString(),actor:"ALEX_CONTROL_ENGINE",action:event.action||"UNKNOWN",reason:event.reason||"STATE_DRIFT",result:event.result||"UNKNOWN",automatic:true});}
