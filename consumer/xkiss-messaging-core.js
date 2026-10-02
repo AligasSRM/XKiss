@@ -1,0 +1,2 @@
+export const XKISS_MESSAGING={section:"17.5",status:"GREEN_CLOSED",failClosed:true,productionActivationAllowed:false,backendRequired:true};
+export function validateMessage(input={}){const recipient=typeof input.recipientId==="string"&&input.recipientId.trim();const body=typeof input.body==="string"&&input.body.trim();return {ok:Boolean(recipient&&body),sendAllowed:false,moderationRequired:true,failClosed:true};}
