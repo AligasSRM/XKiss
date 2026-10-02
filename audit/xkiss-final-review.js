@@ -22,7 +22,9 @@ const sections = [
   ["13","Admin Dashboard",["admin.html","admin/admin-integration.js"]],
   ["14","Super Admin & Security",["security/super-admin-security-core.js","security/super-admin-mfa.js"]],
   ["15","Platform Settings",["settings/xkiss-platform-settings-section-core.js","settings/xkiss-platform-settings-section-self-test.js"]],
-  ["16","Enterprise Content & Partners",["partners/xkiss-enterprise-content-partners-core.js","partners/xkiss-enterprise-content-partners-self-test.js","partners/xkiss-enterprise-content-partners-integration.js","partners/xkiss-section-16-external-dependencies.js","partners/xkiss-section-16-regression.js","partners/xkiss-section-16-lock.js"]]
+  ["16","Enterprise Content & Partners",["partners/xkiss-enterprise-content-partners-core.js","partners/xkiss-enterprise-content-partners-self-test.js","partners/xkiss-enterprise-content-partners-integration.js","partners/xkiss-section-16-external-dependencies.js","partners/xkiss-section-16-regression.js","partners/xkiss-section-16-lock.js"]],
+  ["17","Consumer Product Features",["consumer/xkiss-consumer-product-section-core.js","consumer/xkiss-consumer-product-section-self-test.js","consumer/xkiss-consumer-product-section-integration.js","consumer/xkiss-consumer-product-regression.js","consumer/xkiss-section-17-external-dependencies.js","consumer/xkiss-section-17-lock.js"]],
+  ["18","Alex Control Engine",["control/xkiss-autonomous-control-core.js","control/xkiss-autonomous-control-policy.js","control/xkiss-control-runner.js","control/xkiss-control-section-self-test.js","control/xkiss-control-lock.js"]]
 ];
 
 const jsFiles = [];
