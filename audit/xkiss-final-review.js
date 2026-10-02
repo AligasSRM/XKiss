@@ -85,6 +85,13 @@ const qualityOk = requiredQualities.every(q=>qualityContent.includes(q)) &&
 const releaseLock = exists("core/xkiss-release-lock.js") ? read("core/xkiss-release-lock.js") : "";
 const lockStateOk = releaseLock.includes('state: "DEVELOPMENT_ACTIVE"') || releaseLock.includes('locked: true');
 
+const section16 = await import(path.join(root,"partners/xkiss-enterprise-content-partners-self-test.js").replaceAll(path.sep,"/"));
+const section16Result = section16.runEnterpriseContentPartnersSectionSelfTest();
+const section17 = await import(path.join(root,"consumer/xkiss-consumer-product-section-self-test.js").replaceAll(path.sep,"/"));
+const section17Result = section17.runConsumerProductSectionSelfTest();
+const section18 = await import(path.join(root,"control/xkiss-control-section-self-test.js").replaceAll(path.sep,"/"));
+const section18Result = await section18.runControlSectionSelfTest();
+
 const section15 = await import(path.join(root,"settings/xkiss-platform-settings-section-self-test.js").replaceAll(path.sep,"/"));
 const section15Result = section15.runXKissPlatformSettingsSectionSelfTest();
 
@@ -97,7 +104,10 @@ const result = {
   htmlAssetErrors,
   qualityOk,
   lockStateOk,
-  section15: section15Result
+  section15: section15Result,
+  section16: section16Result,
+  section17: section17Result,
+  section18: section18Result
 };
 
 const allSectionsPresent = Object.values(sectionPresence).every(x=>x.present);
@@ -108,7 +118,10 @@ const ok =
   htmlAssetErrors.length === 0 &&
   qualityOk &&
   lockStateOk &&
-  section15Result.ok === true &&\n  section16Result.ok === true;
+  section15Result.ok === true &&
+  section16Result.ok === true &&
+  section17Result.ok === true &&
+  section18Result.ok === true;
 
 console.log(JSON.stringify({...result,ok},null,2));
 if (!ok) process.exit(1);
