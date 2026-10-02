@@ -1,0 +1,2 @@
+export const XKISS_RECOMMENDATIONS={section:"17.7",status:"GREEN_CLOSED",failClosed:true,productionActivationAllowed:false,backendRequired:true};
+export function validateRecommendationContext(input={}){return {ok:Array.isArray(input.history)&&Array.isArray(input.preferences),personalizationAllowed:false,backendRequired:true,failClosed:true};}
