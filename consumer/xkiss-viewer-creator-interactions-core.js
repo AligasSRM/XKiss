@@ -1,0 +1,2 @@
+export const XKISS_VIEWER_CREATOR_INTERACTIONS={section:"17.10",status:"GREEN_CLOSED",failClosed:true,productionActivationAllowed:false,backendRequired:true};
+export function validateInteraction(input={}){return {ok:typeof input.creatorId==="string"&&typeof input.action==="string",mutationAllowed:false,auditRequired:true,failClosed:true};}
