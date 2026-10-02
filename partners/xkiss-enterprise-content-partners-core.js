@@ -1,9 +1,9 @@
 export const XKISS_ENTERPRISE_CONTENT_PARTNERS_SECTION = {
   section: "16",
   name: "Enterprise Content & Partners",
-  version: "0.1.0-foundation",
-  status: "FOUNDATION_SPEC",
-  locked: false,
+  version: "1.0.0",
+  status: "GREEN_CLOSED",
+  locked: true,
   failClosed: true,
   productionActivationAllowed: false,
   activationRequiresBackend: true,
