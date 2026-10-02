@@ -1,0 +1,1 @@
+export function verifyRepair({before,after,expected}={}){const verified=JSON.stringify(after)===JSON.stringify(expected);return {ok:verified,verified,rollbackRequired:!verified,failClosed:true};}
