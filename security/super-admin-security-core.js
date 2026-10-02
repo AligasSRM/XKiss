@@ -15,8 +15,10 @@ import {
 export const SUPER_ADMIN_SECURITY_CORE = {
   section: "14",
   name: "Super Admin Security Core",
-  status: "configured",
+  status: "FINAL_LOCKED",
+  locked: true,
   enabled: false,
+  productionEnabled: false,
   modules: [
     "security-rules",
     "super-admin-access",
