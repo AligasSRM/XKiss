@@ -46,15 +46,10 @@ async function signedRequest(env, method, key = "", body = null, extraHeaders = 
   const headers = new Headers(extraHeaders);
   if (!headers.has("content-type") && body != null) headers.set("content-type", "application/octet-stream");
 
-  // For an empty S3 GET/DELETE payload, SigV4 expects the SHA-256 of the empty
-  // payload unless UNSIGNED-PAYLOAD is used consistently by the signer.
-  // aws4fetch signs the request using the actual empty body, so keep the
-  // corresponding header value explicit and consistent.
+  // Backblaze B2 S3-compatible GET/DELETE requests are signed with an
+  // explicit UNSIGNED-PAYLOAD marker, matching B2's SigV4-compatible flow.
   if ((method === "GET" || method === "DELETE") && !headers.has("x-amz-content-sha256")) {
-    headers.set(
-      "x-amz-content-sha256",
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    );
+    headers.set("x-amz-content-sha256", "UNSIGNED-PAYLOAD");
   }
 
   // Backblaze B2 exposes an S3-compatible endpoint and uses SigV4.
