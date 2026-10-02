@@ -53,7 +53,7 @@ export function validateSuperAdminSecurityCore() {
 
   return {
     ok: true,
-    stage: "15.3",
+    stage: "14",
     coreConnected: true,
     superAdminAccessConnected: Boolean(SUPER_ADMIN_ACCESS_RULES),
     importsReady: true,
