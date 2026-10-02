@@ -10,7 +10,7 @@ export function runSuperAdminSecurityCoreSelfCheck() {
   });
 
   const checks = {
-    stage: status.section === "15.3",
+    stage: status.section === "14",
     coreConnected: validation.coreConnected === true,
     importsReady: validation.importsReady === true,
     exportsReady: validation.exportsReady === true,
@@ -27,12 +27,12 @@ export function runSuperAdminSecurityCoreSelfCheck() {
 
   return {
     ok: passed,
-    stage: "15.3",
+    stage: "14",
     test: "Super Admin Security Core self-check",
     checks,
     activationAllowed: validation.activationAllowed,
     reason: passed
-      ? "15.3 Core structure and safe-denial behavior passed. Backend activation remains blocked until real providers are connected."
-      : "One or more 15.3 Core checks failed."
+      ? "14 Core structure and safe-denial behavior passed. Backend activation remains blocked until real providers are connected."
+      : "One or more 14 Core checks failed."
   };
 }
