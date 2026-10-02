@@ -1,0 +1,2 @@
+export const XKISS_PPV={section:"17.3",status:"GREEN_CLOSED",failClosed:true,productionActivationAllowed:false,backendRequired:true};
+export function validatePPV(input={}){const contentId=typeof input.contentId==="string"&&input.contentId.trim();return {ok:Boolean(contentId),contentId:contentId||null,paymentAuthorized:false,productionActivationAllowed:false,failClosed:true};}
