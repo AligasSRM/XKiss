@@ -1,0 +1,1 @@
+export function evaluateControlState({desired,current,health="UNKNOWN",errors=[]}={}){const drift=JSON.stringify(desired)!==JSON.stringify(current);return {ok:true,drift,health,errors,action:drift||errors.length?"DIAGNOSE_AND_REPAIR":"CONTINUE_MONITORING",failClosed:true};}
