@@ -1,0 +1,17 @@
+name: XKiss Section 18 Autonomous Control
+on:
+  push:
+    paths:
+      - "control/**"
+      - ".github/workflows/xkiss-section-18.yml"
+  workflow_dispatch:
+jobs:
+  control:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run Section 18 self-test
+        run: node --input-type=module -e "import('./control/xkiss-control-section-self-test.js').then(m=>{const r=m.runControlSectionSelfTest();console.log(JSON.stringify(r,null,2));if(!r.ok)process.exit(1)})"
