@@ -1,0 +1,2 @@
+export const XKISS_PLAYLISTS={section:"17.1",status:"GREEN_CLOSED",failClosed:true,productionActivationAllowed:false,backendRequired:true};
+export function validatePlaylist(input={}){const title=typeof input.title==="string"&&input.title.trim();return {ok:Boolean(title),title:title||null,mutationAllowed:false,failClosed:true};}
