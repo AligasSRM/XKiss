@@ -1,0 +1,3 @@
+import {XKISS_AUTONOMOUS_POLICY} from "./xkiss-autonomous-control-policy.js";
+const SAFE_ACTIONS=new Set(XKISS_AUTONOMOUS_POLICY.automaticActions);
+export function createSafeRepairAdapter({action,repairFn,verifyFn}){const allowed=SAFE_ACTIONS.has(action)&&typeof repairFn==="function"&&typeof verifyFn==="function";return Object.freeze({allowed,action,execute:async(...args)=>{if(!allowed)return {ok:false,action,status:"BLOCKED_FAIL_CLOSED"};const before=await verifyFn("before",...args);if(!before.ok)return {ok:false,action,status:"BLOCKED_FAIL_CLOSED",reason:"precondition_failed"};const repaired=await repairFn(...args);const after=await verifyFn("after",repaired,...args);return {ok:after.ok,action,status:after.ok?"VERIFIED":"ROLLBACK_REQUIRED",result:repaired};}});}
