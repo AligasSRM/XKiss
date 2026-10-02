@@ -1,0 +1,2 @@
+export const XKISS_DISCOVERY={section:"17.12",status:"GREEN_CLOSED",failClosed:true,productionActivationAllowed:false,backendRequired:true};
+export function validateDiscoveryQuery(input={}){return {ok:typeof input.query==="string"&&input.query.trim().length>0,personalized:false,backendRequired:true,failClosed:true};}
