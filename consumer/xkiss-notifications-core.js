@@ -1,0 +1,2 @@
+export const XKISS_NOTIFICATIONS={section:"17.6",status:"GREEN_CLOSED",failClosed:true,productionActivationAllowed:false,backendRequired:true};
+export function validateNotification(input={}){return {ok:typeof input.type==="string"&&input.type.length>0,deliveryAllowed:false,backendRequired:true,failClosed:true};}
