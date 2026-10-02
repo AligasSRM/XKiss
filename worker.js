@@ -41,11 +41,12 @@ import {
 } from "./views-revenue/views-revenue-rules.js";
 import { runSafetySelfTest, getSafetyVerificationOverview } from "./safety/safety-integration.js";
 import { getSafetyBackendStatus, runSafetyBackendSelfTest, recordSafetyBackendEvent } from "./safety/safety-backend.js";
+import { registerMember, loginMember, authenticateSession, logoutMember, AUTH_SECURITY_INVARIANTS } from "./security/xkiss-auth-backend.js";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "https://aligassrm.github.io",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, X-XKiss-Upload-Key, X-XKiss-File-Name, X-XKiss-Title, X-XKiss-Description, X-XKiss-Category, X-XKiss-Download-Policy, X-XKiss-Visibility",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-XKiss-Upload-Key, X-XKiss-File-Name, X-XKiss-Title, X-XKiss-Description, X-XKiss-Category, X-XKiss-Download-Policy, X-XKiss-Visibility",
   "Vary": "Origin"
 };
 
@@ -69,6 +70,40 @@ export default {
         status: 204,
         headers: CORS_HEADERS
       });
+    }
+
+    if (url.pathname === "/api/auth/security" && request.method === "GET") {
+      return json({ ok: true, service: "XKiss Authentication Security", invariants: AUTH_SECURITY_INVARIANTS });
+    }
+
+    if (url.pathname === "/api/auth/register" && request.method === "POST") {
+      if (!env.XKISS_DB) return json({ ok: false, status: "backend_not_configured" }, 503);
+      let body;
+      try { body = await request.json(); } catch { return json({ ok: false, status: "invalid_input" }, 400); }
+      return json(await registerMember(env, body), 201);
+    }
+
+    if (url.pathname === "/api/auth/login" && request.method === "POST") {
+      if (!env.XKISS_DB) return json({ ok: false, status: "backend_not_configured" }, 503);
+      let body;
+      try { body = await request.json(); } catch { return json({ ok: false, status: "invalid_credentials" }, 401); }
+      const result = await loginMember(env, body);
+      return json(result, result.ok ? 200 : 401);
+    }
+
+    if (url.pathname === "/api/auth/me" && request.method === "GET") {
+      if (!env.XKISS_DB) return json({ ok: false, status: "backend_not_configured" }, 503);
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      const result = await authenticateSession(env, token);
+      return json(result, result.ok ? 200 : 401);
+    }
+
+    if (url.pathname === "/api/auth/logout" && request.method === "POST") {
+      if (!env.XKISS_DB) return json({ ok: false, status: "backend_not_configured" }, 503);
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      return json(await logoutMember(env, token));
     }
 
     if (url.pathname === "/api/settings/status" && request.method === "GET") {
