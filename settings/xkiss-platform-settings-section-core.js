@@ -16,7 +16,8 @@ export const XKISS_PLATFORM_SETTINGS_SECTION = {
   section: "15",
   name: "Platform Settings",
   version: "1.1.0",
-  status: "configured",
+  status: "FINAL_LOCKED",
+  locked: true,
   failClosed: true,
   productionActivationAllowed: false
 };
