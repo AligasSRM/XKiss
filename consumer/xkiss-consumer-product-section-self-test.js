@@ -1,0 +1,2 @@
+import {runConsumerProductRegression} from "./xkiss-consumer-product-regression.js";
+export function runConsumerProductSectionSelfTest(){const r=runConsumerProductRegression();return {ok:r.ok===true&&r.failClosed===true&&r.productionActivationAllowed===false,test:"XKiss Section 17 Consumer Product complete self-test",section:"17",status:"GREEN_CLOSED",failClosed:true,productionActivationAllowed:false,checksPassed:r.checksPassed,checksTotal:r.checksTotal};}
