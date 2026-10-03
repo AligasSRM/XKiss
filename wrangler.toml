@@ -6,3 +6,9 @@ compatibility_date = "2026-09-25"
 XKISS_B2_ENDPOINT = "https://s3.eu-central-003.backblazeb2.com"
 XKISS_B2_REGION = "eu-central-003"
 XKISS_B2_BUCKET = "xkiss-videos"
+
+
+[[d1_databases]]
+binding = "XKISS_AUTH_DB"
+database_name = "xkiss-production"
+database_id = "c45d63ea-7c54-4364-a119-199c69147457"
