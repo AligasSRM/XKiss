@@ -12,3 +12,7 @@ XKISS_B2_BUCKET = "xkiss-videos"
 binding = "XKISS_AUTH_DB"
 database_name = "xkiss-production"
 database_id = "c45d63ea-7c54-4364-a119-199c69147457"
+
+[[kv_namespaces]]
+binding = "XKISS_AUTH_SESSIONS"
+id = "447b28e53e4e48a0b9d3d974f829e1f6"
