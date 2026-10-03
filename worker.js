@@ -41,6 +41,7 @@ import {
 } from "./views-revenue/views-revenue-rules.js";
 import { runSafetySelfTest, getSafetyVerificationOverview } from "./safety/safety-integration.js";
 import { getSafetyBackendStatus, runSafetyBackendSelfTest, recordSafetyBackendEvent } from "./safety/safety-backend.js";
+import { verifyDiditWebhook, mapDiditVerificationState } from "./safety/didit-kyc-provider.js";
 import { registerMember, loginMember, authenticateSession, logoutMember, AUTH_SECURITY_INVARIANTS } from "./security/xkiss-auth-backend.js";
 import { adminBackendStatus, authorizeAdminAction, ADMIN_BACKEND_SECURITY } from "./admin/xkiss-admin-backend.js";
 import { settingsBackendStatus, validateSettingsBackendAction, SETTINGS_BACKEND_SECURITY } from "./settings/xkiss-settings-backend.js";
@@ -148,6 +149,48 @@ export default {
 
     if (url.pathname === "/api/safety/self-test" && request.method === "GET") {
       return json(runSafetySelfTest());
+    }
+
+    if (url.pathname === "/api/verification/didit/webhook" && request.method === "POST") {
+      const result = await verifyDiditWebhook(request, env);
+      if (!result.ok) {
+        return json({
+          ok: false,
+          service: "XKiss Didit KYC Webhook",
+          status: result.status,
+          reason: result.reason
+        }, result.status === "provider_not_configured" ? 503 : 401);
+      }
+
+      const verificationState = mapDiditVerificationState(result.verificationStatus);
+      const audit = await recordSafetyBackendEvent(env, {
+        eventType: "didit_verification_status",
+        provider: "didit",
+        sessionId: result.sessionId,
+        vendorData: result.vendorData,
+        providerStatus: result.verificationStatus,
+        verificationState
+      });
+
+      if (!audit.ok) {
+        return json({
+          ok: false,
+          service: "XKiss Didit KYC Webhook",
+          status: "storage-not-ready",
+          reason: "Verified Didit event could not be durably recorded."
+        }, 503);
+      }
+
+      return json({
+        ok: true,
+        service: "XKiss Didit KYC Webhook",
+        provider: "didit",
+        sessionId: result.sessionId,
+        vendorData: result.vendorData,
+        providerStatus: result.verificationStatus,
+        verificationState,
+        recorded: audit.recorded
+      });
     }
 
     if (url.pathname === "/api/safety/backend/status" && request.method === "GET") {
