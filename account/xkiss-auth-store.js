@@ -69,7 +69,7 @@ export async function registerAccount(env, input = {}) {
     ).run();
   } catch (error) {
     const message = String(error?.message || error || "").toLowerCase();
-    if (message.includes("unique") || message.includes("constraint") || message.includes("email")) {
+    if (message.includes("unique constraint") || message.includes("users.email")) {
       return { ok:false, status:"email_exists" };
     }
     return { ok:false, status:"storage_error" };
