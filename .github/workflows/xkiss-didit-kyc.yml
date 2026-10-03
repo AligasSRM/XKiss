@@ -1,0 +1,22 @@
+name: XKiss Didit KYC Provider Self-Test
+
+on:
+  push:
+    branches:
+      - "production/didit-kyc-webhook"
+    paths:
+      - "safety/didit-kyc-provider.js"
+      - "safety/tests/didit-kyc-provider-self-test.mjs"
+      - ".github/workflows/xkiss-didit-kyc.yml"
+  workflow_dispatch:
+
+jobs:
+  didit-kyc-provider:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Didit webhook signature self-test
+        run: node safety/tests/didit-kyc-provider-self-test.mjs
