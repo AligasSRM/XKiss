@@ -56,6 +56,21 @@ function readXKissSessionToken(request) {
   return authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
 }
 
+function requireAccountCsrf(request) {
+  if (request.headers.get("X-XKiss-CSRF") !== "1") {
+    return json({ ok: false, status: "csrf_required" }, 403);
+  }
+  const origin = request.headers.get("Origin");
+  if (origin && origin !== CORS_HEADERS["Access-Control-Allow-Origin"]) {
+    return json({ ok: false, status: "origin_rejected" }, 403);
+  }
+  const contentType = request.headers.get("Content-Type") || "";
+  if (!contentType.toLowerCase().startsWith("application/json")) {
+    return json({ ok: false, status: "content_type_required" }, 415);
+  }
+  return null;
+}
+
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -83,6 +98,8 @@ export default {
     }
 
     if (url.pathname === "/api/account/register" && request.method === "POST") {
+      const csrf = requireAccountCsrf(request);
+      if (csrf) return csrf;
       let body;
       try { body = await request.json(); } catch { body = {}; }
       const result = await registerUser(env, body);
@@ -95,6 +112,8 @@ export default {
     }
 
     if (url.pathname === "/api/account/login" && request.method === "POST") {
+      const csrf = requireAccountCsrf(request);
+      if (csrf) return csrf;
       let body;
       try { body = await request.json(); } catch { body = {}; }
       const result = await loginUser(env, body);
@@ -124,9 +143,8 @@ export default {
     }
 
     if (url.pathname === "/api/account/logout" && request.method === "POST") {
-      if (request.headers.get("X-XKiss-CSRF") !== "1") {
-        return json({ ok: false, status: "csrf_required" }, 403);
-      }
+      const csrf = requireAccountCsrf(request);
+      if (csrf) return csrf;
       const token = readXKissSessionToken(request);
       await logoutUser(env, token);
       const response = json({ ok: true, status: "logged_out" });
