@@ -1,5 +1,5 @@
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 30;
-const PBKDF2_ITERATIONS = 210000;
+const PBKDF2_ITERATIONS = 50000;
 
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
