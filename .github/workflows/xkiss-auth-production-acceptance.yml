@@ -1,0 +1,92 @@
+name: XKiss Auth Production Acceptance
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/xkiss-auth-production-acceptance.yml"
+      - "worker.js"
+      - "security/xkiss-auth-backend.js"
+      - "wrangler.toml"
+
+jobs:
+  auth-acceptance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run production auth acceptance
+        env:
+          BASE_URL: https://xkiss.srourr-ali73.workers.dev
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          node <<'NODE'
+          const base = process.env.BASE_URL;
+          const email = `xkiss-acceptance-${process.env.RUN_ID}@example.com`;
+          const password = "XKiss-Acceptance-2026-Long-Test!";
+          
+          async function call(path, options = {}) {
+            const res = await fetch(base + path, {
+              ...options,
+              headers: { "content-type": "application/json", ...(options.headers || {}) }
+            });
+            let body = null;
+            try { body = await res.json(); } catch {}
+            return { status: res.status, body };
+          }
+          
+          function assert(ok, message, details) {
+            if (!ok) {
+              console.error("FAIL:", message, details ?? "");
+              process.exit(1);
+            }
+            console.log("PASS:", message);
+          }
+          
+          const security = await call("/api/auth/security");
+          assert(security.status === 200 && security.body?.ok === true, "security endpoint");
+          assert(security.body?.invariants?.plaintextPasswordsStored === false, "passwords are not stored plaintext");
+          assert(security.body?.invariants?.sessionTokensStoredAsHashes === true, "session tokens are stored as hashes");
+          
+          const register = await call("/api/auth/register", {
+            method: "POST",
+            body: JSON.stringify({ email, password })
+          });
+          assert(register.status === 201 && register.body?.ok === true && register.body?.status === "created", "register");
+          
+          const duplicate = await call("/api/auth/register", {
+            method: "POST",
+            body: JSON.stringify({ email, password })
+          });
+          assert(duplicate.status === 201 && duplicate.body?.ok === false && duplicate.body?.status === "already_exists", "duplicate registration rejected");
+          
+          const badLogin = await call("/api/auth/login", {
+            method: "POST",
+            body: JSON.stringify({ email, password: password + "-wrong" })
+          });
+          assert(badLogin.status === 401 && badLogin.body?.ok === false && badLogin.body?.status === "invalid_credentials", "wrong password rejected");
+          
+          const login = await call("/api/auth/login", {
+            method: "POST",
+            body: JSON.stringify({ email, password })
+          });
+          assert(login.status === 200 && login.body?.ok === true && login.body?.status === "authenticated" && typeof login.body?.token === "string", "login");
+          
+          const token = login.body.token;
+          const me = await call("/api/auth/me", {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          assert(me.status === 200 && me.body?.ok === true && me.body?.status === "authenticated" && me.body?.user?.email === email, "authenticated session /me");
+          
+          const logout = await call("/api/auth/logout", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}` },
+            body: "{}"
+          });
+          assert(logout.status === 200 && logout.body?.ok === true && logout.body?.status === "logged_out", "logout");
+          
+          const meAfterLogout = await call("/api/auth/me", {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          assert(meAfterLogout.status === 401 && meAfterLogout.body?.ok === false && meAfterLogout.body?.status === "unauthenticated", "revoked session rejected");
+          
+          console.log("XKISS_AUTH_ACCEPTANCE=GREEN");
+          NODE
