@@ -79,14 +79,14 @@ export default {
     }
 
     if (url.pathname === "/api/auth/register" && request.method === "POST") {
-      if (!env.XKISS_DB) return json({ ok: false, status: "backend_not_configured" }, 503);
+      if (!env.XKISS_AUTH_DB) return json({ ok: false, status: "backend_not_configured" }, 503);
       let body;
       try { body = await request.json(); } catch { return json({ ok: false, status: "invalid_input" }, 400); }
       return json(await registerMember(env, body), 201);
     }
 
     if (url.pathname === "/api/auth/login" && request.method === "POST") {
-      if (!env.XKISS_DB) return json({ ok: false, status: "backend_not_configured" }, 503);
+      if (!env.XKISS_AUTH_DB) return json({ ok: false, status: "backend_not_configured" }, 503);
       let body;
       try { body = await request.json(); } catch { return json({ ok: false, status: "invalid_credentials" }, 401); }
       const result = await loginMember(env, body);
@@ -94,7 +94,7 @@ export default {
     }
 
     if (url.pathname === "/api/auth/me" && request.method === "GET") {
-      if (!env.XKISS_DB) return json({ ok: false, status: "backend_not_configured" }, 503);
+      if (!env.XKISS_AUTH_DB) return json({ ok: false, status: "backend_not_configured" }, 503);
       const authorization = request.headers.get("Authorization") || "";
       const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
       const result = await authenticateSession(env, token);
@@ -102,7 +102,7 @@ export default {
     }
 
     if (url.pathname === "/api/auth/logout" && request.method === "POST") {
-      if (!env.XKISS_DB) return json({ ok: false, status: "backend_not_configured" }, 503);
+      if (!env.XKISS_AUTH_DB) return json({ ok: false, status: "backend_not_configured" }, 503);
       const authorization = request.headers.get("Authorization") || "";
       const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
       return json(await logoutMember(env, token));
