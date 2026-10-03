@@ -12,7 +12,13 @@ on:
 jobs:
   auth-acceptance:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
+      - name: Deploy production Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: npx wrangler@latest deploy --config wrangler.toml
       - name: Run production auth acceptance
         env:
           BASE_URL: https://xkiss.srourr-ali73.workers.dev
@@ -20,7 +26,7 @@ jobs:
         run: |
           node <<'NODE'
           const base = process.env.BASE_URL;
-          const email = `xkiss-acceptance-${process.env.RUN_ID}@example.com`;
+          const email = `xk1-${process.env.RUN_ID}@example.com`;
           const password = "XKiss-Acceptance-2026-Long-Test!";
           
           async function call(path, options = {}) {
