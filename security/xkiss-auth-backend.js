@@ -73,7 +73,7 @@ export async function registerMember(env, { email, password }) {
     return { ok: false, status: "invalid_input", message: "Valid email and password are required." };
   }
 
-  const existing = await env.XKISS_DB.prepare(
+  const existing = await env.XKISS_AUTH_DB.prepare(
     "SELECT id FROM users WHERE email = ?1 LIMIT 1"
   ).bind(normalized).first();
 
@@ -86,7 +86,7 @@ export async function registerMember(env, { email, password }) {
   const passwordHash = await hashPassword(password, salt);
   const now = new Date().toISOString();
 
-  await env.XKISS_DB.prepare(
+  await env.XKISS_AUTH_DB.prepare(
     "INSERT INTO users (id,email,password_hash,password_salt,role,status,created_at,updated_at) VALUES (?1,?2,?3,?4,'member','active',?5,?5)"
   ).bind(id, normalized, passwordHash, salt, now).run();
 
@@ -103,7 +103,7 @@ export async function loginMember(env, { email, password }) {
     return { ok: false, status: "invalid_credentials" };
   }
 
-  const row = await env.XKISS_DB.prepare(
+  const row = await env.XKISS_AUTH_DB.prepare(
     "SELECT id,email,password_hash,password_salt,role,status,created_at FROM users WHERE email = ?1 LIMIT 1"
   ).bind(normalized).first();
 
@@ -122,7 +122,7 @@ export async function loginMember(env, { email, password }) {
   const now = new Date();
   const expires = new Date(now.getTime() + SESSION_TTL_SECONDS * 1000).toISOString();
 
-  await env.XKISS_DB.prepare(
+  await env.XKISS_AUTH_DB.prepare(
     "INSERT INTO sessions (id,user_id,token_hash,expires_at,created_at) VALUES (?1,?2,?3,?4,?5)"
   ).bind(sessionId, row.id, tokenHash, expires, now.toISOString()).run();
 
@@ -139,7 +139,7 @@ export async function authenticateSession(env, token) {
   if (!token || typeof token !== "string") return { ok: false, status: "unauthenticated" };
 
   const tokenHash = await hashToken(token);
-  const row = await env.XKISS_DB.prepare(
+  const row = await env.XKISS_AUTH_DB.prepare(
     "SELECT s.id AS session_id,s.expires_at,u.id,u.email,u.role,u.status,u.created_at FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=?1 AND s.revoked_at IS NULL LIMIT 1"
   ).bind(tokenHash).first();
 
@@ -164,7 +164,7 @@ export async function authenticateSession(env, token) {
 export async function logoutMember(env, token) {
   if (!token) return { ok: true, status: "logged_out" };
   const tokenHash = await hashToken(token);
-  await env.XKISS_DB.prepare(
+  await env.XKISS_AUTH_DB.prepare(
     "UPDATE sessions SET revoked_at=?1 WHERE token_hash=?2 AND revoked_at IS NULL"
   ).bind(new Date().toISOString(), tokenHash).run();
   return { ok: true, status: "logged_out" };
