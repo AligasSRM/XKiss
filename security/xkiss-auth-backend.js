@@ -54,7 +54,7 @@ function validPassword(password) {
 }
 
 function validEmail(email) {
-  return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email);
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 function userPublic(row) {
