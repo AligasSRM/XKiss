@@ -231,7 +231,7 @@ export async function listVideos(env) {
   await throwStorageError("list", response);
 
   const xml = await response.text();
-  const blocks = xml.match(/<Contents>[\\s\\S]*?<\\/Contents>/g) || [];
+  const blocks = xml.match(/<Contents>[\s\S]*?<\/Contents>/g) || [];
 
   const videos = blocks
     .map((block) => {
