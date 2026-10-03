@@ -52,7 +52,7 @@ jobs:
             method: "POST",
             body: JSON.stringify({ email, password })
           });
-          assert(register.status === 201 && register.body?.ok === true && register.body?.status === "created", "register");
+          assert(register.status === 201 && register.body?.ok === true && register.body?.status === "created", "register", JSON.stringify(register));
           
           const duplicate = await call("/api/auth/register", {
             method: "POST",
