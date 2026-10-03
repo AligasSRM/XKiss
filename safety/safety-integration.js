@@ -55,19 +55,11 @@ export function runSafetySelfTest() {
     creatorVerified: false,
     accountState: "active"
   });
-  checks.push({
-    name: "unverified_access_blocked",
-    ok: blocked.allowed === false && blocked.status === "age_verification_required"
-  });
 
   const restricted = evaluateSafetyAccess({
     ageVerified: true,
     creatorVerified: false,
     accountState: "suspended"
-  });
-  checks.push({
-    name: "restricted_account_blocked",
-    ok: restricted.allowed === false && restricted.status === "account_restricted"
   });
 
   const verified = evaluateSafetyAccess({
@@ -75,15 +67,38 @@ export function runSafetySelfTest() {
     creatorVerified: true,
     accountState: "active"
   });
+
+  if (SAFETY_INTEGRATION.enabled) {
+    checks.push({
+      name: "unverified_access_blocked",
+      ok: blocked.allowed === false && blocked.status === "age_verification_required"
+    });
+    checks.push({
+      name: "restricted_account_blocked",
+      ok: restricted.allowed === false && restricted.status === "account_restricted"
+    });
+  } else {
+    checks.push({
+      name: "unverified_access_fail_closed",
+      ok: blocked.allowed === false && blocked.status === "not_enabled"
+    });
+    checks.push({
+      name: "restricted_access_fail_closed",
+      ok: restricted.allowed === false && restricted.status === "not_enabled"
+    });
+  }
+
   checks.push({
     name: "backend_enforcement_gate",
-    ok: verified.allowed === false && verified.status === "not_enabled"
+    ok: SAFETY_INTEGRATION.enabled
+      ? verified.allowed === true
+      : verified.allowed === false && verified.status === "not_enabled"
   });
 
   return {
     ok: checks.every(check => check.ok),
     service: "XKiss Safety & Verification",
-    version: "1.0",
+    version: "1.1",
     status: "tested",
     enforcementEnabled: SAFETY_INTEGRATION.enabled,
     checks
