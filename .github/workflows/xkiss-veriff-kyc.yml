@@ -1,0 +1,22 @@
+name: XKiss Veriff KYC Provider Self-Test
+
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "safety/veriff-kyc-provider.js"
+      - "safety/tests/veriff-kyc-provider-self-test.mjs"
+      - ".github/workflows/xkiss-veriff-kyc.yml"
+  workflow_dispatch:
+
+jobs:
+  veriff-kyc-provider:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Veriff webhook signature self-test
+        run: node safety/tests/veriff-kyc-provider-self-test.mjs
