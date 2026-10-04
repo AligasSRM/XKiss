@@ -1,0 +1,22 @@
+name: XKiss Veriff Session Provider Self-Test
+
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "safety/veriff-session-provider.js"
+      - "safety/tests/veriff-session-provider-self-test.mjs"
+      - ".github/workflows/xkiss-veriff-session.yml"
+  workflow_dispatch:
+
+jobs:
+  veriff-session-provider:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Veriff session creation self-test
+        run: node safety/tests/veriff-session-provider-self-test.mjs
