@@ -42,6 +42,7 @@ import {
 import { runSafetySelfTest, getSafetyVerificationOverview } from "./safety/safety-integration.js";
 import { getSafetyBackendStatus, runSafetyBackendSelfTest, recordSafetyBackendEvent } from "./safety/safety-backend.js";
 import { verifyDiditWebhook, mapDiditVerificationState } from "./safety/didit-kyc-provider.js";
+import { verifyVeriffWebhook, mapVeriffVerificationState } from "./safety/veriff-kyc-provider.js";
 import { registerMember, loginMember, authenticateSession, logoutMember, AUTH_SECURITY_INVARIANTS } from "./security/xkiss-auth-backend.js";
 import { adminBackendStatus, authorizeAdminAction, ADMIN_BACKEND_SECURITY } from "./admin/xkiss-admin-backend.js";
 import { settingsBackendStatus, validateSettingsBackendAction, SETTINGS_BACKEND_SECURITY } from "./settings/xkiss-settings-backend.js";
@@ -112,20 +113,25 @@ export default {
     if (url.pathname === "/api/admin/backend/status" && request.method === "GET") {
       return json(adminBackendStatus(env));
     }
+
     if (url.pathname === "/api/admin/authorize" && request.method === "POST") {
       let body; try { body = await request.json(); } catch { return json({ok:false,status:"invalid_input"},400); }
       return json(authorizeAdminAction(body.user, body.permission));
     }
+
     if (url.pathname === "/api/admin/security" && request.method === "GET") {
       return json({ok:true,service:"XKiss Admin Security",security:ADMIN_BACKEND_SECURITY});
     }
+
     if (url.pathname === "/api/settings/backend/status" && request.method === "GET") {
       return json(settingsBackendStatus(env));
     }
+
     if (url.pathname === "/api/settings/backend/action" && request.method === "POST") {
       let body; try { body = await request.json(); } catch { return json({ok:false,status:"invalid_input"},400); }
       return json(validateSettingsBackendAction(body));
     }
+
     if (url.pathname === "/api/settings/backend/security" && request.method === "GET") {
       return json({ok:true,service:"XKiss Settings Backend Security",security:SETTINGS_BACKEND_SECURITY});
     }
@@ -153,6 +159,7 @@ export default {
 
     if (url.pathname === "/api/verification/didit/webhook" && request.method === "POST") {
       const result = await verifyDiditWebhook(request, env);
+
       if (!result.ok) {
         return json({
           ok: false,
@@ -163,6 +170,7 @@ export default {
       }
 
       const verificationState = mapDiditVerificationState(result.verificationStatus);
+
       const audit = await recordSafetyBackendEvent(env, {
         eventType: "didit_verification_status",
         provider: "didit",
@@ -188,6 +196,64 @@ export default {
         sessionId: result.sessionId,
         vendorData: result.vendorData,
         providerStatus: result.verificationStatus,
+        verificationState,
+        recorded: audit.recorded
+      });
+    }
+
+    if (url.pathname === "/api/verification/veriff/webhook" && request.method === "POST") {
+      let result;
+
+      try {
+        result = await verifyVeriffWebhook(request, env);
+      } catch (error) {
+        return json({
+          ok: false,
+          service: "XKiss Veriff KYC Webhook",
+          status: "provider_not_configured",
+          reason: String(
+            error?.message ||
+            error ||
+            "Veriff webhook verification failed."
+          )
+        }, 503);
+      }
+
+      if (!result.ok) {
+        return json({
+          ok: false,
+          service: "XKiss Veriff KYC Webhook",
+          status: result.error || "verification_failed"
+        }, 401);
+      }
+
+      const verificationState = mapVeriffVerificationState(result.status);
+
+      const audit = await recordSafetyBackendEvent(env, {
+        eventType: "veriff_verification_status",
+        provider: "veriff",
+        sessionId: result.verificationId,
+        vendorData: result.vendorData,
+        providerStatus: result.status,
+        verificationState
+      });
+
+      if (!audit.ok) {
+        return json({
+          ok: false,
+          service: "XKiss Veriff KYC Webhook",
+          status: "storage-not-ready",
+          reason: "Verified Veriff event could not be durably recorded."
+        }, 503);
+      }
+
+      return json({
+        ok: true,
+        service: "XKiss Veriff KYC Webhook",
+        provider: "veriff",
+        verificationId: result.verificationId,
+        vendorData: result.vendorData,
+        providerStatus: result.status,
         verificationState,
         recorded: audit.recorded
       });
@@ -289,10 +355,12 @@ export default {
         availableBalance: 25,
         currency: "USD"
       });
+
       const transition = transitionPayoutStatus({
         currentStatus: "requested",
         nextStatus: "under_review"
       });
+
       const authorization = evaluatePayoutAuthorization({
         authenticated: true,
         creatorId: "production-payout-self-test-creator",
@@ -302,6 +370,7 @@ export default {
         sensitiveAction: true,
         reauthenticated: true
       });
+
       const audit = createPayoutAuditEvent({
         payoutRequestId: "production-payout-self-test-request",
         creatorId: "production-payout-self-test-creator",
@@ -573,6 +642,7 @@ export default {
       try {
         const write = await storeWalletEntry(env, entry);
         const read = await getWalletEntry(env, entry);
+
         return json({
           ok: true,
           service: "XKiss Wallet Ledger",
@@ -683,6 +753,7 @@ export default {
         const read = await getViewEvent(env, event);
         const verified = write.ok === true && read.status === "found" && Boolean(read.event);
         const cleanup = await deleteViewEvent(env, event);
+
         return json({
           ok: true,
           service: "XKiss Durable View Event Store",
