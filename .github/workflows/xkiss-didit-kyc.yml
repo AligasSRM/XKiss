@@ -3,7 +3,7 @@ name: XKiss Didit KYC Provider Self-Test
 on:
   push:
     branches:
-      - "production/didit-kyc-webhook"
+      - "main"
     paths:
       - "safety/didit-kyc-provider.js"
       - "safety/tests/didit-kyc-provider-self-test.mjs"
