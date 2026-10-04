@@ -7,19 +7,19 @@ const DIDIT_STATUS = new Set([
   "Resubmitted"
 ]);
 
-function normalize(value) {
-  if (typeof value === "number") {
-    if (!Number.isFinite(value)) return value;
-    return Number(value.toString());
+function canonical(value) {
+  if (Array.isArray(value)) {
+    return "[" + value.map(canonical).join(",") + "]";
   }
-  if (Array.isArray(value)) return value.map(normalize);
   if (value && typeof value === "object") {
-    return Object.keys(value).sort().reduce((out, key) => {
-      out[key] = normalize(value[key]);
-      return out;
-    }, {});
+    return "{" + Object.keys(value).sort()
+      .map((key) => JSON.stringify(key) + ":" + canonical(value[key]))
+      .join(",") + "}";
   }
-  return value;
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return JSON.stringify(Number(value.toString()));
+  }
+  return JSON.stringify(value);
 }
 
 function timingSafeEqual(a, b) {
@@ -40,7 +40,7 @@ async function hmacHex(secret, payload) {
   const signature = await crypto.subtle.sign(
     "HMAC",
     key,
-    new TextEncoder().encode(JSON.stringify(normalize(payload)))
+    new TextEncoder().encode(canonical(payload))
   );
   return [...new Uint8Array(signature)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
@@ -72,6 +72,17 @@ function getVendorData(payload) {
   ).trim();
 }
 
+function verifyFreshness(request, payload) {
+  const timestamp = Number(payload?.timestamp);
+  const headerTimestamp = String(request.headers.get("X-Timestamp") || "").trim();
+
+  if (!Number.isFinite(timestamp) || !headerTimestamp || String(timestamp) !== headerTimestamp) {
+    return false;
+  }
+
+  return Math.abs(Date.now() / 1000 - timestamp) <= 300;
+}
+
 export async function verifyDiditWebhook(request, env) {
   const secret = String(env?.DIDIT_WEBHOOK_SECRET || "").trim();
   if (!secret) {
@@ -88,6 +99,10 @@ export async function verifyDiditWebhook(request, env) {
     payload = await request.json();
   } catch {
     return { ok: false, status: "invalid_payload", reason: "Invalid JSON payload." };
+  }
+
+  if (!verifyFreshness(request, payload)) {
+    return { ok: false, status: "stale_webhook", reason: "Didit webhook timestamp is missing, mismatched, or expired." };
   }
 
   const expected = await hmacHex(secret, payload);
