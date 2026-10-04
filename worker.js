@@ -43,6 +43,7 @@ import { runSafetySelfTest, getSafetyVerificationOverview } from "./safety/safet
 import { getSafetyBackendStatus, runSafetyBackendSelfTest, recordSafetyBackendEvent } from "./safety/safety-backend.js";
 import { verifyDiditWebhook, mapDiditVerificationState } from "./safety/didit-kyc-provider.js";
 import { verifyVeriffWebhook, mapVeriffVerificationState } from "./safety/veriff-kyc-provider.js";
+import { createVeriffSession } from "./safety/veriff-session-provider.js";
 import { registerMember, loginMember, authenticateSession, logoutMember, AUTH_SECURITY_INVARIANTS } from "./security/xkiss-auth-backend.js";
 import { adminBackendStatus, authorizeAdminAction, ADMIN_BACKEND_SECURITY } from "./admin/xkiss-admin-backend.js";
 import { settingsBackendStatus, validateSettingsBackendAction, SETTINGS_BACKEND_SECURITY } from "./settings/xkiss-settings-backend.js";
@@ -198,6 +199,58 @@ export default {
         providerStatus: result.verificationStatus,
         verificationState,
         recorded: audit.recorded
+      });
+    }
+
+    if (url.pathname === "/api/verification/veriff/session" && request.method === "POST") {
+      let body = {};
+
+      try {
+        body = await request.json();
+      } catch {
+        return json({
+          ok: false,
+          service: "XKiss Veriff KYC Session",
+          status: "invalid_input"
+        }, 400);
+      }
+
+      let result;
+
+      try {
+        result = await createVeriffSession(env, {
+          vendorData: body.vendorData,
+          endUserId: body.endUserId,
+          callback: body.callback
+        });
+      } catch (error) {
+        return json({
+          ok: false,
+          service: "XKiss Veriff KYC Session",
+          status: "provider_not_configured",
+          reason: String(error?.message || error || "Veriff session creation failed.")
+        }, 503);
+      }
+
+      if (!result.ok) {
+        return json({
+          ok: false,
+          service: "XKiss Veriff KYC Session",
+          status: result.status,
+          providerHttpStatus: result.providerHttpStatus || null,
+          providerStatus: result.providerStatus || null
+        }, result.status === "invalid_vendor_data" || result.status === "invalid_end_user_id" ? 400 : 502);
+      }
+
+      return json({
+        ok: true,
+        service: "XKiss Veriff KYC Session",
+        provider: "veriff",
+        verificationId: result.verificationId,
+        verificationUrl: result.verificationUrl,
+        vendorData: result.vendorData,
+        endUserId: result.endUserId,
+        status: result.status
       });
     }
 
