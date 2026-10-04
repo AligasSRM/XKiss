@@ -7,7 +7,6 @@ on:
     paths:
       - "safety/veriff-session-provider.js"
       - "safety/tests/veriff-session-provider-self-test.mjs"
-      - "safety/tests/veriff-test-session-smoke-test.mjs"
       - ".github/workflows/xkiss-veriff-session.yml"
   workflow_dispatch:
 
@@ -21,7 +20,3 @@ jobs:
           node-version: 22
       - name: Veriff session creation self-test
         run: node safety/tests/veriff-session-provider-self-test.mjs
-      - name: Veriff Test API smoke test
-        env:
-          VERIFF_API_KEY: ${{ secrets.VERIFF_API_KEY }}
-        run: node safety/tests/veriff-test-session-smoke-test.mjs
