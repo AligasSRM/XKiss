@@ -35,7 +35,7 @@ jobs:
       - name: Build synthetic adaptive HLS fixture
         run: |
           mkdir -p fixtures/v0 fixtures/v1
-          ffmpeg -hide_banner -loglevel error -f lavfi -i "testsrc=size=1280x720:rate=30" -f lavfi -i "sine=frequency=1000:sample_rate=48000" -t 4             -filter_complex "[0:v]split=2[v0][v1];[v1]scale=640:360[v1out]"             -map "[v0]" -map 1:a -map "[v1out]" -map 1:a             -c:v libx264 -preset veryfast -pix_fmt yuv420p -g 60 -sc_threshold 0             -c:a aac -b:a 96k             -b:v:0 1800k -maxrate:v:0 2000k -bufsize:v:0 3600k             -b:v:1 700k -maxrate:v:1 850k -bufsize:v:1 1400k             -f hls -hls_time 1 -hls_list_size 0             -hls_segment_filename "fixtures/v%v/seg%d.ts"             -master_pl_name fixtures/master.m3u8             -var_stream_map "v:0,a:0 v:1,a:1" /tmp/xkiss-v%v.m3u8
+          ffmpeg -hide_banner -loglevel error -f lavfi -i "testsrc=size=1280x720:rate=30" -f lavfi -i "sine=frequency=1000:sample_rate=48000" -t 4             -filter_complex "[0:v]split=2[v0][v1];[v1]scale=640:360[v1out]"             -map "[v0]" -map 1:a -map "[v1out]" -map 1:a             -c:v libx264 -preset veryfast -pix_fmt yuv420p -g 60 -sc_threshold 0             -c:a aac -b:a 96k             -b:v:0 1800k -maxrate:v:0 2000k -bufsize:v:0 3600k             -b:v:1 700k -maxrate:v:1 850k -bufsize:v:1 1400k             -f hls -hls_time 1 -hls_list_size 0             -hls_segment_filename "fixtures/v%v/seg%d.ts"             -master_pl_name master.m3u8             -var_stream_map "v:0,a:0 v:1,a:1" fixtures/v%v/index.m3u8
 
           cp node_modules/hls.js/dist/hls.min.js fixtures/hls.min.js
 
