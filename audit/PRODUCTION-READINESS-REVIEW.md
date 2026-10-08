@@ -2,7 +2,7 @@
 
 Tracked review gates for the final production target.
 
-- Storage integrity
+- Storage integrity — GREEN
 - Adaptive video delivery
 - Protected playback
 - Future content protection integration boundary
@@ -11,4 +11,21 @@ Tracked review gates for the final production target.
 - Full production regression
 - Product exit / sale-ready gate
 
-Status: TRACKED. Nothing here is marked GREEN until real evidence is collected.
+Status: TRACKED. Storage integrity is GREEN based on live production evidence from the XKiss Worker: Backblaze B2 write → read → delete completed successfully with `storageReady=true` and `verified=true` on 2026-10-08. The overall production-readiness review remains open until the remaining gates are independently verified.
+
+## Storage evidence
+
+Live endpoint:
+`/api/views/storage/self-test`
+
+Observed result:
+- HTTP 200
+- Provider: Backblaze B2
+- Test: write-read-delete
+- Write: stored
+- Read: found
+- Read data matched the written event record
+- Cleanup: deleted
+- Verified: true
+
+No existing 15.23–15.31 GREEN / LOCKED runtime work was reopened or changed.
