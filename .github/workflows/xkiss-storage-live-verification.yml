@@ -1,0 +1,29 @@
+name: XKiss Live Storage Verification
+
+on:
+  push:
+    paths:
+      - ".github/workflows/xkiss-storage-live-verification.yml"
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run live B2 write-read-delete verification
+        run: |
+          set -e
+          response="$(curl -fsS --max-time 60 https://xkiss.srourr-ali73.workers.dev/api/views/storage/self-test)"
+          echo "$response"
+          echo "$response" | node -e '
+            let data="";
+            process.stdin.on("data", c => data += c);
+            process.stdin.on("end", () => {
+              const r = JSON.parse(data);
+              if (r.ok !== true || r.storage !== "Backblaze B2" || r.test !== "write-read-delete" || r.verified !== true || r.cleanup?.ok !== true) {
+                console.error("LIVE STORAGE VERIFICATION FAILED");
+                process.exit(1);
+              }
+              console.log("LIVE STORAGE VERIFICATION GREEN");
+            });
+          '
