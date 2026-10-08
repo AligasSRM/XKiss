@@ -64,7 +64,16 @@ jobs:
           page.on("console", msg => { if (msg.type() === "error") consoleErrors.push(msg.text()); });
           await page.goto("http://127.0.0.1:4173/player.html?id=video-001", {waitUntil:"domcontentloaded"});
           await page.waitForFunction(() => window.XKissPlayerCore?.platformCore?.connected === true);
-          await page.waitForFunction(() => document.querySelectorAll("#qualityMenu [data-hls-level]").length >= 2, null, {timeout:15000});
+          await page.waitForFunction(() => window.XKissPlayerQualityRuntime?.adaptiveStarted === true, null, {timeout:10000});
+          await page.waitForTimeout(3000);
+          const diagnostics = await page.evaluate(() => ({
+            runtime: window.XKissPlayerQualityRuntime || null,
+            hlsSupported: Boolean(window.Hls && window.Hls.isSupported()),
+            qualityLevels: document.querySelectorAll("#qualityMenu [data-hls-level]").length
+          }));
+          if (!diagnostics.runtime?.manifestParsed || diagnostics.qualityLevels < 2) {
+            throw new Error("Adaptive manifest did not fully initialize: " + JSON.stringify(diagnostics));
+          }
           const result = await page.evaluate(async () => {
             const v=document.getElementById("video");
             const before=v.currentSrc;
