@@ -18,17 +18,24 @@ const XKISS_VIDEOS = {
       "Test"
     ],
 
+    delivery: {
+      mode: "adaptive",
+      provider: "cloudflare-stream",
+      hlsManifest: "",
+      dashManifest: "",
+      liveInputId: "",
+      liveTestReady: false
+    },
+
     sources: {
-
       "340p": "",
-
       "460p": "",
-
-      "720p":
-        "20260923_234200-3.mp4",
-
+      "720p": "20260923_234200-3.mp4",
       "1080p": ""
+    },
 
+    quality: {
+      default: "auto"
     },
 
     views: 0
