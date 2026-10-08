@@ -42,6 +42,18 @@
     let currentQualityValue = videoData.quality?.default === "auto" ? "Auto" : "720p";
     let hls = null;
 
+    const runtime = {
+      adaptiveManifest,
+      hlsPresent: Boolean(window.Hls),
+      hlsSupported: false,
+      adaptiveStarted: false,
+      manifestParsed: false,
+      levels: 0,
+      lastError: null
+    };
+
+    window.XKissPlayerQualityRuntime = runtime;
+
     function updateQualityDisplay(value = currentQualityValue) {
       currentQualityValue = value;
       if (qualityBtn) qualityBtn.textContent = value;
@@ -152,6 +164,7 @@
       const state = preservePlayback();
 
       if (window.Hls && Hls.isSupported()) {
+        runtime.hlsSupported = true;
         hls = new Hls({
           enableWorker: true,
           capLevelToPlayerSize: true,
@@ -165,6 +178,8 @@
         });
 
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          runtime.manifestParsed = true;
+          runtime.levels = Array.isArray(hls.levels) ? hls.levels.length : 0;
           hls.currentLevel = -1;
           populateAdaptiveMenu();
           updateQualityDisplay("Auto");
@@ -187,6 +202,7 @@
         });
 
         hls.on(Hls.Events.ERROR, (_, data) => {
+          runtime.lastError = data || null;
           if (!data || !data.fatal) return;
           console.error("XKiss HLS fatal error:", data);
           if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
@@ -196,6 +212,7 @@
           }
         });
 
+        runtime.adaptiveStarted = true;
         return true;
       }
 
