@@ -68,7 +68,7 @@ check("existing administration integration remains backend-gated", () => {
 });
 check("Settings workspace has seven scoped categories and stays view-only", () => {
   assert.match(html, /id="settings-groups" class="settings-groups"/);
-  for (const label of ["Platform", "Content", "Users & accounts", "Security", "Payments", "Storage", "Notifications"]) assert.match(html, new RegExp("<h3>" + label.replace(/[.*+?^${}()|[\]\\]/g, "\\check("interactive module readiness is explicit and non-privileged", () => {") + "</h3>"));
+  for (const label of ["Platform", "Content", "Users & accounts", "Security", "Payments", "Storage", "Notifications"]) assert.ok(html.includes("<h3>" + label + "</h3>"), "Missing settings category: " + label);
   assert.match(html, /Current mode: view-only planning/);
   assert.match(html, /No infrastructure or credentials accessed/);
   assert.match(js, /settingsGroups\.hidden = key !== "settings"/);
