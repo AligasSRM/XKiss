@@ -1,229 +1,66 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>XKiss — Super Admin</title>
-
-<style>
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background: #09090d;
-  color: #fff;
-  font-family: Arial, sans-serif;
-}
-
-header {
-  height: 70px;
-  background: #14141b;
-  border-bottom: 1px solid #292932;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 25px;
-}
-
-.logo {
-  font-size: 27px;
-  font-weight: bold;
-}
-
-.admin-label {
-  color: #aaa;
-  font-size: 14px;
-}
-
-.container {
-  max-width: 1250px;
-  margin: auto;
-  padding: 30px 20px;
-}
-
-h1 {
-  margin-top: 0;
-}
-
-.warning {
-  background: #17171f;
-  border: 1px solid #363640;
-  border-radius: 12px;
-  padding: 16px;
-  color: #bbb;
-  margin-bottom: 25px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(190px, 1fr)
-  );
-  gap: 15px;
-}
-
-.card {
-  background: #15151c;
-  border: 1px solid #292932;
-  border-radius: 14px;
-  padding: 22px;
-}
-
-.card h3 {
-  margin-top: 0;
-}
-
-.card p {
-  color: #9999a5;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-button {
-  width: 100%;
-  padding: 11px;
-  border-radius: 8px;
-  border: 1px solid #3a3a45;
-  background: #22222b;
-  color: white;
-  cursor: pointer;
-  margin-top: 8px;
-}
-
-button:hover {
-  background: #2b2b35;
-}
-
-.logout {
-  background: #fff;
-  color: #111;
-  font-weight: bold;
-}
-
-.status {
-  display: inline-block;
-  margin-top: 10px;
-  padding: 5px 9px;
-  border-radius: 15px;
-  background: #20202a;
-  color: #bbb;
-  font-size: 12px;
-}
-
-footer {
-  text-align: center;
-  padding: 35px;
-  color: #666;
-}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="XKiss administration overview. Privileged actions remain disabled until secure backend verification.">
+  <title>XKiss — Admin Dashboard</title>
+  <link rel="stylesheet" href="admin/admin-dashboard.css">
+  <script src="admin/admin-dashboard.js" defer></script>
 </head>
-
 <body>
-
-<header>
-
-  <div class="logo">
-    XKiss
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Primary navigation">
+      <a class="brand" href="index.html" aria-label="XKiss home"><span class="brand-mark">X</span><span>XKiss<span class="accent">.</span><small>CONTROL CENTER</small></span></a>
+      <p class="eyebrow nav-caption">WORKSPACE</p>
+      <nav class="nav-list" aria-label="Admin modules">
+        <button class="nav-item is-active" type="button" data-view="overview" aria-current="page"><span>◫</span>Overview</button>
+        <button class="nav-item" type="button" data-view="users"><span>♙</span>Users <small>LOCKED</small></button>
+        <button class="nav-item" type="button" data-view="content"><span>▤</span>Content <small>LOCKED</small></button>
+        <button class="nav-item" type="button" data-view="reports"><span>⚑</span>Reports <small>LOCKED</small></button>
+        <button class="nav-item" type="button" data-view="analytics"><span>▥</span>Analytics <small>LOCKED</small></button>
+        <button class="nav-item" type="button" data-view="storage"><span>▣</span>Storage <small>LOCKED</small></button>
+        <button class="nav-item" type="button" data-view="settings"><span>⚙</span>Settings <small>LOCKED</small></button>
+        <button class="nav-item" type="button" data-view="access"><span>⛨</span>Admin access <small>LOCKED</small></button>
+      </nav>
+      <div class="sidebar-bottom"><div class="secure-mini"><i class="dot amber"></i><span><strong>Secure mode</strong><small>Privileged actions disabled</small></span></div><a class="back-link" href="index.html">← Back to XKiss</a></div>
+    </aside>
+    <div class="main-column">
+      <header class="topbar">
+        <div class="topbar-left"><button class="icon-button menu-toggle" id="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="sidebar">☰</button><div class="breadcrumb">Workspace <span>/</span> <strong id="breadcrumb">Overview</strong></div></div>
+        <div class="topbar-actions"><span class="env-chip"><i class="dot amber"></i>PRODUCTION LOCKED</span><button class="icon-button" id="refresh" type="button" aria-label="Refresh local dashboard status" title="Refresh local status">↻</button><span class="avatar" aria-label="Administrator identity not connected">A</span></div>
+      </header>
+      <main id="main" class="main-content">
+        <section class="page-heading"><div><p class="eyebrow">XKISS / SECTION 13</p><h1 id="page-title">Admin dashboard<span class="accent">.</span></h1><p class="subtitle" id="page-subtitle">A clear operational overview, with sensitive actions locked until server-side identity and permissions are verified.</p></div><div class="status-summary"><i class="dot amber"></i><span><strong>Read-only shell</strong><small id="updated">Local status not yet refreshed</small></span></div></section>
+        <section class="security-banner" aria-labelledby="security-title"><span class="banner-icon" aria-hidden="true">⛨</span><div><strong id="security-title">Production controls are fail-closed</strong><p>This dashboard does not authenticate administrators or grant permissions. User changes, moderation, settings and other sensitive actions stay unavailable until secure backend authentication, authorization, session handling and audit logging are verified.</p></div><span class="banner-label">SAFE MODE</span></section>
+        <section class="metrics" aria-label="System readiness indicators">
+          <article class="metric"><div class="metric-top">Admin authentication <span>⌁</span></div><strong>Not connected</strong><small><i class="dot amber"></i> Backend provider required</small></article>
+          <article class="metric"><div class="metric-top">Role permissions <span>◈</span></div><strong>Fail-closed</strong><small><i class="dot green"></i> No frontend privilege grants</small></article>
+          <article class="metric"><div class="metric-top">Audit trail <span>≋</span></div><strong>Not verified</strong><small><i class="dot amber"></i> Durable backend required</small></article>
+          <article class="metric"><div class="metric-top">Production access <span>⛨</span></div><strong>Disabled</strong><small><i class="dot amber"></i> Activation gate closed</small></article>
+        </section>
+        <section class="section-heading"><div><p class="eyebrow">OPERATIONS</p><h2 id="modules-title">Administration modules</h2></div><label class="search"><span aria-hidden="true">⌕</span><span class="sr-only">Search modules</span><input id="module-search" type="search" placeholder="Find a module…" autocomplete="off" aria-describedby="search-help"></label></section>
+        <p id="search-help" class="sr-only">Filters local module cards only. It does not search live platform data.</p><p id="search-status" class="search-status" aria-live="polite">Showing 7 modules</p>
+        <section class="module-grid" id="module-grid" aria-labelledby="modules-title">
+          <article class="module-card" data-module="users" data-keywords="users accounts profile suspension restriction"><div class="card-top"><span class="module-icon blue">♙</span><span class="pill locked">Backend required</span></div><h3>Users & accounts</h3><p>Account lookup and account-state changes require verified server-side authorization.</p><div class="card-meta">Permission-gated <span>›</span></div><button class="module-action" type="button" data-open-module="users">View readiness <b>→</b></button></article>
+          <article class="module-card" data-module="content" data-keywords="content videos moderation media"><div class="card-top"><span class="module-icon violet">▤</span><span class="pill locked">Backend required</span></div><h3>Content moderation</h3><p>Moderation decisions require an authenticated service and traceable policy enforcement.</p><div class="card-meta">No live actions <span>›</span></div><button class="module-action" type="button" data-open-module="content">View readiness <b>→</b></button></article>
+          <article class="module-card" data-module="reports" data-keywords="reports complaints flags safety"><div class="card-top"><span class="module-icon orange">⚑</span><span class="pill locked">Backend required</span></div><h3>Reports & review</h3><p>Report queues remain unavailable until reviewer permissions and audit logging are verified.</p><div class="card-meta">Safety-sensitive <span>›</span></div><button class="module-action" type="button" data-open-module="reports">View readiness <b>→</b></button></article>
+          <article class="module-card" data-module="analytics" data-keywords="analytics traffic engagement metrics"><div class="card-top"><span class="module-icon green">▥</span><span class="pill locked">No live data</span></div><h3>Platform analytics</h3><p>Live counts are omitted until an authoritative, privacy-reviewed source is available.</p><div class="card-meta">No invented metrics <span>›</span></div><button class="module-action" type="button" data-open-module="analytics">View readiness <b>→</b></button></article>
+          <article class="module-card" data-module="storage" data-keywords="storage media files video infrastructure"><div class="card-top"><span class="module-icon cyan">▣</span><span class="pill locked">View only</span></div><h3>Storage status</h3><p>This screen does not connect to or change Cloudflare, R2, Backblaze B2 or storage APIs.</p><div class="card-meta">Infrastructure isolated <span>›</span></div><button class="module-action" type="button" data-open-module="storage">View readiness <b>→</b></button></article>
+          <article class="module-card" data-module="settings" data-keywords="settings configuration platform feature flags"><div class="card-top"><span class="module-icon pink">⚙</span><span class="pill locked">Backend required</span></div><h3>Platform settings</h3><p>Configuration changes require scoped roles, validation and a durable audit trail.</p><div class="card-meta">Changes disabled <span>›</span></div><button class="module-action" type="button" data-open-module="settings">View readiness <b>→</b></button></article>
+          <article class="module-card" data-module="access" data-keywords="admin access roles permissions sessions mfa"><div class="card-top"><span class="module-icon gold">⛨</span><span class="pill locked">Not authorized</span></div><h3>Admin access & security</h3><p>Sessions, role grants and MFA cannot be managed from this frontend.</p><div class="card-meta">Least privilege <span>›</span></div><button class="module-action" type="button" data-open-module="access">View readiness <b>→</b></button></article>
+        </section>
+        <section class="detail-panel" id="module-detail" aria-labelledby="detail-title" hidden><div class="detail-heading"><div><p class="eyebrow">MODULE READINESS</p><h2 id="detail-title">Module details</h2></div><button class="icon-button" id="close-detail" type="button" aria-label="Close module details">×</button></div><p id="detail-description"></p><ul id="detail-checks" class="check-list"></ul><p class="detail-note"><i class="dot amber"></i>Readiness information only. No platform data was fetched and no sensitive action was executed.</p></section>
+        <section class="bottom-grid" aria-label="Security and release readiness">
+          <article class="panel"><div class="panel-heading"><div><p class="eyebrow">SECURITY BASELINE</p><h2>Non-negotiable controls</h2></div><span class="panel-symbol">⌘</span></div><ul class="security-list"><li><span class="check">✓</span><span><strong>Least privilege</strong><small>Every privileged action must be authorized server-side.</small></span></li><li><span class="check">✓</span><span><strong>Session protection</strong><small>Secure sessions, expiry, re-authentication and MFA for super admins.</small></span></li><li><span class="check">✓</span><span><strong>Auditability</strong><small>Privileged changes need a durable, access-controlled audit trail.</small></span></li><li><span class="check">✓</span><span><strong>Fail-closed behavior</strong><small>Missing identity or authorization means access is denied.</small></span></li></ul></article>
+          <article class="panel readiness"><div class="panel-heading"><div><p class="eyebrow">RELEASE GATE</p><h2>Section 13 readiness</h2></div><span class="pill review">Verification pending</span></div><p class="readiness-copy">The interface can be validated independently. Production administration remains locked until backend identity, permissions, audit storage and integration tests pass.</p><div class="gate-track" role="img" aria-label="Four backend verification gates remain pending"><span></span><span></span><span></span><span></span></div><div class="gate-row"><span>Backend authentication</span><strong>Pending</strong></div><div class="gate-row"><span>Authorization & audit</span><strong>Pending</strong></div><p class="footnote">Explicit status, not a claim that production access is active.</p></article>
+        </section>
+        <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+      </main>
+      <footer class="footer"><span>© XKiss · Admin Dashboard</span><span>Section 13 · Read-only until backend verification</span></footer>
+    </div>
   </div>
-
-  <div class="admin-label">
-    SUPER ADMIN
-  </div>
-
-</header>
-
-<main class="container">
-
-  <h1>Super Admin Dashboard</h1>
-
-  <div class="warning">
-    This is the administration interface.
-    Real authentication and permissions will be
-    connected to the secure backend later.
-  </div>
-
-  <div class="grid">
-
-    <div class="card">
-      <h3>Users</h3>
-      <p>
-        Manage registered users and account status.
-      </p>
-      <span class="status">Backend authorization required</span>
-    </div>
-
-    <div class="card">
-      <h3>Security</h3>
-      <p>
-        Security settings, sessions and access control.
-      </p>
-      <span class="status">Backend authorization required</span>
-    </div>
-
-    <div class="card">
-      <h3>Content</h3>
-      <p>
-        Manage platform content and moderation.
-      </p>
-      <span class="status">Backend authorization required</span>
-    </div>
-
-    <div class="card">
-      <h3>Reports</h3>
-      <p>
-        Review reports and moderation requests.
-      </p>
-      <span class="status">Backend authorization required</span>
-    </div>
-
-    <div class="card">
-      <h3>Storage</h3>
-      <p>
-        Monitor large-scale video storage.
-      </p>
-      <span class="status">
-        Storage system: Planned
-      </span>
-    </div>
-
-    <div class="card">
-      <h3>Analytics</h3>
-      <p>
-        Platform traffic and usage statistics.
-      </p>
-      <span class="status">Backend authorization required</span>
-    </div>
-
-    <div class="card">
-      <h3>Settings</h3>
-      <p>
-        Configure the platform and system options.
-      </p>
-      <span class="status">Backend authorization required</span>
-    </div>
-
-    <div class="card">
-      <h3>Admin Access</h3>
-      <p>
-        Super Admin permissions and administrator accounts.
-      </p>
-      <span class="status">Backend authorization required</span>
-    </div>
-
-  </div>
-
-  <br>
-
-  <span class="status">Admin session control: Backend required</span>
-
-</main>
-
-<footer>
-  XKiss — Super Admin System
-</footer>
-
 </body>
 </html>
