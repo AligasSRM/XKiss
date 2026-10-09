@@ -80,7 +80,8 @@ async function signedRequest(env, method, key = "", body = null, extraHeaders = 
   const client = new AwsClient({
     accessKeyId: c.accessKey,
     secretAccessKey: c.secretKey,
-    service: "s3"
+    service: "s3",
+    region: c.region
   });
 
   const signed = await client.sign(url, {
