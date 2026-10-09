@@ -1,0 +1,37 @@
+name: XKiss B2 Live Storage Verification
+
+on:
+  push:
+    paths:
+      - ".github/workflows/xkiss-b2-live-storage-verification.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: xkiss-b2-live-storage-verification
+  cancel-in-progress: false
+
+jobs:
+  live-b2-write-read-delete:
+    name: Real Backblaze B2 write-read-delete
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Call deployed XKiss storage self-test
+        shell: bash
+        run: |
+          set -euo pipefail
+          response="$(curl --silent --show-error --max-time 30 'https://xkiss.srourr-ali73.workers.dev/api/views/storage/self-test')"
+          printf '%s\n' "$response"
+          printf '%s\n' "$response" | jq -e '
+            .ok == true and
+            .test == "write-read-delete" and
+            .storage == "Backblaze B2" and
+            .write.ok == true and
+            .read.status == "found" and
+            .cleanup.ok == true and
+            .verified == true
+          ' >/dev/null
+          echo "PASS: deployed XKiss successfully wrote, read, and deleted a real B2 test object."
