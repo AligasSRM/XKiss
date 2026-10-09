@@ -1,0 +1,47 @@
+name: XKiss Section 13 Admin Dashboard
+
+on:
+  push:
+    branches:
+      - main
+      - work/section-13-admin-dashboard
+    paths:
+      - 'admin.html'
+      - 'admin/**'
+      - '.github/workflows/xkiss-section-13-admin-dashboard.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'admin.html'
+      - 'admin/**'
+      - '.github/workflows/xkiss-section-13-admin-dashboard.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: xkiss-section-13-admin-dashboard-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  admin-dashboard:
+    name: Section 13 checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate JavaScript syntax
+        run: |
+          node --check admin/admin-dashboard.js
+          node --check admin/admin-rules.js
+          node --check admin/admin-auth.js
+          node --check admin/admin-integration.js
+          node --check admin/admin-dashboard-self-test.js
+      - name: Run Section 13 fail-closed and UI contract tests
+        run: node admin/admin-dashboard-self-test.js
