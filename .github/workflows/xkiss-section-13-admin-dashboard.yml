@@ -43,5 +43,6 @@ jobs:
           node --check admin/admin-auth.js
           node --check admin/admin-integration.js
           node --check admin/admin-dashboard-self-test.js
+          node --check admin/xkiss-section-13-lock.js
       - name: Run Section 13 fail-closed and UI contract tests
         run: node admin/admin-dashboard-self-test.js
