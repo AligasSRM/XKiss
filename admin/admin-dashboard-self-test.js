@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { ADMIN_DASHBOARD_RULES, checkAdminPermission } from "./admin-rules.js";
 import { ADMIN_AUTH_RULES, evaluateAdminSession, validateAdminLoginRequest } from "./admin-auth.js";
 import { getAdminDashboardOverview, getAdminIntegrationSummary } from "./admin-integration.js";
+import { XKISS_SECTION_13_LOCK } from "./xkiss-section-13-lock.js";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (name) => fs.readFileSync(path.join(root, name), "utf8");
@@ -72,4 +73,11 @@ check("interactive module readiness is explicit and non-privileged", () => {
   assert.match(html, /SAFE MODE/);
   assert.match(html, /No invented metrics/);
 });
-console.log(JSON.stringify({stage:"SECTION-13-ADMIN-DASHBOARD",checks:checks.map((name)=>({name,ok:true})),checkCount:checks.length,status:"PASS",productionAccessEnabled:false},null,2));
+console.log(JSON.stringify({stage:"SECTION-13-ADMIN-DASHBOARD",checks:checks.map((name)=>({name,ok:true})),checkCount:checks.length,status:"PASS",sectionState:XKISS_SECTION_13_LOCK.state,productionAccessEnabled:false},null,2));
+check("Section 13 implementation is GREEN and locked without enabling production access", () => {
+  assert.equal(XKISS_SECTION_13_LOCK.status, "GREEN");
+  assert.equal(XKISS_SECTION_13_LOCK.state, "CLOSED");
+  assert.equal(XKISS_SECTION_13_LOCK.locked, true);
+  assert.equal(XKISS_SECTION_13_LOCK.productionAccessEnabled, false);
+  assert.equal(XKISS_SECTION_13_LOCK.productionActivation, "BLOCKED");
+});
