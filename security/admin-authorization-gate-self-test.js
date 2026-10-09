@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { authorizeAdminAction } from "./xkiss-admin-backend.js";
+import { authorizeAdminAction } from "../admin/xkiss-admin-backend.js";
 
 const root = new URL("../", import.meta.url);
 const worker = fs.readFileSync(new URL("worker.js", root), "utf8");
