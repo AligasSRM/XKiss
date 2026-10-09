@@ -42,7 +42,7 @@ async function check(path, method, expectedStatus) {
       if (path === "/api/settings/backend/security") semanticChecks.push({ name: "settings_fail_closed", ok: body.ok === true && body.security?.frontendCannotAuthorize === true && body.security?.frontendCannotChangeProtectedSettings === true && body.security?.failClosed === true });
       if (path === "/api/wallet/payout/status") semanticChecks.push({ name: "real_payouts_disabled", ok: body.ok === true && body.payoutEnabled === false });
       if (path === "/api/wallet/payout/security/status") semanticChecks.push({ name: "payout_security_gate", ok: body.ok === true && body.payoutEnabled === false && body.clientCannotAuthorize === true && body.secretsServerSideOnly === true });
-      if (path === "/api/wallet/payout/self-test") semanticChecks.push({ name: "payout_lifecycle_test", ok: body.ok === true && body.verified === true && body.payoutEnabled === false && body.request?.ok === true && body.transition?.ok === true && body.authorization?.ok === true });
+      if (path === "/api/wallet/payout/self-test") semanticChecks.push({ name: "payout_lifecycle_test", ok: body.ok === true && body.verified === true && body.payoutEnabled === false && body.request?.ok === true && body.transition?.ok === true && body.authorization?.authorized === true && body.audit?.ok === true && body.audit?.status === "ready" });
       if (path === "/api/views/storage/self-test") semanticChecks.push({ name: "storage_write_read_delete", ok: body.ok === true && body.verified === true && body.write?.ok === true && body.read?.status === "found" && body.cleanup?.ok === true });
     }
     const semanticOk = semanticChecks.every((item) => item.ok);
