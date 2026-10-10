@@ -82,7 +82,7 @@ The draft PR branch `audit/production-baseline-2026-10-10` now contains initial 
 - The creator library route no longer returns an unscoped global video list; it remains blocked until ownership filtering exists.
 - Veriff session creation now requires an authenticated session and derives `vendorData` / `endUserId` from the server session; client-supplied callback and identity values are ignored.
 - Super-admin authorization fails closed unless a server-verified `mfaVerified: true` flag exists. Current sessions do not yet provide that flag, so super-admin actions remain blocked until real MFA is integrated.
-- Added route tests and a Node test workflow. CI passed with all tests on intermediate code commits; the latest test commit is running now and must be checked before approval.
+- Added route tests and a Node test workflow. GitHub Actions confirmed **64 tests passed, 0 failed** on code/test commit `375fdc5586edd53f7a4474f14fa5982ffb60d79c`; the latest report-only commit `20696b793b845aaef2fed0c5ba7181aaeb190bfe` also passed the Node test workflow. This verifies the current test suite, not production behavior or completion of remaining P0 integrations.
 
 These changes intentionally block unintegrated features rather than pretending their authorization is complete. They do **not** complete the wallet, payout, creator-library, or age/safety systems. No production deployment or Cloudflare binding changes were made. ElasticLake's adapter, bindings, and locked write/read/delete path remain untouched.
 
