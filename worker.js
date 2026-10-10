@@ -41,6 +41,7 @@ import { verifyVeriffWebhook, mapVeriffVerificationState } from "./safety/veriff
 import { createVeriffSession } from "./safety/veriff-session-provider.js";
 import { registerMember, loginMember, authenticateSession, logoutMember, AUTH_SECURITY_INVARIANTS } from "./security/xkiss-auth-backend.js";
 import { getCreatorProfileByUserId, createCreatorProfile, CREATOR_IDENTITY_SECURITY } from "./creator/creator-identity.js";
+import { listCreatorVideosForCreator, CREATOR_VIDEO_OWNERSHIP_SECURITY } from "./creator/creator-video-store.js";
 import { adminBackendStatus, authorizeAdminAction, ADMIN_BACKEND_SECURITY } from "./admin/xkiss-admin-backend.js";
 import { settingsBackendStatus, validateSettingsBackendAction, SETTINGS_BACKEND_SECURITY } from "./settings/xkiss-settings-backend.js";
 
@@ -1293,14 +1294,43 @@ export default {
         return json({ ok: false, videos: [], status: "unauthorized" }, 401);
       }
 
-      // The current video store does not yet filter by a verified creator/account ownership mapping.
-      // Do not return a global creator library to an authenticated user.
-      return json({
-        ok: false,
-        videos: [],
-        status: "creator_content_ownership_required",
-        message: "Creator library access remains blocked until stored video records are bound to the authenticated creator and filtered by ownership."
-      }, 503);
+      let profile;
+      try {
+        profile = await getCreatorProfileByUserId(env, session.user.id);
+      } catch {
+        return json({ ok: false, videos: [], status: "creator_identity_schema_not_ready" }, 503);
+      }
+      if (!profile.ok) {
+        return json({ ok: false, videos: [], status: profile.status }, 503);
+      }
+      if (!profile.creator) {
+        return json({
+          ok: false,
+          videos: [],
+          status: "creator_profile_required",
+          message: "Create a creator profile before accessing the creator library."
+        }, 404);
+      }
+
+      try {
+        const result = await listCreatorVideosForCreator(env, profile.creator.id);
+        if (!result.ok) {
+          return json({ ok: false, videos: [], status: result.status }, 503);
+        }
+        return json({
+          ok: true,
+          status: result.status,
+          videos: result.videos,
+          ownershipSecurity: CREATOR_VIDEO_OWNERSHIP_SECURITY
+        });
+      } catch {
+        return json({
+          ok: false,
+          videos: [],
+          status: "creator_video_schema_not_ready",
+          message: "Creator library remains unavailable until the owner-bound video metadata migration is applied."
+        }, 503);
+      }
     }
 
     return json({
