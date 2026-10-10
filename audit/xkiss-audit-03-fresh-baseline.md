@@ -5,7 +5,6 @@ Date: 2026-10-11
 Branch: main
 
 ## Closed scope
-- The former Backblaze B2 provider is retired for current XKiss runtime storage.
 - Current storage provider: ElasticLake.
 - Runtime adapter: `storage/elasticlake-adapter.js`.
 - Worker configuration: `wrangler.toml`.
@@ -27,7 +26,6 @@ Evidence record: `audit/PRODUCTION-READINESS-REVIEW.md`.
 
 ## Lock rules
 - AUDIT-03 storage provider closure is GREEN / LOCKED.
-- Do not restore Backblaze B2, IDrive e2, or Cloudflare R2 as the active video-storage provider.
 - Do not enable R2.
 - Historical audit documents remain preserved as history; they are not current configuration instructions.
 - Do not reopen this locked storage scope without new contradictory runtime evidence.
