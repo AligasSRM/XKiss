@@ -136,3 +136,17 @@ The dependency matrix records the current source-level review:
 - PR #1 removes/replaces a large portion of `index.html` and needs separate playback/product regression review.
 
 No overlapping PR was merged or closed. PR #19 remains Draft.
+
+
+## 13. Owner-bound creator video metadata — 2026-10-10
+
+The remediation branch adds `migrations/0003_creator_video_ownership.sql` and `creator/creator-video-store.js`. The creator library route now:
+- authenticates the bearer session;
+- resolves the creator profile from the authenticated account, never from request parameters;
+- queries video metadata with `WHERE creator_id = ?` using the server-derived creator ID;
+- excludes removed videos and does not expose internal object keys;
+- fails closed when either migration is missing or the account has no creator profile.
+
+Tests in `tests/creator-video-ownership.test.js` cover owner filtering, other-creator denial, removed-video exclusion, missing profile, missing schema, and unauthenticated access. GitHub Actions run `38079796950` completed successfully with **80 tests passed, 0 failed**; Section 13 workflow `38079796952` also completed successfully.
+
+This is only the metadata/read boundary. Upload remains disabled; no route yet writes an owner-bound video row after an actual upload. Neither migration has been applied to production. Media delivery, moderation gates, provider-backed verification state, and browser-to-Worker upload integration remain unfinished.
