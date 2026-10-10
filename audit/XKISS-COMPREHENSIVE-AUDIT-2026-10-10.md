@@ -23,7 +23,10 @@ The repository contains substantial UI and modular software foundations, but key
 6. **HIGH — API routing:** Several frontend modules use root-relative `/api/...` URLs while the static site is hosted on GitHub Pages and the API is a separate Cloudflare Worker. Unless a proxy exists (none was verified), those calls target the Pages host instead of the Worker.
 7. **HIGH — Upload flow:** The visible creator upload UI prepares metadata only; it does not send the selected video bytes or invoke the actual upload endpoint.
 8. **HIGH — Auth/account integration:** The account UI uses browser `localStorage`; it is not wired to the separate server-side register/login/session/logout routes.
-9. **HIGH — Creator library access:** `GET /api/creator/videos` returns the storage listing without a session or creator-owner filter.\n10. **HIGH — Public operational test endpoint:** the B2 write/read/delete self-test is exposed through a public GET route with no verified authentication/rate limit.\n11. **HIGH — View-event abuse controls:** client-supplied event/session identifiers plus structural validation do not prove genuine views; ingestion needs rate limiting and server-side attribution.\n12. **HIGH — Settings/admin database contract:** Wrangler declares `XKISS_AUTH_DB`, while admin/settings status helpers check `XKISS_DB`.
+9. **HIGH — Creator library access:** `GET /api/creator/videos` returns the storage listing without a session or creator-owner filter.
+10. **HIGH — Public operational test endpoint:** the B2 write/read/delete self-test is exposed through a public GET route with no verified authentication/rate limit.
+11. **HIGH — View-event abuse controls:** client-supplied event/session identifiers plus structural validation do not prove genuine views; ingestion needs rate limiting and server-side attribution.
+12. **HIGH — Settings/admin database contract:** Wrangler declares `XKISS_AUTH_DB`, while admin/settings status helpers check `XKISS_DB`.
 13. **HIGH — Current adaptive media delivery:** The checked-in catalog has one demo video, an empty HLS manifest, and only a 720p progressive source. The previous HLS fixture test does not prove live multi-rendition delivery for the current catalog.
 
 ## 2. Section-by-section status matrix
@@ -61,7 +64,12 @@ Status describes the verified implementation state, not the presence of files. A
 - The GitHub Pages origin and Worker origin are different. Standard GitHub Pages does not proxy those paths to the Worker, so these flows are not correctly wired unless an external proxy is proven.
 - The Worker CORS contract currently permits `https://aligassrm.github.io`; keep the API origin and CORS policy consistent after fixing routing.
 
-### Public APIs ↔ ownership ↔ abuse controls\n- `GET /api/creator/videos` returns a full storage listing without server-side creator ownership filtering.\n- `GET /api/views/storage/self-test` invokes provider write/read/delete checks without a verified private access gate; protect it before fixing B2.\n- Public view-event ingestion accepts client-generated identifiers. Keep counting and revenue server-controlled, and add rate limiting and server-side attribution.\n\n### Identity ↔ Admin ↔ Wallet
+### Public APIs ↔ ownership ↔ abuse controls
+- `GET /api/creator/videos` returns a full storage listing without server-side creator ownership filtering.
+- `GET /api/views/storage/self-test` invokes provider write/read/delete checks without a verified private access gate; protect it before fixing B2.
+- Public view-event ingestion accepts client-generated identifiers. Keep counting and revenue server-controlled, and add rate limiting and server-side attribution.
+
+### Identity ↔ Admin ↔ Wallet
 - User registration/login/session logic exists separately in `security/xkiss-auth-backend.js`, but the visible account UI does not use it.
 - Admin authorization on `main` trusts client-supplied identity.
 - Wallet ledger routes accept unauthenticated writes/reads and do not enforce creator ownership.
@@ -110,22 +118,23 @@ Status describes the verified implementation state, not the presence of files. A
 3. Replace admin authorization's client-supplied identity with validated server-side sessions and server-derived roles.
 4. Require authenticated, ownership-checked access to wallet ledger read/write routes; make ledger mutation trusted-service-only.
 5. Replace payout authorization's client-claim flow with fail-closed server-side authorization.
-6. Consolidate overlapping PR #10/#14 and review PR #15 against current main; do not merge without a unified diff and regression plan.
+6. Protect creator-library reads by server-side ownership, protect the storage self-test endpoint, and add abuse controls to view-event ingestion.
+7. Consolidate overlapping PR #10/#14 and review PR #15 against current main; do not merge without a unified diff and regression plan.
 
 ### P1 — Storage and integration
-7. Diagnose the malformed B2 access key/configuration without exposing secret values; then pass a fresh live write-read-delete test.
-8. Centralize the Worker API base URL and fix all frontend API clients; test from the actual GitHub Pages origin.
-9. Unify the D1 binding contract used by Wrangler, admin, and settings.
-10. Implement the real file-upload request using server-side authentication and upload authorization; do not expose a reusable secret to the browser.
-11. Connect account UI to the real auth/session API and add rate limiting, verification/recovery and session-lifecycle tests.
+8. Diagnose the malformed B2 access key/configuration without exposing secret values; then pass a fresh live write-read-delete test.
+9. Centralize the Worker API base URL and fix all frontend API clients; test from the actual GitHub Pages origin.
+10. Unify the D1 binding contract used by Wrangler, admin, and settings.
+11. Implement the real file-upload request using server-side authentication and upload authorization; do not expose a reusable secret to the browser.
+12. Connect account UI to the real auth/session API and add rate limiting, verification/recovery and session-lifecycle tests.
 
 ### P2 — Product completeness and evidence
-12. Populate the catalog through an authorized publish pipeline; verify current media assets and HLS renditions.
-13. Integrate real live-streaming infrastructure before describing live broadcasts as active.
-14. Reconcile R2/B2 labels so operators see the actual provider.
-15. Correct Section 18 capability claims or implement a safely bounded, tested repair orchestration.
-16. Add behavioral tests for Sections 1–14 and cross-section contracts, not just file-presence checks.
-17. Re-run final regression and update readiness documentation only after current evidence supports it.
+13. Populate the catalog through an authorized publish pipeline; verify current media assets and HLS renditions.
+14. Integrate real live-streaming infrastructure before describing live broadcasts as active.
+15. Reconcile R2/B2 labels so operators see the actual provider.
+16. Correct Section 18 capability claims or implement a safely bounded, tested repair orchestration.
+17. Add behavioral tests for Sections 1–14 and cross-section contracts, not just file-presence checks.
+18. Re-run final regression and update readiness documentation only after current evidence supports it.
 
 ## 6. Audit limitations and next action
 
