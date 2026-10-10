@@ -150,11 +150,38 @@ Record all of the following in the PR or linked issue:
 - Production changed? **Yes/No**. For this remediation branch, the required answer remains **No** until separately approved.
 - Final status: GREEN only when all relevant evidence exists; otherwise YELLOW or RED.
 
-## 8. Current decision
+
+## 8. Existing open PR overlap review
+
+These are source/diff-level dispositions, not merges or closures. Keep all existing PRs unmerged until each is reconciled against this branch and the current `main`.
+
+| PR | Finding from diff review | Disposition |
+|---|---|---|
+| #10 and #14 | Both modify the same `POST /api/admin/authorize` route to add session authorization; they overlap each other and the current #19 implementation. | Do not merge either separately. Reconcile any unique tests only; use one reviewed implementation. |
+| #15 | Replaces the payout authorization route with a different fail-closed contract and its own static self-test. This can conflict with #19's route response and current route tests. | Keep payout disabled; cherry-pick no route change without reconciling expected status/body and the current integrated test suite. |
+| #3 | Proposes a second account/auth implementation, alternate user schema (`user_id`, `account_state`, `age_verified`, `creator_verified`) and new auth modules. Current main/#19 already has `users` + `sessions`; #19 now adds a separate creator profile mapping. | Do not merge as-is. It creates a competing identity source/schema and must be reconciled into the single current auth contract first. |
+| #13 | Adds live regression checks that expect `/api/views/storage/self-test` to return 200 without demonstrating an authorized session. #19 intentionally requires authenticated admin permission for that route. | Update the test to supply authorized test credentials or assert 401/403 for anonymous/member requests; do not weaken the route to satisfy the old test. |
+| #16 | Admin settings UI and tests; no complete secure settings mutation backend is established by the UI changes. | Can be reviewed separately as view-only UI, but must not imply protected settings are operational. |
+| #17 | Audit/project notes and ideas ledger. Its audit notes say application remediation has not started, which is now stale after #19's security changes. | Refresh the status or keep as historical notes; do not treat it as the current remediation source of truth. |
+| #1 | Large replacement of `index.html` (623 lines removed, 211 added) for playback. It has broad user-facing regression risk and is not required for the identity/security dependency batches. | Defer until a separate visual/product regression and playback integration review. |
+
+**PR reconciliation rule:** #19 is the current security remediation branch. Do not merge overlapping old PRs just to clear the open list. Any unique useful tests or UI work must be ported deliberately and tested against the current base.
+
+## 9. Latest containment work — CI pending at time of edit
+
+After the 72-test creator identity batch, the Worker upload routes were found to advertise upload readiness despite lacking server-side creator ownership metadata and moderation enforcement. The remediation branch now:
+- reports upload disabled from `GET /api/upload/status`, even when storage credentials exist;
+- makes `POST /api/upload/prepare` and `POST /api/upload` fail closed with `creator_content_ownership_required`;
+- removes direct use of the storage adapter's upload/list functions from the Worker until the owner-bound integration is implemented;
+- adds tests proving configured storage/shared upload key do not bypass the gate.
+
+This is a containment measure, not an upload implementation. It must remain blocked until the creator-video ownership schema, authenticated API contract, moderation and safety gates are implemented together.
+
+## 10. Current decision
 
 - PR #19 stays **Draft**.
 - Production stays unchanged.
-- Payouts and age-restricted activation stay disabled.
-- Creator library and wallet reads stay fail-closed until trusted ownership mapping exists.
+- Uploads, payouts and age-restricted activation stay disabled.
+- Creator library and wallet reads stay fail-closed until trusted ownership mapping and per-video ownership metadata exist.
 - ElasticLake remains **GREEN / LOCKED**; this audit does not authorize modifying its adapter or bindings.
-- Batch 1 has an initial branch implementation (migration, server-derived creator profile module and authenticated profile routes) and **72/72 tests pass** on the tested code commit. The next batch is creator-owned content metadata plus authenticated upload/library API integration; creator library and upload must remain blocked until that ownership boundary and safety gate are implemented.
+- Batch 1 has an initial branch implementation (migration, server-derived creator profile module and authenticated profile routes) and **72/72 tests pass** on the tested code commit. The upload containment change and its tests are now in CI; the next batch is creator-owned content metadata plus authenticated upload/library API integration. Creator library and upload remain blocked until that ownership boundary and safety gate are implemented.
