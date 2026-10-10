@@ -80,7 +80,9 @@ The draft PR branch `audit/production-baseline-2026-10-10` now contains initial 
 - Wallet ledger reads fail closed until a verified user-to-creator identity mapping exists.
 - Payout authorization cannot be granted by client-supplied booleans; real payouts remain disabled.
 - The creator library route no longer returns an unscoped global video list; it remains blocked until ownership filtering exists.
-- Added route tests and a Node test workflow. The test workflow passed on commit `8675f02fdb12fe575787fc3e696b2fd268cc5576`; later commits added more tests and updated this report, so final CI must be checked on the latest branch commit before approval.
+- Veriff session creation now requires an authenticated session and derives `vendorData` / `endUserId` from the server session; client-supplied callback and identity values are ignored.
+- Super-admin authorization fails closed unless a server-verified `mfaVerified: true` flag exists. Current sessions do not yet provide that flag, so super-admin actions remain blocked until real MFA is integrated.
+- Added route tests and a Node test workflow. CI passed with all tests on intermediate code commits; the latest test commit is running now and must be checked before approval.
 
 These changes intentionally block unintegrated features rather than pretending their authorization is complete. They do **not** complete the wallet, payout, creator-library, or age/safety systems. No production deployment or Cloudflare binding changes were made. ElasticLake's adapter, bindings, and locked write/read/delete path remain untouched.
 
