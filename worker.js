@@ -254,25 +254,33 @@ export default {
     }
 
     if (url.pathname === "/api/verification/veriff/session" && request.method === "POST") {
-      let body = {};
-
-      try {
-        body = await request.json();
-      } catch {
-        return json({
-          ok: false,
-          service: "XKiss Veriff KYC Session",
-          status: "invalid_input"
-        }, 400);
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, service: "XKiss Veriff KYC Session", status: "backend_not_configured" }, 503);
       }
 
-      let result;
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) {
+        return json({ ok: false, service: "XKiss Veriff KYC Session", status: "unauthorized" }, 401);
+      }
 
+      let session;
+      try {
+        session = await authenticateSession(env, token);
+      } catch {
+        return json({ ok: false, service: "XKiss Veriff KYC Session", status: "authorization_unavailable" }, 503);
+      }
+      if (!session?.ok || !session.user) {
+        return json({ ok: false, service: "XKiss Veriff KYC Session", status: "unauthorized" }, 401);
+      }
+
+      // Identity is server-derived. Ignore client-supplied endUserId/vendorData/callback values.
+      let result;
       try {
         result = await createVeriffSession(env, {
-          vendorData: body.vendorData,
-          endUserId: body.endUserId,
-          callback: body.callback
+          vendorData: session.user.id,
+          endUserId: session.user.id,
+          callback: env.VERIFF_CALLBACK_URL || null
         });
       } catch (error) {
         return json({
