@@ -43,6 +43,21 @@ jobs:
             console.log("PASS:", message);
           }
           
+          const spoofedAdmin = await call("/api/admin/authorize", {
+            method: "POST",
+            body: JSON.stringify({
+              user: { id: "spoofed", email: "attacker@example.com", role: "super_admin", status: "active" },
+              permission: "view_users"
+            })
+          });
+          assert(
+            spoofedAdmin.status === 401 &&
+            spoofedAdmin.body?.ok === false &&
+            spoofedAdmin.body?.allowed === false &&
+            spoofedAdmin.body?.status === "unauthenticated",
+            "caller-supplied Super Admin identity cannot authorize an admin action"
+          );
+
           const security = await call("/api/auth/security");
           assert(security.status === 200 && security.body?.ok === true, "security endpoint");
           assert(security.body?.invariants?.plaintextPasswordsStored === false, "passwords are not stored plaintext");
