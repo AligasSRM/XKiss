@@ -11,7 +11,7 @@ Branch: main
 - Required Worker secrets: `ELASTICLAKE_ACCESS_KEY_ID` and `ELASTICLAKE_SECRET_ACCESS_KEY`.
 - Bucket: `xkiss-storage--xkiss-production--xkiss-midea`.
 - Current Worker secrets inventory was checked on 2026-10-10; retired-provider credentials were not present.
-- Repository searches on 2026-10-11 returned no matches for the retired provider name or `xkiss-videos`.
+- Repository searches on 2026-10-11 returned no matches for retired-provider references.
 
 ## Verified live evidence
 The production-readiness review records the live XKiss Worker storage self-test on 2026-10-08:
