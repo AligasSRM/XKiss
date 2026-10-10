@@ -153,6 +153,19 @@ These are findings supported by source or CI evidence, not guesses. They are rec
 - The older success record may be valid historical evidence, but it must not be presented as the current storage state. Update the permanent audit record after the root cause is fixed and a fresh live test passes.
 - Several security PRs are based on older main SHAs; rebase/recreate or otherwise reconcile them before relying on their checks. Do not merge overlapping PRs without a unified diff and regression plan.
 
+### F-016 — Final-review coverage is not a full 20-section behavior test (MEDIUM / test coverage)
+
+- Evidence: `audit/xkiss-final-review.js` checks that required files exist for Sections 1–14, runs syntax/import/HTML-asset checks, and directly executes selected self-tests for Sections 15–20. It does not run a dedicated behavioral integration test suite for each of Sections 1–14.
+- `package.json` defines only `start`; there is no repository-wide `test` script. Tests are spread across module self-tests and isolated GitHub Actions workflows.
+- The final-review CI log on PR #14 reports no syntax errors, no missing imports, no missing HTML assets, and Sections 15–17 plus 19–20 self-tests passing; Section 18 fails due the live storage check. That is useful evidence, but it is not proof that every earlier feature works end-to-end.
+- Required remediation: build a non-destructive test matrix for all 20 sections and the key cross-section contracts. Keep live-provider checks separate from local deterministic tests.
+
+### F-017 — Live streaming, content discovery, and current catalog remain prototype-scale (MEDIUM / product scope)
+
+- Evidence: `live/live-data.js` is an empty-data seed; `live.html` explicitly says the real-time provider is not connected and local recording is available. `js/video-data.js` currently contains one demo video record; search/videos pages filter that local object rather than an authoritative catalog API.
+- The UI can demonstrate navigation, local recording, player controls, and client-side search/filtering, but there is no evidence of an active live-stream provider, populated production catalog, or a full publish-to-catalog flow.
+- Required remediation: classify these as working UI/prototype foundations until live services, content persistence, publishing, and end-to-end tests exist.
+
 ## Comprehensive audit plan — next work
 
 1. Establish authoritative baseline: main commit, tree, PRs, branch relationships, CI workflows, and deployed Worker version.
