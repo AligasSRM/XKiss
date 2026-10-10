@@ -168,3 +168,12 @@ Added migration `0004_content_reports.sql` with report intake, duplicate-open-re
 CI run `38080333781` passed **99 tests, 0 failed** on commit `97974fd212f6babc82d167ed1642e4a22dde77d2`. Section 13 and settings integration workflows on the immediately preceding code commit passed; final checks for this test commit were being monitored.
 
 Limit: the review queue does not itself remove content or execute a provider-backed moderation decision. It is report intake/review tracking only. Migration `0004` is not applied to production, and no deployment/configuration changes were made.
+
+
+## 16. Veriff account binding and minimal age-state persistence — 2026-10-10
+
+Added `migrations/0005_verification_state.sql` and `safety/verification-state-store.js`. The Veriff session endpoint records the provider session ID against the authenticated account before returning the provider URL. The signed decision webhook requires a matching stored session, `vendorData`, and `endUserId`; it persists minimal identity/age states to D1. Age becomes verified only when the provider decision is approved and a valid date of birth proves the account holder is at least 18 at decision time. No date of birth is stored. Stale provider decisions are ignored, and identity approval does not automatically verify creator status.
+
+GitHub Actions run `38080501326` passed **102 tests, 0 failed** on commit `b53ec11cb71b1feb74b121b75e33ea87d7e9c416`; Section 13 run `38080504761` succeeded. The final-review workflow was still running at the time of this note.
+
+This change does not turn on age-restricted access or upload. Migration `0005` is not applied to production; production has not been deployed or changed. Didit remains an audit-only webhook path and is not yet a source of persisted age state.
