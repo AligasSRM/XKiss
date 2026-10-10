@@ -96,6 +96,6 @@ export async function recordSafetyBackendEvent(env, event = {}) {
     recorded: result.ok === true,
     status: result.ok === true ? "recorded" : "failed",
     eventId,
-    storage: "Backblaze B2"
+    storage: "ElasticLake"
   };
 }
