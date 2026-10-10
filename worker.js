@@ -116,8 +116,38 @@ export default {
     }
 
     if (url.pathname === "/api/admin/authorize" && request.method === "POST") {
-      let body; try { body = await request.json(); } catch { return json({ok:false,status:"invalid_input"},400); }
-      return json(authorizeAdminAction(body.user, body.permission));
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, allowed: false, status: "auth_backend_not_configured" }, 503);
+      }
+
+      let body;
+      try {
+        body = await request.json();
+      } catch {
+        return json({ ok: false, allowed: false, status: "invalid_input" }, 400);
+      }
+
+      // Never trust identity or role fields supplied by the caller.
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      const session = await authenticateSession(env, token);
+
+      if (!session.ok) {
+        return json({ ok: false, allowed: false, status: "unauthenticated" }, 401);
+      }
+
+      // Super Admin remains denied until a real MFA verifier is connected.
+      if (session.user.role === "super_admin") {
+        return json({ ok: false, allowed: false, status: "mfa_backend_required" }, 403);
+      }
+
+      // RBAC and durable security-audit providers are not connected. Fail closed.
+      if (!env.XKISS_DB || !env.XKISS_ADMIN_AUDIT) {
+        return json({ ok: false, allowed: false, status: "admin_security_providers_not_configured" }, 503);
+      }
+
+      const result = authorizeAdminAction(session.user, body.permission);
+      return json(result, result.allowed ? 200 : 403);
     }
 
     if (url.pathname === "/api/admin/security" && request.method === "GET") {
