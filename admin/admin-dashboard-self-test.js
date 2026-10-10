@@ -44,7 +44,7 @@ check("dashboard never calls live APIs or external infrastructure", () => {
   assert.doesNotMatch(js, /\bXMLHttpRequest\b|\bWebSocket\b/);
   assert.doesNotMatch(html, /https?:\/\//i);
   assert.match(js, /No network or platform services were contacted/);
-  assert.match(html, /does not connect to or change Cloudflare, R2, Backblaze B2 or storage APIs/);
+  assert.match(html, /does not connect to or change Cloudflare, R2, ElasticLake or storage APIs/);
 });
 check("production access remains disabled and fail-closed", () => {
   assert.equal(ADMIN_DASHBOARD_RULES.enabled, false);
