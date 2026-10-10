@@ -41,7 +41,7 @@ import { verifyVeriffWebhook, mapVeriffVerificationState } from "./safety/veriff
 import { createVeriffSession } from "./safety/veriff-session-provider.js";
 import { registerMember, loginMember, authenticateSession, logoutMember, AUTH_SECURITY_INVARIANTS } from "./security/xkiss-auth-backend.js";
 import { getCreatorProfileByUserId, createCreatorProfile, CREATOR_IDENTITY_SECURITY } from "./creator/creator-identity.js";
-import { listCreatorVideosForCreator, CREATOR_VIDEO_OWNERSHIP_SECURITY } from "./creator/creator-video-store.js";
+import { listCreatorVideosForCreator, createCreatorVideoDraft, CREATOR_VIDEO_OWNERSHIP_SECURITY } from "./creator/creator-video-store.js";
 import { adminBackendStatus, authorizeAdminAction, ADMIN_BACKEND_SECURITY } from "./admin/xkiss-admin-backend.js";
 import { settingsBackendStatus, validateSettingsBackendAction, SETTINGS_BACKEND_SECURITY } from "./settings/xkiss-settings-backend.js";
 
@@ -1272,6 +1272,64 @@ export default {
         return json(result, statusCode);
       } catch {
         return json({ ok: false, status: "creator_identity_schema_not_ready" }, 503);
+      }
+    }
+
+    if (url.pathname === "/api/creator/videos/drafts" && request.method === "POST") {
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, status: "backend_not_configured" }, 503);
+      }
+
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) return json({ ok: false, status: "unauthorized" }, 401);
+
+      let session;
+      try {
+        session = await authenticateSession(env, token);
+      } catch {
+        return json({ ok: false, status: "authorization_unavailable" }, 503);
+      }
+      if (!session?.ok || !session.user) {
+        return json({ ok: false, status: "unauthorized" }, 401);
+      }
+
+      let body;
+      try {
+        body = await request.json();
+      } catch {
+        return json({ ok: false, status: "invalid_input" }, 400);
+      }
+      if (!body || typeof body !== "object" || Array.isArray(body)) {
+        return json({ ok: false, status: "invalid_input" }, 400);
+      }
+
+      try {
+        const profile = await getCreatorProfileByUserId(env, session.user.id);
+        if (!profile.ok) return json({ ok: false, status: profile.status }, 503);
+        if (!profile.creator) {
+          return json({ ok: false, status: "creator_profile_required" }, 404);
+        }
+
+        const result = await createCreatorVideoDraft(env, profile.creator.id, {
+          title: body.title,
+          description: body.description,
+          category: body.category,
+          contentType: body.contentType,
+          sizeBytes: body.sizeBytes
+        });
+        const statusCode = result.ok ? 201
+          : result.status.startsWith("invalid_") || result.status === "unsupported_content_type" ? 400
+          : 503;
+        return json({
+          ...result,
+          uploadEnabled: false,
+          message: result.ok
+            ? "Draft saved to the authenticated creator account. This does not upload a file; upload stays disabled pending moderation and safety integration."
+            : undefined
+        }, statusCode);
+      } catch {
+        return json({ ok: false, status: "creator_video_schema_not_ready", uploadEnabled: false }, 503);
       }
     }
 
