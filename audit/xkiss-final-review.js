@@ -103,8 +103,13 @@ const section19Result = section19.runSection19SelfTest();
 const section20 = await import(path.join(root,"release/xkiss-final-master-release-self-test.js").replaceAll(path.sep,"/"));
 const section20Result = section20.runSection20SelfTest();
 
+const reviewedCommit = execFileSync("git",["rev-parse","HEAD"],{encoding:"utf8"}).trim();
+const reviewedCommitMessage = execFileSync("git",["log","-1","--pretty=%s"],{encoding:"utf8"}).trim();
+
 const result = {
   stage:"FINAL-REVIEW",
+  reviewedCommit,
+  reviewedCommitMessage,
   sections,
   sectionPresence,
   syntaxErrors,
