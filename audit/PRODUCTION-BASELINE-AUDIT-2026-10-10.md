@@ -82,9 +82,11 @@ The draft PR branch `audit/production-baseline-2026-10-10` now contains initial 
 - The creator library route no longer returns an unscoped global video list; it remains blocked until ownership filtering exists.
 - Veriff session creation now requires an authenticated session and derives `vendorData` / `endUserId` from the server session; client-supplied callback and identity values are ignored.
 - Super-admin authorization fails closed unless a server-verified `mfaVerified: true` flag exists. Current sessions do not yet provide that flag, so super-admin actions remain blocked until real MFA is integrated.
-- Added route tests and a Node test workflow. GitHub Actions confirmed **64 tests passed, 0 failed** on code/test commit `375fdc5586edd53f7a4474f14fa5982ffb60d79c`; the latest report-only commit `20696b793b845aaef2fed0c5ba7181aaeb190bfe` also passed the Node test workflow. This verifies the current test suite, not production behavior or completion of remaining P0 integrations.
+- Added route tests and a Node test workflow. GitHub Actions confirmed **64 tests passed, 0 failed** on code/test commit `375fdc5586edd53f7a4474f14fa5982ffb60d79c`. A later wallet-ledger self-test remediation added three route tests; GitHub Actions run `38079444205` on commit `6c418a0a56e3473c0fb39b58cc2f3cf0f8ff56dc` completed successfully with **67 tests passed, 0 failed**. This verifies the current test suite, not production behavior or completion of remaining P0 integrations.
 
 These changes intentionally block unintegrated features rather than pretending their authorization is complete. They do **not** complete the wallet, payout, creator-library, or age/safety systems. No production deployment or Cloudflare binding changes were made. ElasticLake's adapter, bindings, and locked write/read/delete path remain untouched.
+
+The wallet-ledger self-test route was found to perform a write/read against the live wallet ledger without an operational-session check. On the remediation branch, commit `aeb2be975ebe361f79598e862de7f37807ed0c58` removes the production write/read side effect, requires an authenticated admin with `view_storage`, and explicitly reports `verified: false` until an isolated write/read test exists. This change passed the 67-test workflow above. Production remains unchanged.
 
 ## 8. Remaining P0 work
 
