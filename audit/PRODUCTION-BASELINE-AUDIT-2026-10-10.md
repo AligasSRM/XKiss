@@ -150,3 +150,12 @@ The remediation branch adds `migrations/0003_creator_video_ownership.sql` and `c
 Tests in `tests/creator-video-ownership.test.js` cover owner filtering, other-creator denial, removed-video exclusion, missing profile, missing schema, and unauthenticated access. GitHub Actions run `38079796950` completed successfully with **80 tests passed, 0 failed**; Section 13 workflow `38079796952` also completed successfully.
 
 This is only the metadata/read boundary. Upload remains disabled; no route yet writes an owner-bound video row after an actual upload. Neither migration has been applied to production. Media delivery, moderation gates, provider-backed verification state, and browser-to-Worker upload integration remain unfinished.
+
+
+## 14. Owner-bound creator draft metadata — 2026-10-10
+
+Added `createCreatorVideoDraft` in `creator/creator-video-store.js` and authenticated `POST /api/creator/videos/drafts` in the Worker. The endpoint derives creator ownership from the authenticated session and creator profile, validates metadata, forces private/pending-upload/disabled-download defaults, and creates a metadata draft only. It does not store a media file, grant a media URL, or enable upload. Client-supplied creator/user IDs, visibility, download policy, moderation status and verification state are ignored.
+
+The initial CI attempt exposed an incorrectly escaped control-character validation regex; this was corrected and the full test workflow then passed **86/86 tests** in run `38080124085` on commit `e65d2366fa66c9d598691fe3981ef748aeed6107`. Section 13 checks for the same head were in progress at the time of this report update.
+
+The metadata route remains un-deployed. Migrations `0002_creator_identity.sql` and `0003_creator_video_ownership.sql` are not applied to production. Actual upload, object key finalization, byte-level file verification, moderation/age verification, private media delivery and deletion are not implemented by this batch.
