@@ -72,7 +72,8 @@ export function validateSuperAdminSecurityCore() {
 export function evaluateSuperAdminSecurity(input = {}) {
   const access = validateSuperAdminAccess(input);
   if (!access.ok || !access.allowed) {
-    return { ok: access.ok, stage: "access", access };
+    // A denied authorization decision must never surface as a successful top-level result.
+    return { ok: false, stage: "access", access };
   }
 
   const session = validateSuperAdminSession(input);
