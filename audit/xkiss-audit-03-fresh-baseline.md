@@ -1,45 +1,34 @@
-# XKiss — AUDIT-03 Fresh Baseline
+# XKiss — Current Storage Baseline
 
-Status: RESET / ACTIVE
-Date: 2026-10-01
+Status: ACTIVE
+Date: 2026-10-11
 Branch: main
-Baseline commit: b3d31fefde909d3a965e2ca91811b6db33fdb99c
 
-## Purpose
-This is a fresh audit baseline for the production-dependency work.
-Historical audit files remain as records and are not deleted.
+## Current provider
+- Active storage provider: ElasticLake.
+- Runtime adapter: `storage/elasticlake-adapter.js`.
+- Worker configuration: `wrangler.toml`.
+- Required Worker secrets: `ELASTICLAKE_ACCESS_KEY_ID` and `ELASTICLAKE_SECRET_ACCESS_KEY`.
+- Bucket: `xkiss-storage--xkiss-production--xkiss-midea`.
+- Backblaze B2 and IDrive e2 are not the active XKiss storage provider.
 
-## Locked scope
+## Verified storage evidence
+The production-readiness review records a live XKiss Worker test on 2026-10-08:
+- Provider: ElasticLake.
+- Endpoint: `/api/views/storage/self-test`.
+- Result: HTTP 200; write → read → delete completed; `storageReady=true` and `verified=true`.
+
+This evidence verifies the storage self-test only. It does not certify the entire XKiss platform as production-ready.
+
+## Fail-closed and locked scope
 - Sections 15.23–15.31 remain GREEN / FINAL LOCKED.
-- Do not reopen locked runtime/security code without a real reason.
-- XKiss remains independent from AC.
+- Production activation remains blocked until all independent safety, identity/access, administration, policy, and payout gates are verified.
+- Do not enable Cloudflare R2 or restore obsolete provider bindings.
+- Do not delete historical audit records or unrelated working code as part of the storage-provider cleanup.
+- No credentials or secret values belong in source control.
 
-## Inventory findings
-1. IDrive e2 storage is the active storage provider.
-2. The old XKISS_VIEW_EVENTS binding is obsolete and must not return.
-3. Worker environment contract self-test had one stale XKISS_VIEW_EVENTS reference; removed.
-4. Storage production gate incorrectly exposed activationAllowed=true when configuration was merely present; corrected to remain fail-closed until real verification.
-5. Real IDrive e2 verification is still FAIL because the live read request returns SignatureDoesNotMatch.
-6. Therefore storage is NOT production-ready and production activation remains blocked.
-7. AUDIT-02 is historical; it should not be deleted.
-8. The continuation checkpoint must be treated as superseded by this fresh baseline.
-
-## What must NOT be deleted
-- Locked 15.23–15.31 runtime/security work.
-- Existing historical audit records.
-- Working storage/view-event implementation.
-- Production fail-closed gates.
-
-## What was cleaned
-- Obsolete XKISS_VIEW_EVENTS reference in the worker environment self-test.
-- Storage gate activation semantics now stay false until verification passes.
-
-## Current blocker
-IDrive e2 AWS SigV4 read verification:
-write -> read -> delete
-currently fails at read with HTTP 403 SignatureDoesNotMatch.
+## Historical note
+The original 2026-10-01 AUDIT-03 baseline described IDrive e2 and an unsuccessful SignatureDoesNotMatch read. That was an earlier state and is superseded by the ElasticLake migration and the later live write/read/delete evidence. Keep older audit files as historical records; do not treat their provider details as current configuration.
 
 ## Next controlled step
-Investigate and replace only the IDrive e2 signing/request implementation.
-No unrelated project changes.
-No production activation until write/read/delete verification is green.
+Continue the production-readiness audit from the latest evidence. Keep storage marked GREEN only for its verified write/read/delete test; keep overall production activation blocked until the remaining gates pass.
