@@ -84,7 +84,6 @@ export async function verifySuperAdminMfaForSession(env,user,session,code) {
   return {ok:true,status:"mfa_verified",verifiedAt:now};
 }
 export function requiresSuperAdminMfa(role){return role===SUPER_ADMIN_MFA_RULES.requiredForRole;}
-export function validateMfaVerificationRequest(input={}){return {ok:false,status:"runtime_verifier_required",verified:false};}
 
 export function validateMfaVerificationRequest(input = {}) {
   if (!requiresSuperAdminMfa(input.role)) return { ok: false, status: "mfa_not_applicable", verified: false };
