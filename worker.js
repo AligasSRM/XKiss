@@ -1302,23 +1302,32 @@ export default {
     }
 
     if (url.pathname === "/api/creator/videos" && request.method === "GET") {
-      try {
-        const result = await listVideos(env);
-
-        return json({
-          ...result,
-          message: storageReady
-            ? "Creator library is connected."
-            : "Creator library is ready. Production storage is not activated yet."
-        });
-      } catch {
-        return json({
-          ok: false,
-          storageReady,
-          videos: [],
-          message: "Creator storage could not be read."
-        }, 500);
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, videos: [], status: "backend_not_configured" }, 503);
       }
+
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) return json({ ok: false, videos: [], status: "unauthorized" }, 401);
+
+      let session;
+      try {
+        session = await authenticateSession(env, token);
+      } catch {
+        return json({ ok: false, videos: [], status: "authorization_unavailable" }, 503);
+      }
+      if (!session?.ok || !session.user) {
+        return json({ ok: false, videos: [], status: "unauthorized" }, 401);
+      }
+
+      // The current video store does not yet filter by a verified creator/account ownership mapping.
+      // Do not return a global creator library to an authenticated user.
+      return json({
+        ok: false,
+        videos: [],
+        status: "creator_identity_mapping_required",
+        message: "Creator library access remains blocked until server-side ownership filtering is implemented."
+      }, 503);
     }
 
     return json({
