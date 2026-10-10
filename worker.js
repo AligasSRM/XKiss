@@ -37,6 +37,7 @@ import {
 import { runSafetySelfTest, getSafetyVerificationOverview } from "./safety/safety-integration.js";
 import { getSafetyBackendStatus, runSafetyBackendSelfTest, recordSafetyBackendEvent } from "./safety/safety-backend.js";
 import { createContentReport, listContentReports, reviewContentReport, CONTENT_REPORT_SECURITY } from "./safety/content-report-store.js";
+import { recordVerificationSession, getVerificationSession, recordVeriffDecision, getUserVerificationState, VERIFICATION_STATE_SECURITY } from "./safety/verification-state-store.js";
 import { verifyDiditWebhook, mapDiditVerificationState } from "./safety/didit-kyc-provider.js";
 import { verifyVeriffWebhook, mapVeriffVerificationState } from "./safety/veriff-kyc-provider.js";
 import { createVeriffSession } from "./safety/veriff-session-provider.js";
@@ -312,6 +313,28 @@ export default {
       }
     }
 
+    if (url.pathname === "/api/safety/verification/me" && request.method === "GET") {
+      if (!env.XKISS_AUTH_DB) return json({ ok: false, status: "backend_not_configured" }, 503);
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) return json({ ok: false, status: "unauthorized" }, 401);
+
+      let session;
+      try {
+        session = await authenticateSession(env, token);
+      } catch {
+        return json({ ok: false, status: "authorization_unavailable" }, 503);
+      }
+      if (!session?.ok || !session.user) return json({ ok: false, status: "unauthorized" }, 401);
+
+      try {
+        const state = await getUserVerificationState(env, session.user.id);
+        return json({ ...state, security: VERIFICATION_STATE_SECURITY }, state.ok ? 200 : 503);
+      } catch {
+        return json({ ok: false, status: "verification_state_storage_not_ready" }, 503);
+      }
+    }
+
     if (url.pathname === "/api/safety/status" && request.method === "GET") {
       return json(getSafetyVerificationOverview());
     }
@@ -412,6 +435,21 @@ export default {
         }, result.status === "invalid_vendor_data" || result.status === "invalid_end_user_id" ? 400 : 502);
       }
 
+      try {
+        await recordVerificationSession(env, {
+          provider: "veriff",
+          providerSessionId: result.verificationId,
+          userId: session.user.id
+        });
+      } catch {
+        // Do not return a provider verification URL unless the provider session is durably bound to this account.
+        return json({
+          ok: false,
+          service: "XKiss Veriff KYC Session",
+          status: "verification_session_storage_not_ready"
+        }, 503);
+      }
+
       return json({
         ok: true,
         service: "XKiss Veriff KYC Session",
@@ -451,6 +489,60 @@ export default {
       }
 
       const verificationState = mapVeriffVerificationState(result.status);
+
+      let boundSession;
+      try {
+        boundSession = await getVerificationSession(env, "veriff", result.verificationId);
+      } catch {
+        return json({
+          ok: false,
+          service: "XKiss Veriff KYC Webhook",
+          status: "verification_session_storage_not_ready"
+        }, 503);
+      }
+      if (!boundSession?.ok || !boundSession.session) {
+        return json({
+          ok: false,
+          service: "XKiss Veriff KYC Webhook",
+          status: "unbound_verification_session"
+        }, 401);
+      }
+
+      const providerVerification = result.payload?.verification || {};
+      if (
+        result.vendorData !== boundSession.session.userId ||
+        providerVerification.endUserId !== boundSession.session.userId
+      ) {
+        return json({
+          ok: false,
+          service: "XKiss Veriff KYC Webhook",
+          status: "verification_account_binding_mismatch"
+        }, 401);
+      }
+
+      let persistedDecision;
+      try {
+        persistedDecision = await recordVeriffDecision(env, {
+          userId: boundSession.session.userId,
+          verificationId: result.verificationId,
+          status: result.status,
+          decisionTime: providerVerification.decisionTime,
+          dateOfBirth: providerVerification.person?.dateOfBirth
+        });
+      } catch {
+        return json({
+          ok: false,
+          service: "XKiss Veriff KYC Webhook",
+          status: "verification_state_storage_not_ready"
+        }, 503);
+      }
+      if (!persistedDecision.ok) {
+        return json({
+          ok: false,
+          service: "XKiss Veriff KYC Webhook",
+          status: persistedDecision.status
+        }, 503);
+      }
 
       const audit = await recordSafetyBackendEvent(env, {
         eventType: "veriff_verification_status",
