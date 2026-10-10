@@ -167,7 +167,7 @@ These are source/diff-level dispositions, not merges or closures. Keep all exist
 
 **PR reconciliation rule:** #19 is the current security remediation branch. Do not merge overlapping old PRs just to clear the open list. Any unique useful tests or UI work must be ported deliberately and tested against the current base.
 
-## 9. Latest containment work — CI pending at time of edit
+## 9. Latest containment work — tests passed
 
 After the 72-test creator identity batch, the Worker upload routes were found to advertise upload readiness despite lacking server-side creator ownership metadata and moderation enforcement. The remediation branch now:
 - reports upload disabled from `GET /api/upload/status`, even when storage credentials exist;
@@ -175,7 +175,7 @@ After the 72-test creator identity batch, the Worker upload routes were found to
 - removes direct use of the storage adapter's upload/list functions from the Worker until the owner-bound integration is implemented;
 - adds tests proving configured storage/shared upload key do not bypass the gate.
 
-This is a containment measure, not an upload implementation. It must remain blocked until the creator-video ownership schema, authenticated API contract, moderation and safety gates are implemented together.
+This is a containment measure, not an upload implementation. GitHub Actions run `38079668710` on commit `63695cdc34f8ae6e47e75c68201ab3e86ccbd291` passed **75 tests, 0 failed**; Section 13 run `38079668788` also passed. It must remain blocked until the creator-video ownership schema, authenticated API contract, moderation and safety gates are implemented together.
 
 ## 10. Current decision
 
@@ -184,4 +184,4 @@ This is a containment measure, not an upload implementation. It must remain bloc
 - Uploads, payouts and age-restricted activation stay disabled.
 - Creator library and wallet reads stay fail-closed until trusted ownership mapping and per-video ownership metadata exist.
 - ElasticLake remains **GREEN / LOCKED**; this audit does not authorize modifying its adapter or bindings.
-- Batch 1 has an initial branch implementation (migration, server-derived creator profile module and authenticated profile routes) and **72/72 tests pass** on the tested code commit. The upload containment change and its tests are now in CI; the next batch is creator-owned content metadata plus authenticated upload/library API integration. Creator library and upload remain blocked until that ownership boundary and safety gate are implemented.
+- Batch 1 has an initial branch implementation (migration, server-derived creator profile module and authenticated profile routes) and **72/72 tests pass** on the tested code commit; upload is now explicitly disabled with **75/75 tests passing**. The upload containment change and its tests are now in CI; the next batch is creator-owned content metadata plus authenticated upload/library API integration. Creator library and upload remain blocked until that ownership boundary and safety gate are implemented.
