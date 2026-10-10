@@ -23,7 +23,7 @@ import {
 } from "./views-revenue/view-event-store.js";
 import { evaluateViewPipeline } from "./views-revenue/view-pipeline.js";
 import { evaluateViewCountDecision } from "./views-revenue/view-count-decision.js";
-import { isWalletLedgerReady, storeWalletEntry, getWalletEntry } from "./wallet/wallet-ledger-store.js";
+import { isWalletLedgerReady } from "./wallet/wallet-ledger-store.js";
 import { evaluateRevenueToWallet } from "./wallet/revenue-to-wallet.js";
 import { evaluatePendingSettlement, WALLET_SETTLEMENT_RULES } from "./wallet/wallet-settlement.js";
 import { evaluateWalletReversal } from "./wallet/wallet-reversals.js";
@@ -746,41 +746,43 @@ export default {
     }
 
     if (url.pathname === "/api/wallet/ledger/self-test" && request.method === "GET") {
-      const entry = {
-        entryId: "production-wallet-self-test-entry",
-        creatorId: "production-wallet-self-test-creator",
-        type: "earning",
-        amount: 1,
-        currency: "USD",
-        balanceType: "pending",
-        referenceId: "production-wallet-self-test-reference",
-        occurredAt: new Date().toISOString()
-      };
-
-      if (!isWalletLedgerReady(env)) {
-        return json({ ok: false, storageReady: false, verified: false }, 503);
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, storageReady: false, verified: false, status: "backend_not_configured" }, 503);
       }
 
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) {
+        return json({ ok: false, verified: false, status: "unauthorized" }, 401);
+      }
+
+      let session;
       try {
-        const write = await storeWalletEntry(env, entry);
-        const read = await getWalletEntry(env, entry);
-
-        return json({
-          ok: true,
-          service: "XKiss Wallet Ledger",
-          test: "write-read",
-          write,
-          read,
-          verified: write.ok === true && read.status === "found" && Boolean(read.entry)
-        });
+        session = await authenticateSession(env, token);
       } catch {
-        return json({
-          ok: false,
-          service: "XKiss Wallet Ledger",
-          test: "write-read",
-          verified: false
-        }, 500);
+        return json({ ok: false, verified: false, status: "authorization_unavailable" }, 503);
       }
+      if (!session?.ok || !session.user) {
+        return json({ ok: false, verified: false, status: "unauthorized" }, 401);
+      }
+
+      const authorizationResult = authorizeAdminAction(session.user, "view_storage");
+      if (!authorizationResult.allowed) {
+        return json({ ok: false, verified: false, status: "forbidden" }, 403);
+      }
+
+      // Never write synthetic financial entries into the live ledger from a health-check route.
+      // A real ledger write/read test must use an isolated test namespace, not production wallet keys.
+      return json({
+        ok: true,
+        service: "XKiss Wallet Ledger",
+        test: "non-mutating-preflight",
+        storageReady: isWalletLedgerReady(env),
+        verified: false,
+        mutationPerformed: false,
+        status: "isolated_write_read_test_required",
+        message: "No live ledger entry was written. Verify wallet write/read using an isolated test namespace before claiming ledger integration is verified."
+      });
     }
 
     if (url.pathname === "/api/wallet/ledger/store" && request.method === "POST") {
