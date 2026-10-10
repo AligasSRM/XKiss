@@ -66,6 +66,19 @@ ElasticLake storage is **GREEN / LOCKED** based on the previously observed produ
 11. Reconcile overlapping PRs; merge only after current-base checks and regression tests pass.
 12. Run the production readiness gate. No release, real payouts, or sensitive activation before all P0 findings are closed with evidence.
 
-## 6. Acceptance evidence required
+
+## 7. Remediation branch progress (not yet verified)
+
+The draft PR branch `audit/production-baseline-2026-10-10` contains initial changes for review:
+
+- `POST /api/admin/authorize` now requires a bearer session, resolves the user from the server-side session, ignores client-supplied identity/role, and returns 401/403/503 for denial/unavailable cases.
+- `GET /api/views/storage/self-test` now requires an authenticated session with the server-derived `view_storage` permission.
+- Registration now validates that the body is an object and maps created / invalid / duplicate / unexpected outcomes to 201 / 400 / 409 / 503 rather than always returning 201.
+- Admin and settings readiness checks now use the configured `XKISS_AUTH_DB` binding.
+- Route tests were added for missing sessions, client role spoofing, admin authorization, missing database, registration input/status handling, and storage self-test access control. `npm test` is configured as `node --test`.
+
+**Verification status:** These edits are in a draft pull request and have not been run in a confirmed CI environment yet. The repository currently reports no status checks or pull-request workflow runs for the latest branch commit. Do not mark these changes GREEN until the test suite runs successfully and the diff is reviewed. Remaining wallet-ledger and payout trust-boundary issues are still P0.
+
+## 8. Acceptance evidence required
 
 For every fix, record the PR/commit, tests run, expected-deny tests, expected-allow tests, CI result, and whether production was changed. A source change alone is not GREEN. The audit status remains **YELLOW / REMEDIATION REQUIRED** until the P0 items are fixed and verified.
