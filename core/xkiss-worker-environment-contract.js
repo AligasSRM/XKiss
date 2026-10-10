@@ -1,11 +1,14 @@
 export const XKISS_WORKER_ENVIRONMENT_CONTRACT = {
   stage: "AUDIT-04",
   name: "XKiss Worker Environment Contract",
-  version: "1.0.0",
+  version: "1.1.0",
   failClosed: true,
   requiredBindings: [
-    { name: "XKISS_VIDEOS", purpose: "video_storage", requiredFor: "upload" },
-    { name: "XKISS_WALLET_LEDGER", purpose: "wallet_ledger", requiredFor: "wallet_payouts" }
+    { name: "ELASTICLAKE_ENDPOINT", purpose: "video_storage_endpoint", requiredFor: "storage" },
+    { name: "ELASTICLAKE_BUCKET", purpose: "video_storage_bucket", requiredFor: "storage" },
+    { name: "ELASTICLAKE_REGION", purpose: "video_storage_region", requiredFor: "storage" },
+    { name: "ELASTICLAKE_ACCESS_KEY_ID", purpose: "video_storage_access_key", requiredFor: "storage" },
+    { name: "ELASTICLAKE_SECRET_ACCESS_KEY", purpose: "video_storage_secret_key", requiredFor: "storage" }
   ],
   providerBoundary: "Cloudflare Worker environment",
   secretsPolicy: "backend_only"
