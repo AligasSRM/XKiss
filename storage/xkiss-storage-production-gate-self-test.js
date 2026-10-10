@@ -4,17 +4,17 @@ import {
 } from "./xkiss-storage-production-gate.js";
 
 const complete = {
-  XKISS_B2_ENDPOINT: "https://s3.eu-central-003.backblazeb2.com",
-  XKISS_B2_BUCKET: "xkiss-videos",
-  XKISS_B2_REGION: "eu-central-003",
-  XKISS_B2_ACCESS_KEY: "test-access-key",
-  XKISS_B2_SECRET_KEY: "test-secret-key"
+  ELASTICLAKE_ENDPOINT: "https://app.elasticlake.com",
+  ELASTICLAKE_BUCKET: "xkiss-storage--xkiss-production--xkiss-midea",
+  ELASTICLAKE_REGION: "auto",
+  ELASTICLAKE_ACCESS_KEY: "test-access-key",
+  ELASTICLAKE_SECRET_KEY: "test-secret-key"
 };
 
 export function runXKissStorageProductionGateSelfTest() {
   const missing = evaluateStorageProductionGate({});
   const partial = evaluateStorageProductionGate({
-    XKISS_B2_ENDPOINT: complete.XKISS_B2_ENDPOINT
+    ELASTICLAKE_ENDPOINT: complete.ELASTICLAKE_ENDPOINT
   });
   const present = evaluateStorageProductionGate(complete);
 
