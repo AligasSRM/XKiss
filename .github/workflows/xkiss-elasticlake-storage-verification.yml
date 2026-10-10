@@ -6,6 +6,10 @@ on:
     paths:
       - ".github/workflows/xkiss-elasticlake-storage-verification.yml"
       - "storage-setup/ELASTICLAKE-GITHUB-SETUP.md"
+      - "storage/r2-adapter.js"
+      - "storage/xkiss-storage-production-gate.js"
+      - "storage/xkiss-storage-production-gate-self-test.js"
+      - "security/xkiss-secret-management-monitor.js"
 
 permissions:
   contents: read
