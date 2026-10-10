@@ -9,6 +9,24 @@ export function runSuperAdminSecurityCoreSelfCheck() {
     action: "view_security_logs"
   });
 
+  const validLookingButBackendDisabled = evaluateSuperAdminSecurity({
+    role: "super_admin",
+    accountState: "active",
+    authenticated: true,
+    mfaVerified: true,
+    sessionValid: true,
+    reauthenticated: true,
+    action: "view_security_logs"
+  });
+
+  const missingMfa = evaluateSuperAdminSecurity({
+    role: "super_admin",
+    accountState: "active",
+    authenticated: true,
+    mfaVerified: false,
+    action: "view_security_logs"
+  });
+
   const checks = {
     stage: status.section === "14",
     coreConnected: validation.coreConnected === true,
@@ -20,7 +38,15 @@ export function runSuperAdminSecurityCoreSelfCheck() {
     mfaReady: validation.mfaReady === true,
     activationBlockedUntilBackend: validation.activationAllowed === false,
     unauthenticatedPrivilegedActionDenied:
-      unauthenticated.ok === false && unauthenticated.stage === "access"
+      unauthenticated.ok === false && unauthenticated.stage === "access",
+    validLookingRequestDeniedWhileBackendDisabled:
+      validLookingButBackendDisabled.ok === false &&
+      validLookingButBackendDisabled.stage === "access" &&
+      validLookingButBackendDisabled.access.allowed === false,
+    missingMfaDeniedWithFailedTopLevelResult:
+      missingMfa.ok === false &&
+      missingMfa.stage === "access" &&
+      missingMfa.access.allowed === false
   };
 
   const passed = Object.values(checks).every(Boolean);
