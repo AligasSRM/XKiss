@@ -190,3 +190,16 @@ The branch now contains the creator-video ownership migration and owner-filtered
 - Creator library reads now use the server-derived creator ID and owner-filtered metadata query on the branch, but remain unavailable until migrations are deployed and upload persistence is integrated; wallet reads remain fail-closed.
 - ElasticLake remains **GREEN / LOCKED**; this audit does not authorize modifying its adapter or bindings.
 - Batch 1 identity mapping, initial owner-filtered library route, and upload containment are present on the branch. The latest test workflow completed successfully with **80 passed, 0 failed**, and the Section 13 workflow also succeeded. The next batch is connecting an authenticated upload-completion flow to owner-bound metadata and moderation/safety enforcement, while keeping uploads disabled.
+
+
+## 12. Owner-bound creator draft metadata — initial implementation
+
+The branch now implements `POST /api/creator/videos/drafts`:
+- requires a valid authenticated session and an existing creator profile;
+- derives `creator_id` from the server-side profile lookup for the session user; ignores client-supplied user/creator IDs;
+- validates title, description, category slug, declared video MIME type and declared size before any D1 insert;
+- forces new drafts to `private`, `downloadPolicy=disabled`, `status=pending_upload`; clients cannot set moderation or verification status;
+- stores only metadata with a server-generated ID and a placeholder object key; does not upload/store media and does not return the internal object key;
+- keeps `/api/upload/status` blocked and both actual upload routes fail-closed.
+
+GitHub Actions test run `38080124085` passed **86 tests, 0 failed** on code commit `e65d2366fa66c9d598691fe3981ef748aeed6107`. This is an authenticated metadata-draft flow, not a completed upload pipeline. The D1 migrations remain unapplied to production; moderation/age/creator verification and actual storage-object binding remain blockers.
