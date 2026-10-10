@@ -95,8 +95,8 @@ These are findings supported by source or CI evidence, not guesses. They are rec
 
 ### F-006 — Authentication hardening and operational controls need review (HIGH / security verification)
 
-- Source currently sets PBKDF2-SHA-256 to 20,000 iterations and does not show rate limiting or email verification in the inspected auth module.
-- Review password-hashing parameters against current authoritative guidance, login/register abuse protection, account enumeration behavior, verification/recovery, session lifecycle, and whether the declared `XKISS_AUTH_SESSIONS` KV binding is used or is stale.
+- Source currently sets PBKDF2-SHA-256 to 20,000 iterations and does not show rate limiting or email verification in the inspected auth module. OWASP's current Password Storage Cheat Sheet recommends 600,000 iterations for PBKDF2-HMAC-SHA256; it also recommends Argon2id for general use. Source: https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
+- Review a safe password-hash upgrade/migration plan, login/register abuse protection, account enumeration behavior, verification/recovery, session lifecycle, and whether the declared `XKISS_AUTH_SESSIONS` KV binding is used or is stale.
 - Do not raise this to a confirmed exploit without tests; it is an evidence-backed hardening gap to assess.
 
 ### F-008 — Public wallet ledger write/read routes lack authentication and ownership checks (CRITICAL / financial integrity + privacy)
