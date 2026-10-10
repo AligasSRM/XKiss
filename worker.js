@@ -116,8 +116,27 @@ export default {
     }
 
     if (url.pathname === "/api/admin/authorize" && request.method === "POST") {
-      let body; try { body = await request.json(); } catch { return json({ok:false,status:"invalid_input"},400); }
-      return json(authorizeAdminAction(body.user, body.permission));
+      let body;
+      try {
+        body = await request.json();
+      } catch {
+        return json({ ok: false, allowed: false, status: "invalid_input" }, 400);
+      }
+
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, allowed: false, status: "backend_not_configured" }, 503);
+      }
+
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      const session = await authenticateSession(env, token);
+
+      if (!session.ok) {
+        return json({ ok: false, allowed: false, status: "unauthorized" }, 401);
+      }
+
+      const result = authorizeAdminAction(session.user, body.permission);
+      return json(result, result.allowed ? 200 : 403);
     }
 
     if (url.pathname === "/api/admin/security" && request.method === "GET") {
