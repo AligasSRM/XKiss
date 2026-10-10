@@ -175,3 +175,23 @@ test("creator library does not expose a global video list before ownership filte
   assert.equal(response.status, 503);
   assert.equal((await response.json()).status, "creator_identity_mapping_required");
 });
+
+test("Veriff session creation rejects unauthenticated requests", async () => {
+  const response = await worker.fetch(
+    request({ endUserId: "victim", vendorData: "victim" }, null, "/api/verification/veriff/session"),
+    makeEnv()
+  );
+  assert.equal(response.status, 401);
+  assert.equal((await response.json()).status, "unauthorized");
+});
+
+test("Veriff session creation does not accept client identity as authority", async () => {
+  const response = await worker.fetch(
+    request({ endUserId: "victim", vendorData: "victim", callback: "https://attacker.invalid" }, "valid-session-token", "/api/verification/veriff/session"),
+    makeEnv("member")
+  );
+  assert.equal(response.status, 503);
+  const body = await response.json();
+  assert.equal(body.status, "provider_not_configured");
+  assert.equal(body.endUserId, undefined);
+});
