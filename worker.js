@@ -44,8 +44,10 @@ import { getSafetyBackendStatus, runSafetyBackendSelfTest, recordSafetyBackendEv
 import { verifyDiditWebhook, mapDiditVerificationState } from "./safety/didit-kyc-provider.js";
 import { verifyVeriffWebhook, mapVeriffVerificationState } from "./safety/veriff-kyc-provider.js";
 import { createVeriffSession } from "./safety/veriff-session-provider.js";
-import { registerMember, loginMember, authenticateSession, logoutMember, AUTH_SECURITY_INVARIANTS } from "./security/xkiss-auth-backend.js";
+import { registerMember, loginMember, authenticateSession, logoutMember, reauthenticateMemberSession, AUTH_SECURITY_INVARIANTS } from "./security/xkiss-auth-backend.js";
+import { beginSuperAdminMfaEnrollment, verifyAndEnableSuperAdminMfa, verifySuperAdminMfaForSession } from "./security/super-admin-mfa.js";
 import { adminBackendStatus, authorizeAdminAction, ADMIN_BACKEND_SECURITY } from "./admin/xkiss-admin-backend.js";
+import { recordAdminSecurityAudit } from "./security/admin-security-audit.js";
 import { settingsBackendStatus, validateSettingsBackendAction, SETTINGS_BACKEND_SECURITY } from "./settings/xkiss-settings-backend.js";
 
 const CORS_HEADERS = {
@@ -115,6 +117,47 @@ export default {
       return json(adminBackendStatus(env));
     }
 
+    if (url.pathname === "/api/admin/security/reauth" && request.method === "POST") {
+      if (!env.XKISS_AUTH_DB) return json({ok:false,status:"backend_not_configured"},503);
+      let body; try { body=await request.json(); } catch { return json({ok:false,status:"invalid_input"},400); }
+      const authorization=request.headers.get("Authorization")||"";
+      const token=authorization.startsWith("Bearer ")?authorization.slice(7).trim():"";
+      const result=await reauthenticateMemberSession(env,token,body.password);
+      return json(result,result.ok?200:result.status==="unauthenticated"?401:403);
+    }
+
+    if (url.pathname === "/api/admin/security/mfa/enroll" && request.method === "POST") {
+      if (!env.XKISS_AUTH_DB) return json({ok:false,status:"backend_not_configured"},503);
+      const authorization=request.headers.get("Authorization")||"";
+      const token=authorization.startsWith("Bearer ")?authorization.slice(7).trim():"";
+      const session=await authenticateSession(env,token);
+      if(!session.ok) return json({ok:false,status:"unauthenticated"},401);
+      const result=await beginSuperAdminMfaEnrollment(env,session.user,session);
+      return json(result,result.ok?200:result.status==="forbidden"?403:result.status==="reauthentication_required"?428:503);
+    }
+
+    if (url.pathname === "/api/admin/security/mfa/enable" && request.method === "POST") {
+      if (!env.XKISS_AUTH_DB) return json({ok:false,status:"backend_not_configured"},503);
+      let body; try { body=await request.json(); } catch { return json({ok:false,status:"invalid_input"},400); }
+      const authorization=request.headers.get("Authorization")||"";
+      const token=authorization.startsWith("Bearer ")?authorization.slice(7).trim():"";
+      const session=await authenticateSession(env,token);
+      if(!session.ok) return json({ok:false,status:"unauthenticated"},401);
+      const result=await verifyAndEnableSuperAdminMfa(env,session.user,session,body.code);
+      return json(result,result.ok?200:result.status==="forbidden"?403:result.status==="reauthentication_required"?428:401);
+    }
+
+    if (url.pathname === "/api/admin/security/mfa/verify" && request.method === "POST") {
+      if (!env.XKISS_AUTH_DB) return json({ok:false,status:"backend_not_configured"},503);
+      let body; try { body=await request.json(); } catch { return json({ok:false,status:"invalid_input"},400); }
+      const authorization=request.headers.get("Authorization")||"";
+      const token=authorization.startsWith("Bearer ")?authorization.slice(7).trim():"";
+      const session=await authenticateSession(env,token);
+      if(!session.ok) return json({ok:false,status:"unauthenticated"},401);
+      const result=await verifySuperAdminMfaForSession(env,session.user,session,body.code);
+      return json(result,result.ok?200:result.status==="forbidden"?403:401);
+    }
+
     if (url.pathname === "/api/admin/authorize" && request.method === "POST") {
       if (!env.XKISS_AUTH_DB) {
         return json({ ok: false, allowed: false, status: "auth_backend_not_configured" }, 503);
@@ -131,22 +174,66 @@ export default {
       const authorization = request.headers.get("Authorization") || "";
       const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
       const session = await authenticateSession(env, token);
+      const requestId = request.headers.get("cf-ray") || request.headers.get("x-request-id") || null;
+
+      if (!env.XKISS_DB || !env.XKISS_ADMIN_AUDIT) {
+        return json({ ok: false, allowed: false, status: "admin_security_providers_not_configured" }, 503);
+      }
 
       if (!session.ok) {
+        const audit = await recordAdminSecurityAudit(env, {
+          action: "admin_authorize",
+          target: typeof body.permission === "string" ? body.permission : null,
+          outcome: "denied",
+          reason: "unauthenticated",
+          requestId
+        });
+        if (!audit.ok) return json({ ok: false, allowed: false, status: "admin_audit_unavailable" }, 503);
         return json({ ok: false, allowed: false, status: "unauthenticated" }, 401);
       }
 
       // Super Admin remains denied until a real MFA verifier is connected.
       if (session.user.role === "super_admin") {
+        const mfaVerifiedAt = session.mfaVerifiedAt ? Date.parse(session.mfaVerifiedAt) : 0;
+        if (!mfaVerifiedAt || Date.now() - mfaVerifiedAt > 5 * 60 * 1000) {
+          const audit = await recordAdminSecurityAudit(env, {
+            actorUserId: session.user.id,
+            actorEmail: session.user.email,
+            action: "admin_authorize",
+            target: typeof body.permission === "string" ? body.permission : null,
+            outcome: "denied",
+            reason: "mfa_verification_required",
+            requestId
+          });
+          if (!audit.ok) return json({ ok: false, allowed: false, status: "admin_audit_unavailable" }, 503);
+          return json({ ok: false, allowed: false, status: "mfa_verification_required" }, 403);
+        }
+        const audit = await recordAdminSecurityAudit(env, {
+          actorUserId: session.user.id,
+          actorEmail: session.user.email,
+          action: "admin_authorize",
+          target: typeof body.permission === "string" ? body.permission : null,
+          outcome: "denied",
+          reason: "mfa_backend_required",
+          requestId
+        });
+        if (!audit.ok) return json({ ok: false, allowed: false, status: "admin_audit_unavailable" }, 503);
         return json({ ok: false, allowed: false, status: "mfa_backend_required" }, 403);
       }
 
-      // RBAC and durable security-audit providers are not connected. Fail closed.
-      if (!env.XKISS_DB || !env.XKISS_ADMIN_AUDIT) {
-        return json({ ok: false, allowed: false, status: "admin_security_providers_not_configured" }, 503);
-      }
-
       const result = authorizeAdminAction(session.user, body.permission);
+      const audit = await recordAdminSecurityAudit(env, {
+        actorUserId: session.user.id,
+        actorEmail: session.user.email,
+        action: "admin_authorize",
+        target: typeof body.permission === "string" ? body.permission : null,
+        outcome: result.allowed ? "allowed" : "denied",
+        reason: result.status,
+        requestId
+      });
+      if (!audit.ok) {
+        return json({ ok: false, allowed: false, status: "admin_audit_unavailable" }, 503);
+      }
       return json(result, result.allowed ? 200 : 403);
     }
 
