@@ -215,3 +215,18 @@ The branch adds migration `0004_content_reports.sql`, `safety/content-report-sto
 The queue supports open, reviewing, actioned and dismissed report states. **This does not automatically remove/hide a video or prove that a moderation decision has been executed against the media.** It is the durable report intake/review ledger only; provider-backed moderation, age verification and actual content enforcement remain separate blockers.
 
 GitHub Actions run `38080333781` passed **99 tests, 0 failed** on commit `97974fd212f6babc82d167ed1642e4a22dde77d2`. D1 migrations remain unapplied to production.
+
+
+## 14. Veriff session binding and minimal age-state persistence
+
+The branch adds migration `0005_verification_state.sql` and `safety/verification-state-store.js`.
+- A Veriff session is recorded in D1 against the account ID derived from the authenticated session before its verification URL is returned.
+- A signed Veriff decision is accepted for account-state persistence only when its provider session ID is already bound and both `vendorData` and `endUserId` match that bound account.
+- Identity state and age state are separate. An approved identity decision does **not** verify age unless the provider decision includes a valid date of birth proving age 18 or older at decision time.
+- Date of birth is not stored. The database stores only provider/session IDs, minimal state, provider status, decision timestamp and update timestamp.
+- Stale decisions are ignored. Creator verification is not inferred from identity verification.
+- `GET /api/safety/verification/me` exposes only the authenticated user's minimized verification state.
+
+The official Veriff Decision Webhook schema documents `verification.person.dateOfBirth`, `verification.decisionTime`, `verification.vendorData` and `verification.endUserId`: https://devdocs.veriff.com/docs/decision-webhook
+
+GitHub Actions run `38080501326` passed **102 tests, 0 failed** on commit `b53ec11cb71b1feb74b121b75e33ea87d7e9c416`; Section 13 run `38080504761` succeeded. The final-review workflow was still running at the time of this note. Migration `0005` is not applied to production; age-gated access and uploads remain disabled.
