@@ -1,5 +1,14 @@
 # XKiss — Comprehensive Audit Report
 
+## Current status — ACTIVE / قيد التنفيذ
+
+- Audit report: findings recorded; review remains open until each critical item is remediated or explicitly deferred with rationale.
+- Remediation: not yet started in application code. This report itself is documentation only.
+- Release: blocked; do not activate production or payouts.
+- Next checkpoint: resolve P0 security/safety issues, then B2 live storage and frontend-to-Worker routing. Each item requires a separate change, regression evidence, and review.
+
+
+
 **Audit date:** 2026-10-10  
 **Audit status:** 🟡 ACTIVE — major source/contract/CI findings recorded; final release certification is not complete.  
 **Repository:** `AligasSRM/XKiss`  
