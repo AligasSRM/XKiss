@@ -29,6 +29,8 @@ export function runSuperAdminSecurityCoreSelfCheck() {
 
   const checks = {
     stage: status.section === "14",
+    finalLocked: status.status === "FINAL_LOCKED" && status.locked === true,
+    productionRemainsDisabled: status.enabled === false && status.productionEnabled === false,
     coreConnected: validation.coreConnected === true,
     importsReady: validation.importsReady === true,
     exportsReady: validation.exportsReady === true,
@@ -56,9 +58,11 @@ export function runSuperAdminSecurityCoreSelfCheck() {
     stage: "14",
     test: "Super Admin Security Core self-check",
     checks,
+    locked: status.locked,
+    productionEnabled: status.productionEnabled,
     activationAllowed: validation.activationAllowed,
     reason: passed
-      ? "14 Core structure and safe-denial behavior passed. Backend activation remains blocked until real providers are connected."
-      : "One or more 14 Core checks failed."
+      ? "Section 14 is FINAL_LOCKED for the verified fail-closed implementation. Production remains disabled until real backend providers are independently verified."
+      : "One or more Section 14 security or lock-state checks failed."
   };
 }
