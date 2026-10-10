@@ -1,10 +1,5 @@
 import { getXKissSettingsRuntimeStatus } from "./settings/xkiss-settings-runtime-core.js";
-import {
-  createVideoKey,
-  isStorageReady,
-  listVideos,
-  storeVideo
-} from "./storage/elasticlake-adapter.js";
+import { isStorageReady } from "./storage/elasticlake-adapter.js";
 import {
   MONETIZATION_RULES,
   CREATOR_ELIGIBILITY_RULES,
@@ -1186,130 +1181,35 @@ export default {
         ok: true,
         service: "XKiss Upload",
         storageReady,
-        uploadEndpoint: true,
-        message: storageReady
-          ? "Production video storage is connected."
-          : "Production video storage is not activated yet."
+        uploadEndpoint: false,
+        uploadEnabled: false,
+        ownershipReady: false,
+        safetyReady: false,
+        status: "blocked",
+        message: "Uploads remain disabled until authenticated creator ownership, object metadata binding, moderation and safety enforcement are implemented and tested."
       });
     }
 
+    // Fail closed: do not allow a shared upload key to bypass creator ownership and safety gates.
+    // Replace this guard only when the creator_videos ownership contract and moderation integration exist.
     if (url.pathname === "/api/upload/prepare" && request.method === "POST") {
-      if (!storageReady) {
-        return json({
-          ok: false,
-          storageReady: false,
-          message: "Production storage is not activated yet. The video was not uploaded."
-        }, 503);
-      }
-
-      let body;
-
-      try {
-        body = await request.json();
-      } catch {
-        return json({
-          ok: false,
-          message: "Invalid upload metadata."
-        }, 400);
-      }
-
-      if (!body.fileName || !body.contentType || !body.title) {
-        return json({
-          ok: false,
-          message: "fileName, contentType and title are required."
-        }, 400);
-      }
-
-      const key = createVideoKey(body.fileName);
-
       return json({
-        ok: true,
-        storageReady: true,
-        uploadReady: Boolean(env.XKISS_UPLOAD_KEY),
-        key,
-        fileName: String(body.fileName),
-        contentType: String(body.contentType),
-        message: env.XKISS_UPLOAD_KEY
-          ? "Upload preparation is ready for the connected storage layer."
-          : "Storage is connected, but upload authorization is not configured yet."
-      });
+        ok: false,
+        storageReady,
+        uploadEnabled: false,
+        status: "creator_content_ownership_required",
+        message: "Upload preparation is disabled until server-side creator ownership and safety gates are complete."
+      }, 503);
     }
 
     if (url.pathname === "/api/upload" && request.method === "POST") {
-      if (!storageReady) {
-        return json({
-          ok: false,
-          storageReady: false,
-          message: "Production video storage is not activated yet. The video was not uploaded."
-        }, 503);
-      }
-
-      if (!env.XKISS_UPLOAD_KEY) {
-        return json({
-          ok: false,
-          storageReady: true,
-          message: "Upload authorization is not configured yet."
-        }, 503);
-      }
-
-      const suppliedKey = request.headers.get("X-XKiss-Upload-Key");
-
-      if (!suppliedKey || suppliedKey !== env.XKISS_UPLOAD_KEY) {
-        return json({
-          ok: false,
-          message: "Upload authorization failed."
-        }, 401);
-      }
-
-      const fileName = request.headers.get("X-XKiss-File-Name");
-      const contentType = request.headers.get("Content-Type") || "application/octet-stream";
-
-      if (!fileName) {
-        return json({
-          ok: false,
-          message: "X-XKiss-File-Name is required."
-        }, 400);
-      }
-
-      if (!contentType.startsWith("video/")) {
-        return json({
-          ok: false,
-          message: "Only video content is accepted."
-        }, 415);
-      }
-
-      if (!request.body) {
-        return json({
-          ok: false,
-          message: "Video request body is empty."
-        }, 400);
-      }
-
-      const key = createVideoKey(fileName);
-
-      try {
-        const stored = await storeVideo(env, key, request.body, {
-          fileName,
-          contentType,
-          title: request.headers.get("X-XKiss-Title") || "",
-          description: request.headers.get("X-XKiss-Description") || "",
-          category: request.headers.get("X-XKiss-Category") || "",
-          downloadPolicy: request.headers.get("X-XKiss-Download-Policy") || "disabled",
-          visibility: request.headers.get("X-XKiss-Visibility") || "private"
-        });
-
-        return json({
-          ...stored,
-          message: "Video uploaded successfully."
-        }, 201);
-      } catch {
-        return json({
-          ok: false,
-          storageReady: true,
-          status: "failed",
-          message: "Video storage failed."
-        }, 500);
-      }
+      return json({
+        ok: false,
+        storageReady,
+        uploadEnabled: false,
+        status: "creator_content_ownership_required",
+        message: "Upload is disabled until server-side creator ownership and safety gates are complete. No file was stored."
+      }, 503);
     }
 
     if (
