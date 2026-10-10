@@ -138,7 +138,7 @@ test("wallet ledger reads require a session and fail closed without verified cre
     makeEnv("member")
   );
   assert.equal(response.status, 503);
-  assert.equal((await response.json()).status, "creator_identity_mapping_required");
+  assert.equal((await response.json()).status, "creator_content_ownership_required");
 });
 
 test("client-supplied payout authorization flags cannot authorize real payouts", async () => {
