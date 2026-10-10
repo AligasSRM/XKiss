@@ -1,0 +1,60 @@
+name: XKiss ElasticLake Storage Verification
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/xkiss-elasticlake-storage-verification.yml"
+      - "storage-setup/ELASTICLAKE-GITHUB-SETUP.md"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: xkiss-elasticlake-storage-verification
+  cancel-in-progress: false
+
+jobs:
+  elasticlake-write-read-delete:
+    name: ElasticLake S3 write-read-delete
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.ELASTICLAKE_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.ELASTICLAKE_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: auto
+      S3_ENDPOINT: https://app.elasticlake.com
+      S3_BUCKET: xkiss-storage--xkiss-production--xkiss-midea
+    steps:
+      - name: Validate required credentials are configured
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${AWS_ACCESS_KEY_ID}" || { echo "Missing GitHub Actions secret: ELASTICLAKE_ACCESS_KEY_ID"; exit 1; }
+          test -n "${AWS_SECRET_ACCESS_KEY}" || { echo "Missing GitHub Actions secret: ELASTICLAKE_SECRET_ACCESS_KEY"; exit 1; }
+
+      - name: Install AWS CLI
+        run: |
+          python -m pip install --user awscli
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Write, read, compare, and delete a private test object
+        shell: bash
+        run: |
+          set -euo pipefail
+          key="xkiss-github-verification/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.txt"
+          expected="XKiss ElasticLake verification ${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          printf '%s' "$expected" > /tmp/xkiss-storage-test.txt
+
+          aws --endpoint-url "$S3_ENDPOINT" --region "$AWS_DEFAULT_REGION" s3api put-object \
+            --bucket "$S3_BUCKET" --key "$key" --body /tmp/xkiss-storage-test.txt >/dev/null
+
+          aws --endpoint-url "$S3_ENDPOINT" --region "$AWS_DEFAULT_REGION" s3api get-object \
+            --bucket "$S3_BUCKET" --key "$key" /tmp/xkiss-storage-readback.txt >/dev/null
+
+          cmp /tmp/xkiss-storage-test.txt /tmp/xkiss-storage-readback.txt
+
+          aws --endpoint-url "$S3_ENDPOINT" --region "$AWS_DEFAULT_REGION" s3api delete-object \
+            --bucket "$S3_BUCKET" --key "$key" >/dev/null
+
+          echo "PASS: ElasticLake accepted a real write, read-back comparison, and delete."
