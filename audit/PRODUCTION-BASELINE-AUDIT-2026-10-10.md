@@ -82,7 +82,7 @@ The draft PR branch `audit/production-baseline-2026-10-10` now contains initial 
 - The creator library route no longer returns an unscoped global video list; it remains blocked until ownership filtering exists.
 - Veriff session creation now requires an authenticated session and derives `vendorData` / `endUserId` from the server session; client-supplied callback and identity values are ignored.
 - Super-admin authorization fails closed unless a server-verified `mfaVerified: true` flag exists. Current sessions do not yet provide that flag, so super-admin actions remain blocked until real MFA is integrated.
-- Added route tests and a Node test workflow. GitHub Actions confirmed **64 tests passed, 0 failed** on code/test commit `375fdc5586edd53f7a4474f14fa5982ffb60d79c`. A later wallet-ledger self-test remediation added three route tests; GitHub Actions run `38079444205` on commit `6c418a0a56e3473c0fb39b58cc2f3cf0f8ff56dc` completed successfully with **67 tests passed, 0 failed**. This verifies the current test suite, not production behavior or completion of remaining P0 integrations.
+- Added route tests and a Node test workflow. GitHub Actions confirmed **64 tests passed, 0 failed** on code/test commit `375fdc5586edd53f7a4474f14fa5982ffb60d79c`. A later wallet-ledger self-test remediation added three route tests; GitHub Actions run `38079444205` on commit `6c418a0a56e3473c0fb39b58cc2f3cf0f8ff56dc` completed successfully with **67 tests passed, 0 failed** on the wallet self-test fix. The creator-identity batch then added a migration, server-derived profile module, authenticated profile routes, and five route tests; GitHub Actions run `38079585782` completed successfully with **72 tests passed, 0 failed** on code commit `b6e3b44a7bd839eb91dd352d8414c54fef54f5aa`. This verifies the current test suite, not production behavior or completion of remaining P0 integrations.
 
 These changes intentionally block unintegrated features rather than pretending their authorization is complete. They do **not** complete the wallet, payout, creator-library, or age/safety systems. No production deployment or Cloudflare binding changes were made. ElasticLake's adapter, bindings, and locked write/read/delete path remain untouched.
 
@@ -99,3 +99,18 @@ The wallet-ledger self-test route was found to perform a write/read against the 
 ## 9. Acceptance evidence required
 
 For every fix, record the PR/commit, tests run, expected-deny tests, expected-allow tests, CI result, and whether production was changed. A source change alone is not GREEN. The audit status remains **YELLOW / REMEDIATION REQUIRED** until the P0 items are fixed and verified.
+
+
+## 10. Dependency matrix and creator-identity batch — 2026-10-10
+
+Added `audit/XKISS-DEPENDENCY-AND-INTEGRATION-MATRIX-2026-10-10.md`, mapping hard dependencies, safe parallel work, implementation batches, and acceptance evidence.
+
+On the remediation branch only:
+- Added `migrations/0002_creator_identity.sql` with one creator profile per authenticated account and pending/unverified defaults.
+- Added `creator/creator-identity.js` to create/read the mapping using server-derived account identity.
+- Added authenticated `GET/POST /api/creator/profile` routes; client-supplied user ID, creator ID, status and verification state are ignored.
+- Kept `/api/creator/videos` fail-closed because per-video ownership metadata/filtering does not yet exist.
+- Added tests for unauthenticated access, spoofed identity, idempotent profile creation, invalid display name and missing migration.
+- GitHub Actions run `38079585782`: **72 passed, 0 failed**. Section 13 run `38079585762`: success.
+
+This does not mean the D1 migration was applied to production or that the creator library/upload, safety, wallet, settlement or payout paths are complete. Production remains unchanged; PR #19 remains Draft.
