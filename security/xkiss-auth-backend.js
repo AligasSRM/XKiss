@@ -194,7 +194,7 @@ export async function reauthenticateMemberSession(env, token, password) {
   if (candidate !== row.password_hash) return { ok: false, status: "invalid_credentials" };
   const now = new Date().toISOString();
   await env.XKISS_AUTH_DB.prepare(
-    "UPDATE sessions SET reauthenticated_at=?1 WHERE id=?2 AND revoked_at IS NULL"
+    "UPDATE sessions SET reauthenticated_at=?1,mfa_verified_at=NULL WHERE id=?2 AND revoked_at IS NULL"
   ).bind(now, session.sessionId).run();
   return { ok: true, status: "reauthenticated", reauthenticatedAt: now };
 }
