@@ -506,22 +506,32 @@ export default {
     }
 
     if (url.pathname === "/api/wallet/payout/authorize" && request.method === "POST") {
-      let body;
-
-      try {
-        body = await request.json();
-      } catch {
-        return json({
-          ok: false,
-          message: "Invalid payout authorization data."
-        }, 400);
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, authorized: false, status: "backend_not_configured" }, 503);
       }
 
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) return json({ ok: false, authorized: false, status: "unauthorized" }, 401);
+
+      let session;
+      try {
+        session = await authenticateSession(env, token);
+      } catch {
+        return json({ ok: false, authorized: false, status: "authorization_unavailable" }, 503);
+      }
+      if (!session?.ok || !session.user) {
+        return json({ ok: false, authorized: false, status: "unauthorized" }, 401);
+      }
+
+      // Real payouts remain disabled. Never authorize from client-supplied booleans or identity fields.
       return json({
-        ok: true,
-        service: "XKiss Payout Authorization",
-        result: evaluatePayoutAuthorization(body)
-      });
+        ok: false,
+        authorized: false,
+        payoutEnabled: false,
+        status: "payouts_disabled",
+        message: "Real payouts remain disabled until server-side ownership, verification, re-authentication, and audit checks are integrated."
+      }, 403);
     }
 
     if (url.pathname === "/api/wallet/payout/audit" && request.method === "POST") {
@@ -766,62 +776,60 @@ export default {
     }
 
     if (url.pathname === "/api/wallet/ledger/store" && request.method === "POST") {
-      if (!isWalletLedgerReady(env)) {
-        return json({
-          ok: false,
-          storageReady: false,
-          recorded: false,
-          message: "Wallet ledger storage is not connected yet. The entry was not recorded."
-        }, 503);
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, recorded: false, status: "backend_not_configured" }, 503);
       }
 
-      let body;
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) return json({ ok: false, recorded: false, status: "unauthorized" }, 401);
 
+      let session;
       try {
-        body = await request.json();
+        session = await authenticateSession(env, token);
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid wallet ledger data."
-        }, 400);
+        return json({ ok: false, recorded: false, status: "authorization_unavailable" }, 503);
+      }
+      if (!session?.ok || !session.user) {
+        return json({ ok: false, recorded: false, status: "unauthorized" }, 401);
       }
 
-      const result = await storeWalletEntry(env, body);
-
+      // Ledger entries must be created by trusted server-side settlement/reversal flows only.
+      // Authenticated clients cannot write financial records directly.
       return json({
-        ok: true,
-        service: "XKiss Wallet Ledger",
-        result
-      });
+        ok: false,
+        recorded: false,
+        status: "server_generated_entries_only",
+        message: "Wallet ledger writes are restricted to trusted server-side financial flows."
+      }, 403);
     }
 
     if (url.pathname === "/api/wallet/ledger/get" && request.method === "POST") {
-      if (!isWalletLedgerReady(env)) {
-        return json({
-          ok: false,
-          storageReady: false,
-          message: "Wallet ledger storage is not connected yet."
-        }, 503);
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, status: "backend_not_configured" }, 503);
       }
 
-      let body;
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) return json({ ok: false, status: "unauthorized" }, 401);
 
+      let session;
       try {
-        body = await request.json();
+        session = await authenticateSession(env, token);
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid wallet ledger lookup data."
-        }, 400);
+        return json({ ok: false, status: "authorization_unavailable" }, 503);
+      }
+      if (!session?.ok || !session.user) {
+        return json({ ok: false, status: "unauthorized" }, 401);
       }
 
-      const result = await getWalletEntry(env, body);
-
+      // The current schema has no verified user-to-creator identity mapping.
+      // Fail closed instead of trusting a client-supplied creatorId or leaking another creator's ledger.
       return json({
-        ok: true,
-        service: "XKiss Wallet Ledger",
-        result
-      });
+        ok: false,
+        status: "creator_identity_mapping_required",
+        message: "Wallet ledger reads remain unavailable until creator ownership is bound to the authenticated account."
+      }, 503);
     }
 
     if (url.pathname === "/api/views/status" && request.method === "GET") {
