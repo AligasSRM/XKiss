@@ -182,9 +182,11 @@ This is a containment measure, not an upload implementation. GitHub Actions run 
 
 The branch now contains the creator-video ownership migration and owner-filtered list route. GitHub Actions test run `38079768625` reported **80 tests passed, 0 failed** for the test step. The route fails closed if either migration is absent, if the account has no creator profile, or if the owner-bound video table is unavailable. This does not implement upload persistence or media delivery, and it does not authorize deployment.
 
+## 11. Current decision
+
 - PR #19 stays **Draft**.
 - Production stays unchanged.
 - Uploads, payouts and age-restricted activation stay disabled.
 - Creator library reads now use the server-derived creator ID and owner-filtered metadata query on the branch, but remain unavailable until migrations are deployed and upload persistence is integrated; wallet reads remain fail-closed.
 - ElasticLake remains **GREEN / LOCKED**; this audit does not authorize modifying its adapter or bindings.
-- Batch 1 has an initial branch implementation (migration, server-derived creator profile module and authenticated profile routes) and **72/72 tests pass** on the tested code commit; upload is now explicitly disabled with **75/75 tests passing**. The upload containment change and its tests are now in CI; the next batch is creator-owned content metadata plus authenticated upload/library API integration. Creator library and upload remain blocked until that ownership boundary and safety gate are implemented.
+- Batch 1 identity mapping, initial owner-filtered library route, and upload containment are present on the branch. The latest test step reported **80 passed, 0 failed**; confirm the workflow's final conclusion before treating the current head as green. The next batch is connecting an authenticated upload-completion flow to owner-bound metadata and moderation/safety enforcement, while keeping uploads disabled.
