@@ -166,6 +166,25 @@ These are findings supported by source or CI evidence, not guesses. They are rec
 - The UI can demonstrate navigation, local recording, player controls, and client-side search/filtering, but there is no evidence of an active live-stream provider, populated production catalog, or a full publish-to-catalog flow.
 - Required remediation: classify these as working UI/prototype foundations until live services, content persistence, publishing, and end-to-end tests exist.
 
+### F-018 — Creator library endpoint is public and not scoped to the caller (HIGH / privacy + ownership)
+
+- Evidence: `GET /api/creator/videos` in `worker.js` calls `listVideos(env)` and returns the entire storage listing without authenticating a creator or filtering by owner.
+- The storage listing returns object keys and metadata for all video objects under the `videos/` prefix.
+- Required remediation: require a validated session, filter by server-derived creator ID, and keep private/unlisted objects out of public listing responses. Separate the public catalog API from the private creator library.
+
+### F-019 — Storage self-test endpoint is public despite performing provider operations (HIGH / abuse surface)
+
+- Evidence: `GET /api/views/storage/self-test` invokes the durable storage self-test. The test is designed to exercise a real write/read/delete cycle against B2, and no authentication or rate limit was found at the Worker route.
+- The current provider read failure blocks the test early; once credentials are repaired, any caller could repeatedly trigger provider operations and test-object churn.
+- Required remediation: protect the operational self-test with a private/admin-only mechanism or a CI-authenticated endpoint, apply rate limits, and keep ordinary public health checks read-only.
+
+### F-020 — Public view-event ingestion lacks robust abuse controls (HIGH / data integrity + storage abuse)
+
+- Evidence: view-event APIs accept caller-provided video/creator IDs, viewer-session IDs and event IDs. Structural validation and deduplication by client-supplied identifiers are not sufficient to establish genuine human viewing or trusted creator attribution.
+- No rate limit, server-issued event nonce, authenticated creator ownership check, or durable anti-abuse control was verified in the inspected route path.
+- The current rules deliberately return `counted:false` before qualified-view and durable uniqueness checks, which is safer than trusting a client claim; preserve that behavior and do not let client-supplied watch progress directly create revenue or wallet entries.
+- Required remediation: rate-limit ingestion, validate video/creator association server-side, issue or validate server-controlled session/event identifiers, and make the revenue ledger write path trusted-service-only.
+
 ## Comprehensive audit plan — next work
 
 1. Establish authoritative baseline: main commit, tree, PRs, branch relationships, CI workflows, and deployed Worker version.
