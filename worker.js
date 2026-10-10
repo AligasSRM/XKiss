@@ -570,6 +570,9 @@ export default {
         vendorData: result.vendorData,
         providerStatus: result.status,
         verificationState,
+        identityVerificationState: persistedDecision.identityState,
+        ageVerificationState: persistedDecision.ageState,
+        verificationStateRecorded: true,
         recorded: audit.recorded
       });
     }
