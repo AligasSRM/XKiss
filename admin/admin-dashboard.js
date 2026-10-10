@@ -39,8 +39,9 @@
     if (byId("page-subtitle")) byId("page-subtitle").textContent = module.description;
     if (byId("detail-title")) byId("detail-title").textContent = module.title;
     if (byId("detail-description")) byId("detail-description").textContent = module.description;
-    var detail = byId("module-detail"), list = byId("detail-checks");
+    var detail = byId("module-detail"), list = byId("detail-checks"), settingsGroups = byId("settings-groups");
     if (detail) detail.hidden = false;
+    if (settingsGroups) settingsGroups.hidden = key !== "settings";
     if (list) {
       list.replaceChildren();
       module.checks.forEach(function (check) { var li = document.createElement("li"); li.textContent = check; list.appendChild(li); });
