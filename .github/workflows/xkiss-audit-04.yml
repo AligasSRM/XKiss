@@ -1,0 +1,30 @@
+name: XKiss AUDIT-04 Worker Environment Contract
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "core/xkiss-worker-environment-contract.js"
+      - "core/xkiss-worker-environment-contract-self-test.js"
+      - ".github/workflows/xkiss-audit-04.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit-04:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Syntax-check AUDIT-04 files
+        run: |
+          node --check core/xkiss-worker-environment-contract.js
+          node --check core/xkiss-worker-environment-contract-self-test.js
+      - name: Run environment contract self-test
+        run: |
+          node --input-type=module -e "import('./core/xkiss-worker-environment-contract-self-test.js').then(m => { const r = m.runXKissWorkerEnvironmentContractSelfTest(); console.log(JSON.stringify(r, null, 2)); if (!r.ok) process.exit(1); })"
