@@ -7,8 +7,8 @@ const complete = {
   ELASTICLAKE_ENDPOINT: "https://app.elasticlake.com",
   ELASTICLAKE_BUCKET: "xkiss-storage--xkiss-production--xkiss-midea",
   ELASTICLAKE_REGION: "auto",
-  ELASTICLAKE_ACCESS_KEY: "test-access-key",
-  ELASTICLAKE_SECRET_KEY: "test-secret-key"
+  ELASTICLAKE_ACCESS_KEY_ID: "test-access-key",
+  ELASTICLAKE_SECRET_ACCESS_KEY: "test-secret-key"
 };
 
 export function runXKissStorageProductionGateSelfTest() {
