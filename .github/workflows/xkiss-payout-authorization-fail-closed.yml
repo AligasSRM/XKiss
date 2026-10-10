@@ -1,0 +1,30 @@
+name: XKiss Payout Authorization Fail-Closed
+
+on:
+  pull_request:
+    paths:
+      - "worker.js"
+      - "security/payout-authorization-fail-closed-self-test.js"
+      - ".github/workflows/xkiss-payout-authorization-fail-closed.yml"
+  push:
+    branches: [main]
+    paths:
+      - "worker.js"
+      - "security/payout-authorization-fail-closed-self-test.js"
+      - ".github/workflows/xkiss-payout-authorization-fail-closed.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  payout-authorization-fail-closed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Syntax check worker
+        run: node --check worker.js
+      - name: Verify payout authorization remains disabled
+        run: node security/payout-authorization-fail-closed-self-test.js

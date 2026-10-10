@@ -455,22 +455,19 @@ export default {
     }
 
     if (url.pathname === "/api/wallet/payout/authorize" && request.method === "POST") {
-      let body;
-
-      try {
-        body = await request.json();
-      } catch {
-        return json({
-          ok: false,
-          message: "Invalid payout authorization data."
-        }, 400);
-      }
-
+      // Real payouts are deliberately disabled. Client-supplied identity,
+      // verification and re-authentication claims must never authorize them.
       return json({
-        ok: true,
+        ok: false,
         service: "XKiss Payout Authorization",
-        result: evaluatePayoutAuthorization(body)
-      });
+        payoutEnabled: false,
+        result: {
+          ok: true,
+          authorized: false,
+          status: "payout_disabled",
+          reason: "Real payout authorization is disabled until server-side identity, verification, durable audit and payout-provider gates are production-verified."
+        }
+      }, 403);
     }
 
     if (url.pathname === "/api/wallet/payout/audit" && request.method === "POST") {
