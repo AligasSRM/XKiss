@@ -1,4 +1,4 @@
-import { isStorageReady, storeJsonObject } from "../storage/r2-adapter.js";
+import { isStorageReady, storeJsonObject } from "../storage/elasticlake-adapter.js";
 
 export const SAFETY_BACKEND = {
   version: "1.0",
