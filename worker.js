@@ -83,9 +83,31 @@ export default {
 
     if (url.pathname === "/api/auth/register" && request.method === "POST") {
       if (!env.XKISS_AUTH_DB) return json({ ok: false, status: "backend_not_configured" }, 503);
+
       let body;
-      try { body = await request.json(); } catch { return json({ ok: false, status: "invalid_input" }, 400); }
-      return json(await registerMember(env, body), 201);
+      try {
+        body = await request.json();
+      } catch {
+        return json({ ok: false, status: "invalid_input" }, 400);
+      }
+
+      if (!body || typeof body !== "object" || Array.isArray(body)) {
+        return json({ ok: false, status: "invalid_input" }, 400);
+      }
+
+      try {
+        const result = await registerMember(env, body);
+        const status = result.ok
+          ? 201
+          : result.status === "already_exists"
+            ? 409
+            : result.status === "invalid_input"
+              ? 400
+              : 503;
+        return json(result, status);
+      } catch {
+        return json({ ok: false, status: "registration_unavailable" }, 503);
+      }
     }
 
     if (url.pathname === "/api/auth/login" && request.method === "POST") {
