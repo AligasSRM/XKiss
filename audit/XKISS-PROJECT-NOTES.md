@@ -99,6 +99,54 @@ These are findings supported by source or CI evidence, not guesses. They are rec
 - Review password-hashing parameters against current authoritative guidance, login/register abuse protection, account enumeration behavior, verification/recovery, session lifecycle, and whether the declared `XKISS_AUTH_SESSIONS` KV binding is used or is stale.
 - Do not raise this to a confirmed exploit without tests; it is an evidence-backed hardening gap to assess.
 
+### F-008 — Public wallet ledger write/read routes lack authentication and ownership checks (CRITICAL / financial integrity + privacy)
+
+- Evidence: `worker.js` routes `POST /api/wallet/ledger/store` and `POST /api/wallet/ledger/get` without requiring an authenticated session or checking that the caller owns the creator ledger.
+- `wallet/wallet-ledger-store.js` accepts caller-supplied `creatorId`, `entryId`, `amount`, `type`, `currency`, `balanceType`, and `referenceId`; the write path does not validate amount sign/type or verify that the entry came from a trusted revenue/settlement service.
+- Consequence: if the storage binding is ready, an unauthenticated caller may be able to create fabricated ledger records and query records by guessed/known keys. Real payouts are disabled, but this is still a persistent financial-record integrity and confidentiality defect.
+- Required remediation: server-side session authentication, ownership/role authorization, strict schema/amount/currency validation, trusted internal-only ledger mutation, idempotency/concurrency controls, and audit evidence. Keep payouts disabled until end-to-end authorization tests pass.
+
+### F-009 — Adult age gate is not implemented on the public home page (CRITICAL / safety + launch blocker)
+
+- Evidence: `index.html` displays an “18+ ADULTS ONLY” badge but has no age-gate modal or gate script in its included scripts. The safety rules and age-verification module explicitly set `enabled: false`, `provider: null`, and `verificationMethod: backend_verification_required`.
+- The safety overview/self-test is a structural check; it does not establish that visitors are actually blocked from viewing the public site.
+- Required remediation: do not publicly launch or publish adult content until a compliant age-assurance flow and server-side enforcement are implemented and verified, with fail-closed behavior and appropriate jurisdictional review. A label alone is not age verification.
+
+### F-010 — API clients use relative /api URLs against GitHub Pages instead of the separate Worker (HIGH / integration blocker)
+
+- Evidence: `upload/upload-api.js`, `views-revenue/views-client.js`, `views-revenue/views-progress.js`, and `creator/creator-library.js` call paths such as `/api/upload/status`, `/api/views/event/...`, and `/api/creator/videos` using relative URLs.
+- The public frontend is hosted at `https://aligassrm.github.io/XKiss/`, while the API Worker is `https://xkiss.srourr-ali73.workers.dev`. On GitHub Pages, a root-relative `/api/...` URL targets the GitHub Pages host, not the Worker, unless an unverified proxy exists.
+- In contrast, `creator/creator-dashboard.js` hard-codes the Worker base URL, so API routing is inconsistent across pages.
+- Required remediation: centralize one explicit API base/configuration and use it consistently; add integration tests that run against the actual Pages origin and Worker with the configured CORS contract.
+
+### F-011 — Creator upload UI prepares metadata but does not upload the selected video (HIGH / feature incomplete)
+
+- Evidence: `upload/upload-core.js` sends metadata to `/api/upload/prepare` and reports “Upload preparation complete”; it never sends the selected file bytes or calls `/api/upload`.
+- The backend has a separate `POST /api/upload` route requiring the server-side upload key, but the UI does not implement a secure authenticated upload path. The selected file is only checked client-side.
+- Consequence: the current visible upload flow is preparation-only, not a completed creator upload/publish flow. Do not claim video upload works end-to-end.
+
+### F-012 — Current video data does not provide live adaptive streaming renditions (HIGH / media delivery completeness)
+
+- Evidence: `js/video-data.js` contains one demo video, an empty HLS manifest, and only a local 720p MP4 source; 340p, 460p, and 1080p sources are empty.
+- `js/player/player-quality.js` therefore falls back to progressive MP4 for this video. The prior adaptive-video E2E evidence uses a test fixture and does not prove that the currently configured production video has a multi-rendition HLS/DASH manifest.
+- Required remediation: keep the implementation-level E2E result distinct from real content delivery; configure actual authorized media assets and verify multi-rendition playback in a browser before marking live adaptive delivery GREEN for the deployed catalog.
+
+### F-013 — Section 18 advertises automatic repair but the active runner only monitors and escalates (MEDIUM / status accuracy)
+
+- Evidence: `control/xkiss-control-runner.js` runs validations, health checks, live regression, and creates an audit event. It does not import or invoke `control/xkiss-control-repair-adapter.js`, `planSafeRepair`, or any repair/rollback function.
+- The control metadata/policy lists automatic repair actions, but the inspected runner's failure behavior is `DIAGNOSE_AND_ESCALATE` / `BLOCKED_FAIL_CLOSED`.
+- Required remediation: either implement a narrowly scoped, verified repair orchestration with before/after checks and safe rollback, or accurately rename/document the current capability as monitoring + fail-closed escalation. Do not enable automatic changes to production as part of this audit.
+
+### F-014 — B2/R2 provider naming is inconsistent across user-facing pages (MEDIUM / operator confusion)
+
+- Evidence: the backend adapter and Worker report Backblaze B2; `creator-upload.html` and `creator/creator-dashboard.js` still refer to “R2” / “Pending R2”. `storage/r2-adapter.js` is also named for R2 despite implementing B2 S3-compatible requests.
+- This mismatch can mislead operators about which provider is active and which configuration should be verified. Align labels and module names with the agreed B2 provider after the storage fix is confirmed, without changing the provider itself.
+
+### F-015 — Sections 16–17 are structural foundations, not active external product services (MEDIUM / feature scope)
+
+- Evidence: Section 16 explicitly marks all listed external capabilities false; Section 17 sets `backendRequired`, `externalActivationRequired`, and `productionActivationAllowed:false`. Their tests validate contracts and rule shapes, not live partner, messaging, subscription, PPV, notification, or discovery services.
+- Their GREEN/CLOSED labels refer to the software-side foundation and fail-closed boundaries, not to production-enabled features. The release report must preserve that distinction.
+
 ### F-007 — Documentation/status drift (MEDIUM / auditability)
 
 - `audit/PRODUCTION-READINESS-REVIEW.md` contains a previous statement that B2 write-read-delete was GREEN on 2026-10-08, while the later 2026-10-09 live verification fails and the 2026-10-10 Section 18 run still fails.
