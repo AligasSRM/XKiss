@@ -97,3 +97,21 @@ test("registration returns 400 for a non-object JSON body", async () => {
   assert.equal(response.status, 400);
   assert.equal((await response.json()).status, "invalid_input");
 });
+
+test("storage self-test rejects unauthenticated public requests", async () => {
+  const response = await worker.fetch(
+    request({}, null, "/api/views/storage/self-test"),
+    makeEnv()
+  );
+  assert.equal(response.status, 401);
+  assert.equal((await response.json()).status, "unauthorized");
+});
+
+test("storage self-test denies authenticated members without storage permission", async () => {
+  const response = await worker.fetch(
+    request({}, "valid-session-token", "/api/views/storage/self-test"),
+    makeEnv("member")
+  );
+  assert.equal(response.status, 403);
+  assert.equal((await response.json()).status, "forbidden");
+});
