@@ -4,7 +4,7 @@ import {
   isStorageReady,
   listVideos,
   storeVideo
-} from "./storage/r2-adapter.js";
+} from "./storage/elasticlake-adapter.js";
 import {
   MONETIZATION_RULES,
   CREATOR_ELIGIBILITY_RULES,
