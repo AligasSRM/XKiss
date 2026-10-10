@@ -85,3 +85,16 @@ export async function verifySuperAdminMfaForSession(env,user,session,code) {
 }
 export function requiresSuperAdminMfa(role){return role===SUPER_ADMIN_MFA_RULES.requiredForRole;}
 export function validateMfaVerificationRequest(input={}){return {ok:false,status:"runtime_verifier_required",verified:false};}
+
+export function validateMfaVerificationRequest(input = {}) {
+  if (!requiresSuperAdminMfa(input.role)) return { ok: false, status: "mfa_not_applicable", verified: false };
+  const method = String(input.method || "").trim();
+  if (!SUPER_ADMIN_MFA_RULES.allowedMethods.includes(method)) return { ok: false, status: "invalid_method", verified: false };
+  const code = String(input.code || "").trim();
+  if (code.length !== 6 || [...code].some((char) => char < "0" || char > "9")) return { ok: false, status: "code_required", verified: false };
+  return { ok: true, status: "backend_route_required", verified: false };
+}
+
+export function getSuperAdminMfaStatus() {
+  return { ok: true, status: SUPER_ADMIN_MFA_RULES.status, enabled: SUPER_ADMIN_MFA_RULES.enabled, providerConnected: true, requiredForRole: SUPER_ADMIN_MFA_RULES.requiredForRole, allowedMethods: [...SUPER_ADMIN_MFA_RULES.allowedMethods], secretStorage: SUPER_ADMIN_MFA_RULES.secretStorage };
+}
