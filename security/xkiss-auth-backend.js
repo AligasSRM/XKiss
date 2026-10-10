@@ -140,7 +140,7 @@ export async function authenticateSession(env, token) {
 
   const tokenHash = await hashToken(token);
   const row = await env.XKISS_AUTH_DB.prepare(
-    "SELECT s.id AS session_id,s.expires_at,u.id,u.email,u.role,u.status,u.created_at FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=?1 AND s.revoked_at IS NULL LIMIT 1"
+    "SELECT s.id AS session_id,s.expires_at,s.mfa_verified_at,s.reauthenticated_at,u.id,u.email,u.role,u.status,u.created_at FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=?1 AND s.revoked_at IS NULL LIMIT 1"
   ).bind(tokenHash).first();
 
   if (!row || row.status !== "active" || Date.parse(row.expires_at) <= Date.now()) {
@@ -151,6 +151,8 @@ export async function authenticateSession(env, token) {
     ok: true,
     status: "authenticated",
     sessionId: row.session_id,
+    mfaVerifiedAt: row.mfa_verified_at || null,
+    reauthenticatedAt: row.reauthenticated_at || null,
     user: {
       id: row.id,
       email: row.email,
@@ -179,3 +181,20 @@ export const AUTH_SECURITY_INVARIANTS = Object.freeze({
   pbkdf2Iterations: PBKDF2_ITERATIONS,
   failClosed: true
 });
+
+export async function reauthenticateMemberSession(env, token, password) {
+  if (!env?.XKISS_AUTH_DB || typeof password !== "string" || !password) return { ok: false, status: "invalid_credentials" };
+  const session = await authenticateSession(env, token);
+  if (!session.ok) return { ok: false, status: "unauthenticated" };
+  const row = await env.XKISS_AUTH_DB.prepare(
+    "SELECT password_hash,password_salt FROM users WHERE id=?1 AND status='active' LIMIT 1"
+  ).bind(session.user.id).first();
+  if (!row) return { ok: false, status: "invalid_credentials" };
+  const candidate = await hashPassword(password, row.password_salt);
+  if (candidate !== row.password_hash) return { ok: false, status: "invalid_credentials" };
+  const now = new Date().toISOString();
+  await env.XKISS_AUTH_DB.prepare(
+    "UPDATE sessions SET reauthenticated_at=?1 WHERE id=?2 AND revoked_at IS NULL"
+  ).bind(now, session.sessionId).run();
+  return { ok: true, status: "reauthenticated", reauthenticatedAt: now };
+}
