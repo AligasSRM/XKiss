@@ -80,9 +80,9 @@ The draft PR branch `audit/production-baseline-2026-10-10` now contains initial 
 - Wallet ledger reads fail closed until a verified user-to-creator identity mapping exists.
 - Payout authorization cannot be granted by client-supplied booleans; real payouts remain disabled.
 - The creator library route no longer returns an unscoped global video list; it remains blocked until ownership filtering exists.
-- Added route tests and a Node test workflow. The Node test workflow has passed on intermediate commits; the latest branch commit still requires its final CI result and review.
+- Added route tests and a Node test workflow. The test workflow passed on commit `8675f02fdb12fe575787fc3e696b2fd268cc5576`; later commits added more tests and updated this report, so final CI must be checked on the latest branch commit before approval.
 
-These changes intentionally block some currently unintegrated features rather than pretending their authorization is complete. They do **not** complete the wallet, payout, creator-library, or age/safety systems. No production deployment or Cloudflare binding changes were made. ElasticLake's adapter, bindings, and locked write/read/delete path remain untouched.
+These changes intentionally block unintegrated features rather than pretending their authorization is complete. They do **not** complete the wallet, payout, creator-library, or age/safety systems. No production deployment or Cloudflare binding changes were made. ElasticLake's adapter, bindings, and locked write/read/delete path remain untouched.
 
 ## 8. Remaining P0 work
 
@@ -93,17 +93,5 @@ These changes intentionally block some currently unintegrated features rather th
 5. Recheck upload and all other private creator routes for the same identity/ownership boundary.
 
 ## 9. Acceptance evidence required
-
-The draft PR branch `audit/production-baseline-2026-10-10` contains initial changes for review:
-
-- `POST /api/admin/authorize` now requires a bearer session, resolves the user from the server-side session, ignores client-supplied identity/role, and returns 401/403/503 for denial/unavailable cases.
-- `GET /api/views/storage/self-test` now requires an authenticated session with the server-derived `view_storage` permission.
-- Registration now validates that the body is an object and maps created / invalid / duplicate / unexpected outcomes to 201 / 400 / 409 / 503 rather than always returning 201.
-- Admin and settings readiness checks now use the configured `XKISS_AUTH_DB` binding.
-- Route tests were added for missing sessions, client role spoofing, admin authorization, missing database, registration input/status handling, and storage self-test access control. `npm test` is configured as `node --test`.
-
-**Verification status:** These edits are in a draft pull request and have not been run in a confirmed CI environment yet. The repository currently reports no status checks or pull-request workflow runs for the latest branch commit. Do not mark these changes GREEN until the test suite runs successfully and the diff is reviewed. Remaining wallet-ledger and payout trust-boundary issues are still P0.
-
-## 10. Acceptance evidence required
 
 For every fix, record the PR/commit, tests run, expected-deny tests, expected-allow tests, CI result, and whether production was changed. A source change alone is not GREEN. The audit status remains **YELLOW / REMEDIATION REQUIRED** until the P0 items are fixed and verified.
