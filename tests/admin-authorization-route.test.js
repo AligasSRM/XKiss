@@ -29,10 +29,10 @@ function makeEnv(role = "member") {
   };
 }
 
-function request(body, token) {
+function request(body, token, path = "/api/admin/authorize") {
   const headers = { "content-type": "application/json" };
   if (token) headers.Authorization = `Bearer ${token}`;
-  return new Request("https://worker.example/api/admin/authorize", {
+  return new Request(`https://worker.example${path}`, {
     method: "POST",
     headers,
     body: JSON.stringify(body)
@@ -74,4 +74,26 @@ test("admin authorization fails closed when auth database is missing", async () 
   );
   assert.equal(response.status, 503);
   assert.equal((await response.json()).status, "backend_not_configured");
+});
+
+test("registration returns 400 for invalid input instead of 201", async () => {
+  const response = await worker.fetch(
+    request({ email: "not-an-email", password: "long-enough-password" }, null, "/api/auth/register"),
+    makeEnv()
+  );
+  assert.equal(response.status, 400);
+  assert.equal((await response.json()).status, "invalid_input");
+});
+
+test("registration returns 400 for a non-object JSON body", async () => {
+  const response = await worker.fetch(
+    new Request("https://worker.example/api/auth/register", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: "null"
+    }),
+    makeEnv()
+  );
+  assert.equal(response.status, 400);
+  assert.equal((await response.json()).status, "invalid_input");
 });
