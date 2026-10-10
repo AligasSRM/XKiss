@@ -203,3 +203,15 @@ The branch now implements `POST /api/creator/videos/drafts`:
 - keeps `/api/upload/status` blocked and both actual upload routes fail-closed.
 
 GitHub Actions test run `38080124085` passed **86 tests, 0 failed** on code commit `e65d2366fa66c9d598691fe3981ef748aeed6107`. This is an authenticated metadata-draft flow, not a completed upload pipeline. The D1 migrations remain unapplied to production; moderation/age/creator verification and actual storage-object binding remain blockers.
+
+
+## 13. Content reporting and moderation queue — initial implementation
+
+The branch adds migration `0004_content_reports.sql`, `safety/content-report-store.js`, and the following authenticated APIs:
+- `POST /api/safety/reports`: creates a report only for a public, approved video; reporter identity comes from the authenticated session; reason/details are validated; duplicate open reports by the same account for the same video are rejected.
+- `GET /api/safety/reports`: requires `view_reports` permission and returns the bounded queue.
+- `POST /api/safety/reports/review`: requires `manage_reports`, derives moderator identity from the session, updates only open/reviewing reports, and uses a D1 batch to persist the status transition and moderation audit action atomically. Super-admin requests remain blocked unless MFA is verified.
+
+The queue supports open, reviewing, actioned and dismissed report states. **This does not automatically remove/hide a video or prove that a moderation decision has been executed against the media.** It is the durable report intake/review ledger only; provider-backed moderation, age verification and actual content enforcement remain separate blockers.
+
+GitHub Actions run `38080333781` passed **99 tests, 0 failed** on commit `97974fd212f6babc82d167ed1642e4a22dde77d2`. D1 migrations remain unapplied to production.
