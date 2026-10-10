@@ -20,6 +20,9 @@ export function adminBackendStatus(env={}) {
 
 export function authorizeAdminAction(user, permission) {
   if(!user || user.status!=="active") return {ok:false,allowed:false,status:"unauthorized"};
+  if (user.role === "super_admin" && user.mfaVerified !== true) {
+    return { ok: true, allowed: false, status: "mfa_required", role: user.role, permission };
+  }
   const permissions=ROLE_PERMISSIONS[user.role]||[];
   const allowed=permissions.includes(permission);
   return {ok:true,allowed,status:allowed?"authorized":"forbidden",role:user.role,permission};
