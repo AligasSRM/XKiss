@@ -114,3 +114,25 @@ On the remediation branch only:
 - GitHub Actions run `38079585782`: **72 passed, 0 failed**. Section 13 run `38079585762`: success.
 
 This does not mean the D1 migration was applied to production or that the creator library/upload, safety, wallet, settlement or payout paths are complete. Production remains unchanged; PR #19 remains Draft.
+
+
+## 11. Upload boundary containment — 2026-10-10
+
+Source review found that upload preparation did not authenticate an account, and the upload route relied on a shared upload key without binding stored video metadata to a server-derived creator identity. The UI also uses relative API paths that do not automatically target the Cloudflare Worker from GitHub Pages.
+
+On the remediation branch, commit `3a8ffdccf4d60e24c2c8d6d70095d98de559ae13` changes the upload status to explicitly blocked and makes `POST /api/upload/prepare` and `POST /api/upload` return 503 until creator ownership, object metadata, moderation and safety enforcement are implemented. It removes direct upload/list storage-adapter usage from the Worker while this integration is unavailable. Tests in `tests/upload-boundary.test.js` prove that even configured storage credentials and a configured shared upload key do not bypass the gate.
+
+GitHub Actions run `38079668710` passed **75 tests, 0 failed**; Section 13 run `38079668788` also passed. This is branch/test evidence only; production remains unchanged and uploads remain disabled.
+
+## 12. Open PR overlap disposition
+
+The dependency matrix records the current source-level review:
+- PRs #10 and #14 overlap the session-backed admin authorization fix in #19.
+- PR #15 overlaps the payout authorization contract; keep payouts disabled and reconcile tests/contracts before any merge.
+- PR #3 proposes a competing account/auth schema and must not be merged as-is against the current `users`/`sessions` foundation.
+- PR #13 has a live regression expectation for an unauthenticated storage self-test that conflicts with the intentional authorization gate; update the test, not the security gate.
+- PR #16 is UI-only readiness work and does not establish a secure settings backend.
+- PR #17's statement that remediation has not started is now stale.
+- PR #1 removes/replaces a large portion of `index.html` and needs separate playback/product regression review.
+
+No overlapping PR was merged or closed. PR #19 remains Draft.
