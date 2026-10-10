@@ -3,9 +3,9 @@ main = "worker.js"
 compatibility_date = "2026-09-25"
 
 [vars]
-XKISS_B2_ENDPOINT = "https://s3.eu-central-003.backblazeb2.com"
-XKISS_B2_REGION = "eu-central-003"
-XKISS_B2_BUCKET = "xkiss-videos"
+ELASTICLAKE_ENDPOINT = "https://app.elasticlake.com"
+ELASTICLAKE_REGION = "auto"
+ELASTICLAKE_BUCKET = "xkiss-storage--xkiss-production--xkiss-midea"
 
 
 [[d1_databases]]
