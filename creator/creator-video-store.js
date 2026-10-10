@@ -59,10 +59,10 @@ export async function createCreatorVideoDraft(env, creatorId, input = {}) {
   const contentType = String(input.contentType ?? "").trim().toLowerCase();
   const sizeBytes = Number(input.sizeBytes);
 
-  if (!title || title.length > VIDEO_TITLE_MAX || /[\\u0000-\\u001F\\u007F]/.test(title)) {
+  if (!title || title.length > VIDEO_TITLE_MAX || /[\u0000-\u001F\u007F]/.test(title)) {
     return { ok: false, status: "invalid_title", video: null };
   }
-  if (description.length > VIDEO_DESCRIPTION_MAX || /[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F\\u007F]/.test(description)) {
+  if (description.length > VIDEO_DESCRIPTION_MAX || /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/.test(description)) {
     return { ok: false, status: "invalid_description", video: null };
   }
   if (!/^[a-z0-9][a-z0-9-]{0,39}$/.test(category)) {
