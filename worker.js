@@ -325,10 +325,10 @@ export default {
         ok: true,
         service: "XKiss Durable View Event Store",
         storageReady: isViewEventStoreReady(env),
-        storage: "Backblaze B2",
+        storage: "ElasticLake",
         message: isViewEventStoreReady(env)
-          ? "Backblaze B2 durable view event storage is connected."
-          : "Backblaze B2 durable view event storage is not connected yet."
+          ? "ElasticLake durable view event storage is connected."
+          : "ElasticLake durable view event storage is not connected yet."
       });
     }
 
@@ -810,7 +810,7 @@ export default {
         return json({
           ok: true,
           service: "XKiss Durable View Event Store",
-          storage: "Backblaze B2",
+          storage: "ElasticLake",
           test: "write-read-delete",
           write,
           read,
@@ -821,7 +821,7 @@ export default {
         return json({
           ok: false,
           service: "XKiss Durable View Event Store",
-          storage: "Backblaze B2",
+          storage: "ElasticLake",
           test: "write-read-delete",
           verified: false,
           diagnostic: String(error?.message || error || "Unknown storage error").slice(0, 1000)
