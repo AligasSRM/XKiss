@@ -23,8 +23,8 @@ The repository contains substantial UI and modular software foundations, but key
 6. **HIGH — API routing:** Several frontend modules use root-relative `/api/...` URLs while the static site is hosted on GitHub Pages and the API is a separate Cloudflare Worker. Unless a proxy exists (none was verified), those calls target the Pages host instead of the Worker.
 7. **HIGH — Upload flow:** The visible creator upload UI prepares metadata only; it does not send the selected video bytes or invoke the actual upload endpoint.
 8. **HIGH — Auth/account integration:** The account UI uses browser `localStorage`; it is not wired to the separate server-side register/login/session/logout routes.
-9. **HIGH — Settings/admin database contract:** Wrangler declares `XKISS_AUTH_DB`, while admin/settings status helpers check `XKISS_DB`.
-10. **HIGH — Current adaptive media delivery:** The checked-in catalog has one demo video, an empty HLS manifest, and only a 720p progressive source. The previous HLS fixture test does not prove live multi-rendition delivery for the current catalog.
+9. **HIGH — Creator library access:** `GET /api/creator/videos` returns the storage listing without a session or creator-owner filter.\n10. **HIGH — Public operational test endpoint:** the B2 write/read/delete self-test is exposed through a public GET route with no verified authentication/rate limit.\n11. **HIGH — View-event abuse controls:** client-supplied event/session identifiers plus structural validation do not prove genuine views; ingestion needs rate limiting and server-side attribution.\n12. **HIGH — Settings/admin database contract:** Wrangler declares `XKISS_AUTH_DB`, while admin/settings status helpers check `XKISS_DB`.
+13. **HIGH — Current adaptive media delivery:** The checked-in catalog has one demo video, an empty HLS manifest, and only a 720p progressive source. The previous HLS fixture test does not prove live multi-rendition delivery for the current catalog.
 
 ## 2. Section-by-section status matrix
 
@@ -37,10 +37,10 @@ Status describes the verified implementation state, not the presence of files. A
 | 03 | Live | 🔴 Not production-ready | Live data is empty; page supports local camera/microphone recording, but its own UI says the real-time stream provider is not connected. |
 | 04 | Creators | 🟡 Prototype | Home creator cards are static; verified creator profiles and creator data service were not demonstrated. |
 | 05 | User Account | 🔴 Incomplete integration | Account UI stores profile/favorites/history/preferences locally. It does not call the server-side authentication endpoints. |
-| 06 | Creator Dashboard | 🟡 Partial integration | Dashboard calls the Worker explicitly, but storage readiness is based on configuration presence and can be misleading while B2 reads fail. |
+| 06 | Creator Dashboard | 🟡 Partial integration | Dashboard calls the Worker explicitly, but storage readiness is configuration-only. The creator library API returns all stored video metadata without session/owner scoping. |
 | 07 | Video Upload | 🔴 Incomplete | UI performs client validation and metadata preparation only; no actual file upload occurs from the UI. Upload API URL also uses a relative path. |
 | 08 | Monetization | 🟡 Rules only | Monetization rules exist, but activation/payment provider are not production-enabled. |
-| 09 | Views & Revenue | 🔴 Blocked | B2 durable-event verification fails. Some client API calls use relative `/api` URLs that target GitHub Pages, not the separate Worker. |
+| 09 | Views & Revenue | 🔴 Blocked | B2 durable-event verification fails; some client URLs target GitHub Pages, and public event ingestion/self-test routes need abuse controls. |
 | 10 | Creator Wallet & Payouts | 🔴 Security blocker | Ledger read/write routes lack authentication/ownership checks; payout authorization trusts client claims on `main`. Real payouts must remain disabled. |
 | 11 | Search & Categories | 🟡 Local-only | Client-side search/category logic exists, but it reads the same small local demo catalog. |
 | 12 | Safety & Verification | 🔴 Launch blocker | Age verification and safety enforcement are disabled; no real age provider is connected; the public page shows a badge rather than an actual gate. |
@@ -61,7 +61,7 @@ Status describes the verified implementation state, not the presence of files. A
 - The GitHub Pages origin and Worker origin are different. Standard GitHub Pages does not proxy those paths to the Worker, so these flows are not correctly wired unless an external proxy is proven.
 - The Worker CORS contract currently permits `https://aligassrm.github.io`; keep the API origin and CORS policy consistent after fixing routing.
 
-### Identity ↔ Admin ↔ Wallet
+### Public APIs ↔ ownership ↔ abuse controls\n- `GET /api/creator/videos` returns a full storage listing without server-side creator ownership filtering.\n- `GET /api/views/storage/self-test` invokes provider write/read/delete checks without a verified private access gate; protect it before fixing B2.\n- Public view-event ingestion accepts client-generated identifiers. Keep counting and revenue server-controlled, and add rate limiting and server-side attribution.\n\n### Identity ↔ Admin ↔ Wallet
 - User registration/login/session logic exists separately in `security/xkiss-auth-backend.js`, but the visible account UI does not use it.
 - Admin authorization on `main` trusts client-supplied identity.
 - Wallet ledger routes accept unauthenticated writes/reads and do not enforce creator ownership.
