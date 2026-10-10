@@ -89,7 +89,7 @@ export async function storeWalletEntry(env, entry) {
       status: "duplicate",
       recorded: false,
       key,
-      storage: "Backblaze B2"
+      storage: "ElasticLake"
     };
   }
 
@@ -101,7 +101,7 @@ export async function storeWalletEntry(env, entry) {
     status: "stored",
     recorded: true,
     key,
-    storage: "Backblaze B2"
+    storage: "ElasticLake"
   };
 }
 
@@ -137,6 +137,6 @@ export async function getWalletEntry(env, entry) {
     status: result.value ? "found" : "not-found",
     key,
     entry: result.value || null,
-    storage: "Backblaze B2"
+    storage: "ElasticLake"
   };
 }
