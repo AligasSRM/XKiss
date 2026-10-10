@@ -1,4 +1,4 @@
-const REQUIRED_SECRET_NAMES=Object.freeze(["ELASTICLAKE_ACCESS_KEY","ELASTICLAKE_SECRET_KEY","ELASTICLAKE_ENDPOINT","ELASTICLAKE_BUCKET","ELASTICLAKE_REGION"]);
+const REQUIRED_SECRET_NAMES=Object.freeze(["ELASTICLAKE_ACCESS_KEY_ID","ELASTICLAKE_SECRET_ACCESS_KEY","ELASTICLAKE_ENDPOINT","ELASTICLAKE_BUCKET","ELASTICLAKE_REGION"]);
 export function runSecretManagementMonitor(env=process.env){
   const supplied=Object.keys(env).some(k=>REQUIRED_SECRET_NAMES.includes(k));
   const presence=Object.fromEntries(REQUIRED_SECRET_NAMES.map(k=>[k,Boolean(env[k])]));
