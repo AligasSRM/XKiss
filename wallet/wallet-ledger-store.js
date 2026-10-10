@@ -1,4 +1,4 @@
-import { isStorageReady, storeJsonObject, getJsonObject } from "../storage/r2-adapter.js";
+import { isStorageReady, storeJsonObject, getJsonObject } from "../storage/elasticlake-adapter.js";
 
 const WALLET_LEDGER_PREFIX = "wallet-ledger:";
 
