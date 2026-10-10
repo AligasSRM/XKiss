@@ -1,3 +1,4 @@
+import { authorizeAdminAction } from "../admin/xkiss-admin-backend.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import worker from "../worker.js";
@@ -194,4 +195,13 @@ test("Veriff session creation does not accept client identity as authority", asy
   const body = await response.json();
   assert.equal(body.status, "provider_not_configured");
   assert.equal(body.endUserId, undefined);
+});
+
+test("super-admin authorization fails closed without server-verified MFA", () => {
+  const result = authorizeAdminAction(
+    { id: "root-user", role: "super_admin", status: "active" },
+    "manage_users"
+  );
+  assert.equal(result.allowed, false);
+  assert.equal(result.status, "mfa_required");
 });
