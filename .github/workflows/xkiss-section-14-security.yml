@@ -1,0 +1,30 @@
+name: XKiss Section 14 Super Admin Security
+on:
+  push:
+    branches: [main]
+    paths:
+      - "security/**"
+      - "audit/xkiss-final-review.js"
+      - ".github/workflows/xkiss-section-14-security.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  section-14-security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check Section 14 JavaScript syntax
+        run: |
+          for file in security/*.js; do
+            node --check "$file"
+          done
+      - name: Run Section 14 fail-closed security self-test
+        run: |
+          node --input-type=module -e "import('./security/super-admin-security-core-self-test.js').then(m => { const r = m.runSuperAdminSecurityCoreSelfCheck(); console.log(JSON.stringify(r, null, 2)); if (!r.ok) process.exit(1); })"
+      - name: Run repository final review
+        run: node audit/xkiss-final-review.js
