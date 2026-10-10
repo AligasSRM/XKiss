@@ -1,4 +1,4 @@
-import { isStorageReady, storeJsonObject, getJsonObject, deleteJsonObject } from "../storage/r2-adapter.js";
+import { isStorageReady, storeJsonObject, getJsonObject, deleteJsonObject } from "../storage/elasticlake-adapter.js";
 
 const VIEW_EVENT_PREFIX = "view-events/";
 
