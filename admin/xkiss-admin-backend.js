@@ -8,9 +8,9 @@ const ROLE_PERMISSIONS = Object.freeze({
 
 export function adminBackendStatus(env={}) {
   return {
-    ok:Boolean(env.XKISS_DB),
+    ok:Boolean(env.XKISS_AUTH_DB),
     service:"XKiss Admin Backend",
-    databaseConfigured:Boolean(env.XKISS_DB),
+    databaseConfigured:Boolean(env.XKISS_AUTH_DB),
     authorizationMode:"role_based",
     mfaRequiredForSuperAdmin:true,
     auditRequired:true,
@@ -20,6 +20,9 @@ export function adminBackendStatus(env={}) {
 
 export function authorizeAdminAction(user, permission) {
   if(!user || user.status!=="active") return {ok:false,allowed:false,status:"unauthorized"};
+  if (user.role === "super_admin" && user.mfaVerified !== true) {
+    return { ok: true, allowed: false, status: "mfa_required", role: user.role, permission };
+  }
   const permissions=ROLE_PERMISSIONS[user.role]||[];
   const allowed=permissions.includes(permission);
   return {ok:true,allowed,status:allowed?"authorized":"forbidden",role:user.role,permission};

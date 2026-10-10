@@ -1,10 +1,5 @@
 import { getXKissSettingsRuntimeStatus } from "./settings/xkiss-settings-runtime-core.js";
-import {
-  createVideoKey,
-  isStorageReady,
-  listVideos,
-  storeVideo
-} from "./storage/elasticlake-adapter.js";
+import { isStorageReady } from "./storage/elasticlake-adapter.js";
 import {
   MONETIZATION_RULES,
   CREATOR_ELIGIBILITY_RULES,
@@ -23,7 +18,7 @@ import {
 } from "./views-revenue/view-event-store.js";
 import { evaluateViewPipeline } from "./views-revenue/view-pipeline.js";
 import { evaluateViewCountDecision } from "./views-revenue/view-count-decision.js";
-import { isWalletLedgerReady, storeWalletEntry, getWalletEntry } from "./wallet/wallet-ledger-store.js";
+import { isWalletLedgerReady } from "./wallet/wallet-ledger-store.js";
 import { evaluateRevenueToWallet } from "./wallet/revenue-to-wallet.js";
 import { evaluatePendingSettlement, WALLET_SETTLEMENT_RULES } from "./wallet/wallet-settlement.js";
 import { evaluateWalletReversal } from "./wallet/wallet-reversals.js";
@@ -41,10 +36,14 @@ import {
 } from "./views-revenue/views-revenue-rules.js";
 import { runSafetySelfTest, getSafetyVerificationOverview } from "./safety/safety-integration.js";
 import { getSafetyBackendStatus, runSafetyBackendSelfTest, recordSafetyBackendEvent } from "./safety/safety-backend.js";
+import { createContentReport, listContentReports, reviewContentReport, CONTENT_REPORT_SECURITY } from "./safety/content-report-store.js";
+import { recordVerificationSession, getVerificationSession, recordVeriffDecision, getUserVerificationState, VERIFICATION_STATE_SECURITY } from "./safety/verification-state-store.js";
 import { verifyDiditWebhook, mapDiditVerificationState } from "./safety/didit-kyc-provider.js";
 import { verifyVeriffWebhook, mapVeriffVerificationState } from "./safety/veriff-kyc-provider.js";
 import { createVeriffSession } from "./safety/veriff-session-provider.js";
 import { registerMember, loginMember, authenticateSession, logoutMember, AUTH_SECURITY_INVARIANTS } from "./security/xkiss-auth-backend.js";
+import { getCreatorProfileByUserId, createCreatorProfile, CREATOR_IDENTITY_SECURITY } from "./creator/creator-identity.js";
+import { listCreatorVideosForCreator, createCreatorVideoDraft, CREATOR_VIDEO_OWNERSHIP_SECURITY } from "./creator/creator-video-store.js";
 import { adminBackendStatus, authorizeAdminAction, ADMIN_BACKEND_SECURITY } from "./admin/xkiss-admin-backend.js";
 import { settingsBackendStatus, validateSettingsBackendAction, SETTINGS_BACKEND_SECURITY } from "./settings/xkiss-settings-backend.js";
 
@@ -83,9 +82,31 @@ export default {
 
     if (url.pathname === "/api/auth/register" && request.method === "POST") {
       if (!env.XKISS_AUTH_DB) return json({ ok: false, status: "backend_not_configured" }, 503);
+
       let body;
-      try { body = await request.json(); } catch { return json({ ok: false, status: "invalid_input" }, 400); }
-      return json(await registerMember(env, body), 201);
+      try {
+        body = await request.json();
+      } catch {
+        return json({ ok: false, status: "invalid_input" }, 400);
+      }
+
+      if (!body || typeof body !== "object" || Array.isArray(body)) {
+        return json({ ok: false, status: "invalid_input" }, 400);
+      }
+
+      try {
+        const result = await registerMember(env, body);
+        const status = result.ok
+          ? 201
+          : result.status === "already_exists"
+            ? 409
+            : result.status === "invalid_input"
+              ? 400
+              : 503;
+        return json(result, status);
+      } catch {
+        return json({ ok: false, status: "registration_unavailable" }, 503);
+      }
     }
 
     if (url.pathname === "/api/auth/login" && request.method === "POST") {
@@ -116,8 +137,37 @@ export default {
     }
 
     if (url.pathname === "/api/admin/authorize" && request.method === "POST") {
-      let body; try { body = await request.json(); } catch { return json({ok:false,status:"invalid_input"},400); }
-      return json(authorizeAdminAction(body.user, body.permission));
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, allowed: false, status: "backend_not_configured" }, 503);
+      }
+
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+
+      if (!token) {
+        return json({ ok: false, allowed: false, status: "unauthorized" }, 401);
+      }
+
+      let session;
+      try {
+        session = await authenticateSession(env, token);
+      } catch {
+        return json({ ok: false, allowed: false, status: "authorization_unavailable" }, 503);
+      }
+
+      if (!session?.ok || !session.user) {
+        return json({ ok: false, allowed: false, status: "unauthorized" }, 401);
+      }
+
+      let body;
+      try {
+        body = await request.json();
+      } catch {
+        return json({ ok: false, allowed: false, status: "invalid_input" }, 400);
+      }
+
+      const result = authorizeAdminAction(session.user, body.permission);
+      return json(result, result.allowed ? 200 : 403);
     }
 
     if (url.pathname === "/api/admin/security" && request.method === "GET") {
@@ -148,6 +198,141 @@ export default {
         storageReady,
         uploadEndpoint: true
       });
+    }
+
+    if (url.pathname === "/api/safety/reports" && request.method === "POST") {
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, status: "backend_not_configured" }, 503);
+      }
+
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) return json({ ok: false, status: "unauthorized" }, 401);
+
+      let session;
+      try {
+        session = await authenticateSession(env, token);
+      } catch {
+        return json({ ok: false, status: "authorization_unavailable" }, 503);
+      }
+      if (!session?.ok || !session.user) {
+        return json({ ok: false, status: "unauthorized" }, 401);
+      }
+
+      let body;
+      try {
+        body = await request.json();
+      } catch {
+        return json({ ok: false, status: "invalid_input" }, 400);
+      }
+      if (!body || typeof body !== "object" || Array.isArray(body)) {
+        return json({ ok: false, status: "invalid_input" }, 400);
+      }
+
+      try {
+        const result = await createContentReport(env, session.user.id, {
+          videoId: body.videoId,
+          reason: body.reason,
+          details: body.details
+        });
+        const statusCode = result.ok ? 201
+          : result.status === "duplicate_open_report" ? 409
+          : result.status === "reportable_content_not_found" ? 404
+          : result.status.startsWith("invalid_") ? 400
+          : 503;
+        return json({ ...result, security: CONTENT_REPORT_SECURITY }, statusCode);
+      } catch {
+        return json({ ok: false, status: "content_report_storage_not_ready" }, 503);
+      }
+    }
+
+    if (url.pathname === "/api/safety/reports" && request.method === "GET") {
+      if (!env.XKISS_AUTH_DB) return json({ ok: false, status: "backend_not_configured" }, 503);
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) return json({ ok: false, status: "unauthorized" }, 401);
+
+      let session;
+      try {
+        session = await authenticateSession(env, token);
+      } catch {
+        return json({ ok: false, status: "authorization_unavailable" }, 503);
+      }
+      if (!session?.ok || !session.user) return json({ ok: false, status: "unauthorized" }, 401);
+      const permission = authorizeAdminAction(session.user, "view_reports");
+      if (!permission.allowed) return json({ ok: false, status: permission.status }, 403);
+
+      try {
+        const result = await listContentReports(env);
+        return json({ ...result, security: CONTENT_REPORT_SECURITY }, result.ok ? 200 : 503);
+      } catch {
+        return json({ ok: false, status: "content_report_storage_not_ready", reports: [] }, 503);
+      }
+    }
+
+    if (url.pathname === "/api/safety/reports/review" && request.method === "POST") {
+      if (!env.XKISS_AUTH_DB) return json({ ok: false, status: "backend_not_configured" }, 503);
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) return json({ ok: false, status: "unauthorized" }, 401);
+
+      let session;
+      try {
+        session = await authenticateSession(env, token);
+      } catch {
+        return json({ ok: false, status: "authorization_unavailable" }, 503);
+      }
+      if (!session?.ok || !session.user) return json({ ok: false, status: "unauthorized" }, 401);
+      const permission = authorizeAdminAction(session.user, "manage_reports");
+      if (!permission.allowed) return json({ ok: false, status: permission.status }, 403);
+
+      let body;
+      try {
+        body = await request.json();
+      } catch {
+        return json({ ok: false, status: "invalid_input" }, 400);
+      }
+      if (!body || typeof body !== "object" || Array.isArray(body)) {
+        return json({ ok: false, status: "invalid_input" }, 400);
+      }
+
+      try {
+        const result = await reviewContentReport(env, session.user.id, {
+          reportId: body.reportId,
+          action: body.action,
+          notes: body.notes
+        });
+        const statusCode = result.ok ? 200
+          : result.status === "report_not_found" ? 404
+          : result.status === "report_already_closed" || result.status === "report_state_conflict" ? 409
+          : result.status.startsWith("invalid_") ? 400
+          : 503;
+        return json({ ...result, security: CONTENT_REPORT_SECURITY }, statusCode);
+      } catch {
+        return json({ ok: false, status: "content_moderation_storage_not_ready" }, 503);
+      }
+    }
+
+    if (url.pathname === "/api/safety/verification/me" && request.method === "GET") {
+      if (!env.XKISS_AUTH_DB) return json({ ok: false, status: "backend_not_configured" }, 503);
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) return json({ ok: false, status: "unauthorized" }, 401);
+
+      let session;
+      try {
+        session = await authenticateSession(env, token);
+      } catch {
+        return json({ ok: false, status: "authorization_unavailable" }, 503);
+      }
+      if (!session?.ok || !session.user) return json({ ok: false, status: "unauthorized" }, 401);
+
+      try {
+        const state = await getUserVerificationState(env, session.user.id);
+        return json({ ...state, security: VERIFICATION_STATE_SECURITY }, state.ok ? 200 : 503);
+      } catch {
+        return json({ ok: false, status: "verification_state_storage_not_ready" }, 503);
+      }
     }
 
     if (url.pathname === "/api/safety/status" && request.method === "GET") {
@@ -203,25 +388,33 @@ export default {
     }
 
     if (url.pathname === "/api/verification/veriff/session" && request.method === "POST") {
-      let body = {};
-
-      try {
-        body = await request.json();
-      } catch {
-        return json({
-          ok: false,
-          service: "XKiss Veriff KYC Session",
-          status: "invalid_input"
-        }, 400);
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, service: "XKiss Veriff KYC Session", status: "backend_not_configured" }, 503);
       }
 
-      let result;
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) {
+        return json({ ok: false, service: "XKiss Veriff KYC Session", status: "unauthorized" }, 401);
+      }
 
+      let session;
+      try {
+        session = await authenticateSession(env, token);
+      } catch {
+        return json({ ok: false, service: "XKiss Veriff KYC Session", status: "authorization_unavailable" }, 503);
+      }
+      if (!session?.ok || !session.user) {
+        return json({ ok: false, service: "XKiss Veriff KYC Session", status: "unauthorized" }, 401);
+      }
+
+      // Identity is server-derived. Ignore client-supplied endUserId/vendorData/callback values.
+      let result;
       try {
         result = await createVeriffSession(env, {
-          vendorData: body.vendorData,
-          endUserId: body.endUserId,
-          callback: body.callback
+          vendorData: session.user.id,
+          endUserId: session.user.id,
+          callback: env.VERIFF_CALLBACK_URL || null
         });
       } catch (error) {
         return json({
@@ -240,6 +433,21 @@ export default {
           providerHttpStatus: result.providerHttpStatus || null,
           providerStatus: result.providerStatus || null
         }, result.status === "invalid_vendor_data" || result.status === "invalid_end_user_id" ? 400 : 502);
+      }
+
+      try {
+        await recordVerificationSession(env, {
+          provider: "veriff",
+          providerSessionId: result.verificationId,
+          userId: session.user.id
+        });
+      } catch {
+        // Do not return a provider verification URL unless the provider session is durably bound to this account.
+        return json({
+          ok: false,
+          service: "XKiss Veriff KYC Session",
+          status: "verification_session_storage_not_ready"
+        }, 503);
       }
 
       return json({
@@ -282,6 +490,60 @@ export default {
 
       const verificationState = mapVeriffVerificationState(result.status);
 
+      let boundSession;
+      try {
+        boundSession = await getVerificationSession(env, "veriff", result.verificationId);
+      } catch {
+        return json({
+          ok: false,
+          service: "XKiss Veriff KYC Webhook",
+          status: "verification_session_storage_not_ready"
+        }, 503);
+      }
+      if (!boundSession?.ok || !boundSession.session) {
+        return json({
+          ok: false,
+          service: "XKiss Veriff KYC Webhook",
+          status: "unbound_verification_session"
+        }, 401);
+      }
+
+      const providerVerification = result.payload?.verification || {};
+      if (
+        result.vendorData !== boundSession.session.userId ||
+        providerVerification.endUserId !== boundSession.session.userId
+      ) {
+        return json({
+          ok: false,
+          service: "XKiss Veriff KYC Webhook",
+          status: "verification_account_binding_mismatch"
+        }, 401);
+      }
+
+      let persistedDecision;
+      try {
+        persistedDecision = await recordVeriffDecision(env, {
+          userId: boundSession.session.userId,
+          verificationId: result.verificationId,
+          status: result.status,
+          decisionTime: providerVerification.decisionTime,
+          dateOfBirth: providerVerification.person?.dateOfBirth
+        });
+      } catch {
+        return json({
+          ok: false,
+          service: "XKiss Veriff KYC Webhook",
+          status: "verification_state_storage_not_ready"
+        }, 503);
+      }
+      if (!persistedDecision.ok) {
+        return json({
+          ok: false,
+          service: "XKiss Veriff KYC Webhook",
+          status: persistedDecision.status
+        }, 503);
+      }
+
       const audit = await recordSafetyBackendEvent(env, {
         eventType: "veriff_verification_status",
         provider: "veriff",
@@ -308,6 +570,9 @@ export default {
         vendorData: result.vendorData,
         providerStatus: result.status,
         verificationState,
+        identityVerificationState: persistedDecision.identityState,
+        ageVerificationState: persistedDecision.ageState,
+        verificationStateRecorded: true,
         recorded: audit.recorded
       });
     }
@@ -455,22 +720,32 @@ export default {
     }
 
     if (url.pathname === "/api/wallet/payout/authorize" && request.method === "POST") {
-      let body;
-
-      try {
-        body = await request.json();
-      } catch {
-        return json({
-          ok: false,
-          message: "Invalid payout authorization data."
-        }, 400);
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, authorized: false, status: "backend_not_configured" }, 503);
       }
 
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) return json({ ok: false, authorized: false, status: "unauthorized" }, 401);
+
+      let session;
+      try {
+        session = await authenticateSession(env, token);
+      } catch {
+        return json({ ok: false, authorized: false, status: "authorization_unavailable" }, 503);
+      }
+      if (!session?.ok || !session.user) {
+        return json({ ok: false, authorized: false, status: "unauthorized" }, 401);
+      }
+
+      // Real payouts remain disabled. Never authorize from client-supplied booleans or identity fields.
       return json({
-        ok: true,
-        service: "XKiss Payout Authorization",
-        result: evaluatePayoutAuthorization(body)
-      });
+        ok: false,
+        authorized: false,
+        payoutEnabled: false,
+        status: "payouts_disabled",
+        message: "Real payouts remain disabled until server-side ownership, verification, re-authentication, and audit checks are integrated."
+      }, 403);
     }
 
     if (url.pathname === "/api/wallet/payout/audit" && request.method === "POST") {
@@ -677,100 +952,100 @@ export default {
     }
 
     if (url.pathname === "/api/wallet/ledger/self-test" && request.method === "GET") {
-      const entry = {
-        entryId: "production-wallet-self-test-entry",
-        creatorId: "production-wallet-self-test-creator",
-        type: "earning",
-        amount: 1,
-        currency: "USD",
-        balanceType: "pending",
-        referenceId: "production-wallet-self-test-reference",
-        occurredAt: new Date().toISOString()
-      };
-
-      if (!isWalletLedgerReady(env)) {
-        return json({ ok: false, storageReady: false, verified: false }, 503);
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, storageReady: false, verified: false, status: "backend_not_configured" }, 503);
       }
 
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) {
+        return json({ ok: false, verified: false, status: "unauthorized" }, 401);
+      }
+
+      let session;
       try {
-        const write = await storeWalletEntry(env, entry);
-        const read = await getWalletEntry(env, entry);
-
-        return json({
-          ok: true,
-          service: "XKiss Wallet Ledger",
-          test: "write-read",
-          write,
-          read,
-          verified: write.ok === true && read.status === "found" && Boolean(read.entry)
-        });
+        session = await authenticateSession(env, token);
       } catch {
-        return json({
-          ok: false,
-          service: "XKiss Wallet Ledger",
-          test: "write-read",
-          verified: false
-        }, 500);
+        return json({ ok: false, verified: false, status: "authorization_unavailable" }, 503);
       }
+      if (!session?.ok || !session.user) {
+        return json({ ok: false, verified: false, status: "unauthorized" }, 401);
+      }
+
+      const authorizationResult = authorizeAdminAction(session.user, "view_storage");
+      if (!authorizationResult.allowed) {
+        return json({ ok: false, verified: false, status: "forbidden" }, 403);
+      }
+
+      // Never write synthetic financial entries into the live ledger from a health-check route.
+      // A real ledger write/read test must use an isolated test namespace, not production wallet keys.
+      return json({
+        ok: true,
+        service: "XKiss Wallet Ledger",
+        test: "non-mutating-preflight",
+        storageReady: isWalletLedgerReady(env),
+        verified: false,
+        mutationPerformed: false,
+        status: "isolated_write_read_test_required",
+        message: "No live ledger entry was written. Verify wallet write/read using an isolated test namespace before claiming ledger integration is verified."
+      });
     }
 
     if (url.pathname === "/api/wallet/ledger/store" && request.method === "POST") {
-      if (!isWalletLedgerReady(env)) {
-        return json({
-          ok: false,
-          storageReady: false,
-          recorded: false,
-          message: "Wallet ledger storage is not connected yet. The entry was not recorded."
-        }, 503);
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, recorded: false, status: "backend_not_configured" }, 503);
       }
 
-      let body;
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) return json({ ok: false, recorded: false, status: "unauthorized" }, 401);
 
+      let session;
       try {
-        body = await request.json();
+        session = await authenticateSession(env, token);
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid wallet ledger data."
-        }, 400);
+        return json({ ok: false, recorded: false, status: "authorization_unavailable" }, 503);
+      }
+      if (!session?.ok || !session.user) {
+        return json({ ok: false, recorded: false, status: "unauthorized" }, 401);
       }
 
-      const result = await storeWalletEntry(env, body);
-
+      // Ledger entries must be created by trusted server-side settlement/reversal flows only.
+      // Authenticated clients cannot write financial records directly.
       return json({
-        ok: true,
-        service: "XKiss Wallet Ledger",
-        result
-      });
+        ok: false,
+        recorded: false,
+        status: "server_generated_entries_only",
+        message: "Wallet ledger writes are restricted to trusted server-side financial flows."
+      }, 403);
     }
 
     if (url.pathname === "/api/wallet/ledger/get" && request.method === "POST") {
-      if (!isWalletLedgerReady(env)) {
-        return json({
-          ok: false,
-          storageReady: false,
-          message: "Wallet ledger storage is not connected yet."
-        }, 503);
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, status: "backend_not_configured" }, 503);
       }
 
-      let body;
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) return json({ ok: false, status: "unauthorized" }, 401);
 
+      let session;
       try {
-        body = await request.json();
+        session = await authenticateSession(env, token);
       } catch {
-        return json({
-          ok: false,
-          message: "Invalid wallet ledger lookup data."
-        }, 400);
+        return json({ ok: false, status: "authorization_unavailable" }, 503);
+      }
+      if (!session?.ok || !session.user) {
+        return json({ ok: false, status: "unauthorized" }, 401);
       }
 
-      const result = await getWalletEntry(env, body);
-
+      // The current schema has no verified user-to-creator identity mapping.
+      // Fail closed instead of trusting a client-supplied creatorId or leaking another creator's ledger.
       return json({
-        ok: true,
-        service: "XKiss Wallet Ledger",
-        result
-      });
+        ok: false,
+        status: "creator_identity_mapping_required",
+        message: "Wallet ledger reads remain unavailable until creator ownership is bound to the authenticated account."
+      }, 503);
     }
 
     if (url.pathname === "/api/views/status" && request.method === "GET") {
@@ -785,6 +1060,32 @@ export default {
     }
 
     if (url.pathname === "/api/views/storage/self-test" && request.method === "GET") {
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, verified: false, status: "backend_not_configured" }, 503);
+      }
+
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) {
+        return json({ ok: false, verified: false, status: "unauthorized" }, 401);
+      }
+
+      let session;
+      try {
+        session = await authenticateSession(env, token);
+      } catch {
+        return json({ ok: false, verified: false, status: "authorization_unavailable" }, 503);
+      }
+
+      if (!session?.ok || !session.user) {
+        return json({ ok: false, verified: false, status: "unauthorized" }, 401);
+      }
+
+      const authorizationResult = authorizeAdminAction(session.user, "view_storage");
+      if (!authorizationResult.allowed) {
+        return json({ ok: false, verified: false, status: "forbidden" }, 403);
+      }
+
       const event = {
         videoId: "production-self-test-video",
         creatorId: "production-self-test-creator",
@@ -1090,149 +1391,212 @@ export default {
         ok: true,
         service: "XKiss Upload",
         storageReady,
-        uploadEndpoint: true,
-        message: storageReady
-          ? "Production video storage is connected."
-          : "Production video storage is not activated yet."
+        uploadEndpoint: false,
+        uploadEnabled: false,
+        ownershipReady: false,
+        safetyReady: false,
+        status: "blocked",
+        message: "Uploads remain disabled until authenticated creator ownership, object metadata binding, moderation and safety enforcement are implemented and tested."
       });
     }
 
+    // Fail closed: do not allow a shared upload key to bypass creator ownership and safety gates.
+    // Replace this guard only when the creator_videos ownership contract and moderation integration exist.
     if (url.pathname === "/api/upload/prepare" && request.method === "POST") {
-      if (!storageReady) {
-        return json({
-          ok: false,
-          storageReady: false,
-          message: "Production storage is not activated yet. The video was not uploaded."
-        }, 503);
-      }
-
-      let body;
-
-      try {
-        body = await request.json();
-      } catch {
-        return json({
-          ok: false,
-          message: "Invalid upload metadata."
-        }, 400);
-      }
-
-      if (!body.fileName || !body.contentType || !body.title) {
-        return json({
-          ok: false,
-          message: "fileName, contentType and title are required."
-        }, 400);
-      }
-
-      const key = createVideoKey(body.fileName);
-
       return json({
-        ok: true,
-        storageReady: true,
-        uploadReady: Boolean(env.XKISS_UPLOAD_KEY),
-        key,
-        fileName: String(body.fileName),
-        contentType: String(body.contentType),
-        message: env.XKISS_UPLOAD_KEY
-          ? "Upload preparation is ready for the connected storage layer."
-          : "Storage is connected, but upload authorization is not configured yet."
-      });
+        ok: false,
+        storageReady,
+        uploadEnabled: false,
+        status: "creator_content_ownership_required",
+        message: "Upload preparation is disabled until server-side creator ownership and safety gates are complete."
+      }, 503);
     }
 
     if (url.pathname === "/api/upload" && request.method === "POST") {
-      if (!storageReady) {
-        return json({
-          ok: false,
-          storageReady: false,
-          message: "Production video storage is not activated yet. The video was not uploaded."
-        }, 503);
+      return json({
+        ok: false,
+        storageReady,
+        uploadEnabled: false,
+        status: "creator_content_ownership_required",
+        message: "Upload is disabled until server-side creator ownership and safety gates are complete. No file was stored."
+      }, 503);
+    }
+
+    if (
+      url.pathname === "/api/creator/profile" &&
+      (request.method === "GET" || request.method === "POST")
+    ) {
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, status: "backend_not_configured" }, 503);
       }
 
-      if (!env.XKISS_UPLOAD_KEY) {
-        return json({
-          ok: false,
-          storageReady: true,
-          message: "Upload authorization is not configured yet."
-        }, 503);
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) return json({ ok: false, status: "unauthorized" }, 401);
+
+      let session;
+      try {
+        session = await authenticateSession(env, token);
+      } catch {
+        return json({ ok: false, status: "authorization_unavailable" }, 503);
+      }
+      if (!session?.ok || !session.user) {
+        return json({ ok: false, status: "unauthorized" }, 401);
       }
 
-      const suppliedKey = request.headers.get("X-XKiss-Upload-Key");
-
-      if (!suppliedKey || suppliedKey !== env.XKISS_UPLOAD_KEY) {
-        return json({
-          ok: false,
-          message: "Upload authorization failed."
-        }, 401);
+      if (request.method === "GET") {
+        try {
+          const result = await getCreatorProfileByUserId(env, session.user.id);
+          return json({
+            ok: result.ok,
+            status: result.status,
+            creator: result.creator,
+            security: CREATOR_IDENTITY_SECURITY
+          }, result.ok ? 200 : 503);
+        } catch {
+          return json({ ok: false, status: "creator_identity_schema_not_ready", creator: null }, 503);
+        }
       }
 
-      const fileName = request.headers.get("X-XKiss-File-Name");
-      const contentType = request.headers.get("Content-Type") || "application/octet-stream";
-
-      if (!fileName) {
-        return json({
-          ok: false,
-          message: "X-XKiss-File-Name is required."
-        }, 400);
+      let body;
+      try {
+        body = await request.json();
+      } catch {
+        return json({ ok: false, status: "invalid_input" }, 400);
       }
-
-      if (!contentType.startsWith("video/")) {
-        return json({
-          ok: false,
-          message: "Only video content is accepted."
-        }, 415);
+      if (!body || typeof body !== "object" || Array.isArray(body)) {
+        return json({ ok: false, status: "invalid_input" }, 400);
       }
-
-      if (!request.body) {
-        return json({
-          ok: false,
-          message: "Video request body is empty."
-        }, 400);
-      }
-
-      const key = createVideoKey(fileName);
 
       try {
-        const stored = await storeVideo(env, key, request.body, {
-          fileName,
-          contentType,
-          title: request.headers.get("X-XKiss-Title") || "",
-          description: request.headers.get("X-XKiss-Description") || "",
-          category: request.headers.get("X-XKiss-Category") || "",
-          downloadPolicy: request.headers.get("X-XKiss-Download-Policy") || "disabled",
-          visibility: request.headers.get("X-XKiss-Visibility") || "private"
+        // userId, creatorId, status and verification fields from the client are deliberately ignored.
+        const result = await createCreatorProfile(env, {
+          userId: session.user.id,
+          displayName: body.displayName
         });
-
-        return json({
-          ...stored,
-          message: "Video uploaded successfully."
-        }, 201);
+        const statusCode = result.status === "created" ? 201
+          : result.status === "already_exists" ? 200
+          : result.status === "invalid_display_name" ? 400
+          : result.ok ? 200 : 503;
+        return json(result, statusCode);
       } catch {
+        return json({ ok: false, status: "creator_identity_schema_not_ready" }, 503);
+      }
+    }
+
+    if (url.pathname === "/api/creator/videos/drafts" && request.method === "POST") {
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, status: "backend_not_configured" }, 503);
+      }
+
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) return json({ ok: false, status: "unauthorized" }, 401);
+
+      let session;
+      try {
+        session = await authenticateSession(env, token);
+      } catch {
+        return json({ ok: false, status: "authorization_unavailable" }, 503);
+      }
+      if (!session?.ok || !session.user) {
+        return json({ ok: false, status: "unauthorized" }, 401);
+      }
+
+      let body;
+      try {
+        body = await request.json();
+      } catch {
+        return json({ ok: false, status: "invalid_input" }, 400);
+      }
+      if (!body || typeof body !== "object" || Array.isArray(body)) {
+        return json({ ok: false, status: "invalid_input" }, 400);
+      }
+
+      try {
+        const profile = await getCreatorProfileByUserId(env, session.user.id);
+        if (!profile.ok) return json({ ok: false, status: profile.status }, 503);
+        if (!profile.creator) {
+          return json({ ok: false, status: "creator_profile_required" }, 404);
+        }
+
+        const result = await createCreatorVideoDraft(env, profile.creator.id, {
+          title: body.title,
+          description: body.description,
+          category: body.category,
+          contentType: body.contentType,
+          sizeBytes: body.sizeBytes
+        });
+        const statusCode = result.ok ? 201
+          : result.status.startsWith("invalid_") || result.status === "unsupported_content_type" ? 400
+          : 503;
         return json({
-          ok: false,
-          storageReady: true,
-          status: "failed",
-          message: "Video storage failed."
-        }, 500);
+          ...result,
+          uploadEnabled: false,
+          message: result.ok
+            ? "Draft saved to the authenticated creator account. This does not upload a file; upload stays disabled pending moderation and safety integration."
+            : undefined
+        }, statusCode);
+      } catch {
+        return json({ ok: false, status: "creator_video_schema_not_ready", uploadEnabled: false }, 503);
       }
     }
 
     if (url.pathname === "/api/creator/videos" && request.method === "GET") {
-      try {
-        const result = await listVideos(env);
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, videos: [], status: "backend_not_configured" }, 503);
+      }
 
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) return json({ ok: false, videos: [], status: "unauthorized" }, 401);
+
+      let session;
+      try {
+        session = await authenticateSession(env, token);
+      } catch {
+        return json({ ok: false, videos: [], status: "authorization_unavailable" }, 503);
+      }
+      if (!session?.ok || !session.user) {
+        return json({ ok: false, videos: [], status: "unauthorized" }, 401);
+      }
+
+      let profile;
+      try {
+        profile = await getCreatorProfileByUserId(env, session.user.id);
+      } catch {
+        return json({ ok: false, videos: [], status: "creator_identity_schema_not_ready" }, 503);
+      }
+      if (!profile.ok) {
+        return json({ ok: false, videos: [], status: profile.status }, 503);
+      }
+      if (!profile.creator) {
         return json({
-          ...result,
-          message: storageReady
-            ? "Creator library is connected."
-            : "Creator library is ready. Production storage is not activated yet."
+          ok: false,
+          videos: [],
+          status: "creator_profile_required",
+          message: "Create a creator profile before accessing the creator library."
+        }, 404);
+      }
+
+      try {
+        const result = await listCreatorVideosForCreator(env, profile.creator.id);
+        if (!result.ok) {
+          return json({ ok: false, videos: [], status: result.status }, 503);
+        }
+        return json({
+          ok: true,
+          status: result.status,
+          videos: result.videos,
+          ownershipSecurity: CREATOR_VIDEO_OWNERSHIP_SECURITY
         });
       } catch {
         return json({
           ok: false,
-          storageReady,
           videos: [],
-          message: "Creator storage could not be read."
-        }, 500);
+          status: "creator_video_schema_not_ready",
+          message: "Creator library remains unavailable until the owner-bound video metadata migration is applied."
+        }, 503);
       }
     }
 
