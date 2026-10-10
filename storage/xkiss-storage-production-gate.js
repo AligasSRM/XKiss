@@ -2,13 +2,13 @@ export const XKISS_STORAGE_PRODUCTION_GATE = {
   stage: "AUDIT-03",
   name: "Video Storage Production Gate",
   failClosed: true,
-  provider: "Backblaze B2",
+  provider: "ElasticLake",
   requiredConfiguration: [
-    "XKISS_B2_ENDPOINT",
-    "XKISS_B2_BUCKET",
-    "XKISS_B2_REGION",
-    "XKISS_B2_ACCESS_KEY",
-    "XKISS_B2_SECRET_KEY"
+    "ELASTICLAKE_ENDPOINT",
+    "ELASTICLAKE_BUCKET",
+    "ELASTICLAKE_REGION",
+    "ELASTICLAKE_ACCESS_KEY",
+    "ELASTICLAKE_SECRET_KEY"
   ]
 };
 
