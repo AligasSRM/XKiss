@@ -36,6 +36,7 @@ import {
 } from "./views-revenue/views-revenue-rules.js";
 import { runSafetySelfTest, getSafetyVerificationOverview } from "./safety/safety-integration.js";
 import { getSafetyBackendStatus, runSafetyBackendSelfTest, recordSafetyBackendEvent } from "./safety/safety-backend.js";
+import { createContentReport, CONTENT_REPORT_SECURITY } from "./safety/content-report-store.js";
 import { verifyDiditWebhook, mapDiditVerificationState } from "./safety/didit-kyc-provider.js";
 import { verifyVeriffWebhook, mapVeriffVerificationState } from "./safety/veriff-kyc-provider.js";
 import { createVeriffSession } from "./safety/veriff-session-provider.js";
@@ -196,6 +197,52 @@ export default {
         storageReady,
         uploadEndpoint: true
       });
+    }
+
+    if (url.pathname === "/api/safety/reports" && request.method === "POST") {
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, status: "backend_not_configured" }, 503);
+      }
+
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) return json({ ok: false, status: "unauthorized" }, 401);
+
+      let session;
+      try {
+        session = await authenticateSession(env, token);
+      } catch {
+        return json({ ok: false, status: "authorization_unavailable" }, 503);
+      }
+      if (!session?.ok || !session.user) {
+        return json({ ok: false, status: "unauthorized" }, 401);
+      }
+
+      let body;
+      try {
+        body = await request.json();
+      } catch {
+        return json({ ok: false, status: "invalid_input" }, 400);
+      }
+      if (!body || typeof body !== "object" || Array.isArray(body)) {
+        return json({ ok: false, status: "invalid_input" }, 400);
+      }
+
+      try {
+        const result = await createContentReport(env, session.user.id, {
+          videoId: body.videoId,
+          reason: body.reason,
+          details: body.details
+        });
+        const statusCode = result.ok ? 201
+          : result.status === "duplicate_open_report" ? 409
+          : result.status === "reportable_content_not_found" ? 404
+          : result.status.startsWith("invalid_") ? 400
+          : 503;
+        return json({ ...result, security: CONTENT_REPORT_SECURITY }, statusCode);
+      } catch {
+        return json({ ok: false, status: "content_report_storage_not_ready" }, 503);
+      }
     }
 
     if (url.pathname === "/api/safety/status" && request.method === "GET") {
