@@ -159,3 +159,12 @@ Added `createCreatorVideoDraft` in `creator/creator-video-store.js` and authenti
 The initial CI attempt exposed an incorrectly escaped control-character validation regex; this was corrected and the full test workflow then passed **86/86 tests** in run `38080124085` on commit `e65d2366fa66c9d598691fe3981ef748aeed6107`. Section 13 checks for the same head were in progress at the time of this report update.
 
 The metadata route remains un-deployed. Migrations `0002_creator_identity.sql` and `0003_creator_video_ownership.sql` are not applied to production. Actual upload, object key finalization, byte-level file verification, moderation/age verification, private media delivery and deletion are not implemented by this batch.
+
+
+## 15. Durable content reporting and review queue — 2026-10-10
+
+Added migration `0004_content_reports.sql` with report intake, duplicate-open-report prevention, queue indexes, and a moderation-action audit table. The Worker now exposes authenticated report submission, permission-gated report queue retrieval, and permission-gated report review. The reporter/moderator identities are server-derived. Review transitions and their audit records use D1 `batch()` to keep them atomic; super-admin moderation remains blocked without server-verified MFA.
+
+CI run `38080333781` passed **99 tests, 0 failed** on commit `97974fd212f6babc82d167ed1642e4a22dde77d2`. Section 13 and settings integration workflows on the immediately preceding code commit passed; final checks for this test commit were being monitored.
+
+Limit: the review queue does not itself remove content or execute a provider-backed moderation decision. It is report intake/review tracking only. Migration `0004` is not applied to production, and no deployment/configuration changes were made.
