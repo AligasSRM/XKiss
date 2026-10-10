@@ -48,6 +48,7 @@ import { registerMember, loginMember, authenticateSession, logoutMember, reauthe
 import { beginSuperAdminMfaEnrollment, verifyAndEnableSuperAdminMfa, verifySuperAdminMfaForSession } from "./security/super-admin-mfa.js";
 import { adminBackendStatus, authorizeAdminAction, ADMIN_BACKEND_SECURITY } from "./admin/xkiss-admin-backend.js";
 import { recordAdminSecurityAudit } from "./security/admin-security-audit.js";
+import { isRecentSuperAdminMfa } from "./security/admin-mfa-authorization.js";
 import { settingsBackendStatus, validateSettingsBackendAction, SETTINGS_BACKEND_SECURITY } from "./settings/xkiss-settings-backend.js";
 
 const CORS_HEADERS = {
@@ -194,9 +195,7 @@ export default {
 
       // Super Admin actions require a successfully verified, recent MFA step.
       if (session.user.role === "super_admin") {
-        const mfaVerifiedAt = session.mfaVerifiedAt ? Date.parse(session.mfaVerifiedAt) : NaN;
-        const mfaAgeMs = Date.now() - mfaVerifiedAt;
-        if (!Number.isFinite(mfaVerifiedAt) || mfaAgeMs < 0 || mfaAgeMs > 5 * 60 * 1000) {
+        if (!isRecentSuperAdminMfa(session.mfaVerifiedAt)) {
           const audit = await recordAdminSecurityAudit(env, {
             actorUserId: session.user.id,
             actorEmail: session.user.email,
