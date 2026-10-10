@@ -120,7 +120,7 @@ export async function listVideos(env) {
   const response = await signedRequest(env, "GET");
   await throwStorageError("list", response);
   const xml = await response.text();
-  const blocks = xml.match(/<Contents>[\\s\\S]*?<\\/Contents>/g) || [];
+  const blocks = xml.match(/<Contents>[\s\S]*?<\/Contents>/g) || [];
   const videos = blocks.map((block) => {
     const key = xmlTag(block, "Key");
     if (!key || !key.startsWith(VIDEO_PREFIX)) return null;
