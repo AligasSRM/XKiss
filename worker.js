@@ -836,6 +836,32 @@ export default {
     }
 
     if (url.pathname === "/api/views/storage/self-test" && request.method === "GET") {
+      if (!env.XKISS_AUTH_DB) {
+        return json({ ok: false, verified: false, status: "backend_not_configured" }, 503);
+      }
+
+      const authorization = request.headers.get("Authorization") || "";
+      const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+      if (!token) {
+        return json({ ok: false, verified: false, status: "unauthorized" }, 401);
+      }
+
+      let session;
+      try {
+        session = await authenticateSession(env, token);
+      } catch {
+        return json({ ok: false, verified: false, status: "authorization_unavailable" }, 503);
+      }
+
+      if (!session?.ok || !session.user) {
+        return json({ ok: false, verified: false, status: "unauthorized" }, 401);
+      }
+
+      const authorizationResult = authorizeAdminAction(session.user, "view_storage");
+      if (!authorizationResult.allowed) {
+        return json({ ok: false, verified: false, status: "forbidden" }, 403);
+      }
+
       const event = {
         videoId: "production-self-test-video",
         creatorId: "production-self-test-creator",
