@@ -20,7 +20,7 @@ Section 13 is the administration dashboard experience: responsive information ar
 - The frontend does not authenticate, authorize, create sessions, grant roles, or perform privileged operations.
 - Production access remains disabled until server-side authentication, role-based authorization, protected session storage, MFA for super-admin access, and durable audit logging are independently implemented and verified.
 - Unknown or unavailable authorization must fail closed.
-- This work must not change Cloudflare configuration, Worker deployments, secrets, B2/R2 bindings, Didit settings, datasets, or parked Sections 7–10 and Safety & Verification.
+- This work must not change Cloudflare configuration, Worker deployments, storage-provider bindings or secrets, Didit settings, datasets, or parked Sections 7–10 and Safety & Verification.
 
 ## Verification
 ```sh
