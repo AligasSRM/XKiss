@@ -29,13 +29,13 @@ function makeEnv(role = "member") {
   };
 }
 
-function request(body, token, path = "/api/admin/authorize") {
+function request(body, token, path = "/api/admin/authorize", method = "POST") {
   const headers = { "content-type": "application/json" };
   if (token) headers.Authorization = `Bearer ${token}`;
   return new Request(`https://worker.example${path}`, {
-    method: "POST",
+    method,
     headers,
-    body: JSON.stringify(body)
+    body: method === "GET" ? undefined : JSON.stringify(body)
   });
 }
 
@@ -100,7 +100,7 @@ test("registration returns 400 for a non-object JSON body", async () => {
 
 test("storage self-test rejects unauthenticated public requests", async () => {
   const response = await worker.fetch(
-    request({}, null, "/api/views/storage/self-test"),
+    request({}, null, "/api/views/storage/self-test", "GET"),
     makeEnv()
   );
   assert.equal(response.status, 401);
@@ -109,7 +109,7 @@ test("storage self-test rejects unauthenticated public requests", async () => {
 
 test("storage self-test denies authenticated members without storage permission", async () => {
   const response = await worker.fetch(
-    request({}, "valid-session-token", "/api/views/storage/self-test"),
+    request({}, "valid-session-token", "/api/views/storage/self-test", "GET"),
     makeEnv("member")
   );
   assert.equal(response.status, 403);
