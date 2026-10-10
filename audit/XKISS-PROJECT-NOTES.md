@@ -1,4 +1,15 @@
-# XKiss — Project Notes & Continuity Ledger
+# XKiss — Project Notes
+
+## Current status — ACTIVE / قيد التنفيذ
+
+- **Overall XKiss review:** 🟡 IN PROGRESS. The source/contract/CI audit has identified and documented major blockers; the audit is not closed and production is not approved.
+- **Documentation:** 🟢 The project notes, separate temporary ideas ledger, and comprehensive audit report are saved on the draft branch and grouped in PR #17.
+- **Application remediation:** 🟡 NOT STARTED. No application code or live provider configuration has been changed in this audit pass.
+- **Production activation / payouts:** 🔴 BLOCKED. Keep both disabled until critical security, adult-safety, storage, and integration gates pass.
+- **Next action:** Start with P0 containment: server-side admin authorization, wallet ledger authentication/ownership, payout fail-closed authorization, adult age assurance, creator-library access controls, and protecting the storage self-test endpoint. Then diagnose B2 safely and fix API routing.
+- **Change-control rule:** Work in isolated PRs, test each change against current `main`, record evidence, and do not merge or activate production without Ali's explicit approval.
+
+ & Continuity Ledger
 
 **Record type:** Permanent project state, evidence, blockers, decisions, and next actions.  
 **Last inspected:** 2026-10-10  
