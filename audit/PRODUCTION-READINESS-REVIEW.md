@@ -11,7 +11,7 @@ Tracked review gates for the final production target.
 - Full production regression
 - Product exit / sale-ready gate
 
-Status: ACTIVE GATES TRACKED. Adaptive delivery implementation is GREEN after the real browser E2E gate passed. Storage integrity is GREEN based on live production evidence from the XKiss Worker: Backblaze B2 write → read → delete completed successfully with `storageReady=true` and `verified=true` on 2026-10-08. The overall production-readiness review remains open until the remaining gates are independently verified.
+Status: ACTIVE GATES TRACKED. Adaptive delivery implementation is GREEN after the real browser E2E gate passed. Storage integrity is GREEN based on live production evidence from the XKiss Worker: ElasticLake write → read → delete completed successfully with `storageReady=true` and `verified=true` on 2026-10-08. The overall production-readiness review remains open until the remaining gates are independently verified.
 
 ## Storage evidence
 
@@ -20,7 +20,7 @@ Live endpoint:
 
 Observed result:
 - HTTP 200
-- Provider: Backblaze B2
+- Provider: ElasticLake
 - Test: write-read-delete
 - Write: stored
 - Read: found
