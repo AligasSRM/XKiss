@@ -67,7 +67,32 @@ ElasticLake storage is **GREEN / LOCKED** based on the previously observed produ
 12. Run the production readiness gate. No release, real payouts, or sensitive activation before all P0 findings are closed with evidence.
 
 
-## 7. Remediation branch progress (not yet verified)
+
+## 7. Remediation branch progress (review required; production unchanged)
+
+The draft PR branch `audit/production-baseline-2026-10-10` now contains initial fail-closed changes:
+
+- `POST /api/admin/authorize` requires a bearer session and derives the user/role from the server-side session; client-supplied identity is ignored.
+- `GET /api/views/storage/self-test` requires a server-authenticated account with `view_storage` permission.
+- Registration validates the request body and maps created / invalid / duplicate / unexpected outcomes to 201 / 400 / 409 / 503.
+- Admin and settings readiness checks use the configured `XKISS_AUTH_DB` binding.
+- Direct wallet ledger writes are blocked for clients and restricted to trusted server-side financial flows.
+- Wallet ledger reads fail closed until a verified user-to-creator identity mapping exists.
+- Payout authorization cannot be granted by client-supplied booleans; real payouts remain disabled.
+- The creator library route no longer returns an unscoped global video list; it remains blocked until ownership filtering exists.
+- Added route tests and a Node test workflow. The Node test workflow has passed on intermediate commits; the latest branch commit still requires its final CI result and review.
+
+These changes intentionally block some currently unintegrated features rather than pretending their authorization is complete. They do **not** complete the wallet, payout, creator-library, or age/safety systems. No production deployment or Cloudflare binding changes were made. ElasticLake's adapter, bindings, and locked write/read/delete path remain untouched.
+
+## 8. Remaining P0 work
+
+1. Implement a trusted account-to-creator identity mapping and server-side creator ownership model.
+2. Implement a server-only revenue/settlement pipeline that is the sole writer to the wallet ledger; keep client writes denied.
+3. Integrate payout ownership, verified creator state, re-authentication, audit persistence, and a real payout provider before enabling payouts.
+4. Complete age verification, moderation, reporting, privacy, audit, and server-side enforcement before age-restricted activation.
+5. Recheck upload and all other private creator routes for the same identity/ownership boundary.
+
+## 9. Acceptance evidence required
 
 The draft PR branch `audit/production-baseline-2026-10-10` contains initial changes for review:
 
@@ -79,6 +104,6 @@ The draft PR branch `audit/production-baseline-2026-10-10` contains initial chan
 
 **Verification status:** These edits are in a draft pull request and have not been run in a confirmed CI environment yet. The repository currently reports no status checks or pull-request workflow runs for the latest branch commit. Do not mark these changes GREEN until the test suite runs successfully and the diff is reviewed. Remaining wallet-ledger and payout trust-boundary issues are still P0.
 
-## 8. Acceptance evidence required
+## 10. Acceptance evidence required
 
 For every fix, record the PR/commit, tests run, expected-deny tests, expected-allow tests, CI result, and whether production was changed. A source change alone is not GREEN. The audit status remains **YELLOW / REMEDIATION REQUIRED** until the P0 items are fixed and verified.
