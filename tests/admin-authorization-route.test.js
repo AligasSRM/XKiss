@@ -115,3 +115,45 @@ test("storage self-test denies authenticated members without storage permission"
   assert.equal(response.status, 403);
   assert.equal((await response.json()).status, "forbidden");
 });
+
+test("wallet ledger writes require a session and remain server-generated only", async () => {
+  const unauthenticated = await worker.fetch(
+    request({ creatorId: "victim", entryId: "e1", amount: 999999 }, null, "/api/wallet/ledger/store"),
+    makeEnv()
+  );
+  assert.equal(unauthenticated.status, 401);
+
+  const authenticated = await worker.fetch(
+    request({ creatorId: "victim", entryId: "e1", amount: 999999 }, "valid-session-token", "/api/wallet/ledger/store"),
+    makeEnv("member")
+  );
+  assert.equal(authenticated.status, 403);
+  assert.equal((await authenticated.json()).status, "server_generated_entries_only");
+});
+
+test("wallet ledger reads require a session and fail closed without verified creator mapping", async () => {
+  const response = await worker.fetch(
+    request({ creatorId: "victim", entryId: "e1" }, "valid-session-token", "/api/wallet/ledger/get"),
+    makeEnv("member")
+  );
+  assert.equal(response.status, 503);
+  assert.equal((await response.json()).status, "creator_identity_mapping_required");
+});
+
+test("client-supplied payout authorization flags cannot authorize real payouts", async () => {
+  const unauthenticated = await worker.fetch(
+    request({ authenticated: true, creatorVerified: true, payoutProfileReady: true, reauthenticated: true }, null, "/api/wallet/payout/authorize"),
+    makeEnv("admin")
+  );
+  assert.equal(unauthenticated.status, 401);
+
+  const authenticated = await worker.fetch(
+    request({ authenticated: true, creatorId: "victim", requestCreatorId: "victim", creatorVerified: true, payoutProfileReady: true, reauthenticated: true }, "valid-session-token", "/api/wallet/payout/authorize"),
+    makeEnv("admin")
+  );
+  assert.equal(authenticated.status, 403);
+  const body = await authenticated.json();
+  assert.equal(body.authorized, false);
+  assert.equal(body.payoutEnabled, false);
+  assert.equal(body.status, "payouts_disabled");
+});
