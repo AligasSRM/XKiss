@@ -18,3 +18,4 @@ jobs:
       - run: node --check security/super-admin-mfa.js
       - run: node --check security/xkiss-auth-backend.js
       - run: node --check security/admin-security-audit.js
+      - run: node --check security/admin-mfa-authorization.js

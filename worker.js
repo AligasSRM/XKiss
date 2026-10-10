@@ -48,6 +48,7 @@ import { registerMember, loginMember, authenticateSession, logoutMember, reauthe
 import { beginSuperAdminMfaEnrollment, verifyAndEnableSuperAdminMfa, verifySuperAdminMfaForSession } from "./security/super-admin-mfa.js";
 import { adminBackendStatus, authorizeAdminAction, ADMIN_BACKEND_SECURITY } from "./admin/xkiss-admin-backend.js";
 import { recordAdminSecurityAudit } from "./security/admin-security-audit.js";
+import { isRecentSuperAdminMfa } from "./security/admin-mfa-authorization.js";
 import { settingsBackendStatus, validateSettingsBackendAction, SETTINGS_BACKEND_SECURITY } from "./settings/xkiss-settings-backend.js";
 
 const CORS_HEADERS = {
@@ -192,10 +193,9 @@ export default {
         return json({ ok: false, allowed: false, status: "unauthenticated" }, 401);
       }
 
-      // Super Admin remains denied until a real MFA verifier is connected.
+      // Super Admin actions require a successfully verified, recent MFA step.
       if (session.user.role === "super_admin") {
-        const mfaVerifiedAt = session.mfaVerifiedAt ? Date.parse(session.mfaVerifiedAt) : 0;
-        if (!mfaVerifiedAt || Date.now() - mfaVerifiedAt > 5 * 60 * 1000) {
+        if (!isRecentSuperAdminMfa(session.mfaVerifiedAt)) {
           const audit = await recordAdminSecurityAudit(env, {
             actorUserId: session.user.id,
             actorEmail: session.user.email,
@@ -208,17 +208,6 @@ export default {
           if (!audit.ok) return json({ ok: false, allowed: false, status: "admin_audit_unavailable" }, 503);
           return json({ ok: false, allowed: false, status: "mfa_verification_required" }, 403);
         }
-        const audit = await recordAdminSecurityAudit(env, {
-          actorUserId: session.user.id,
-          actorEmail: session.user.email,
-          action: "admin_authorize",
-          target: typeof body.permission === "string" ? body.permission : null,
-          outcome: "denied",
-          reason: "mfa_backend_required",
-          requestId
-        });
-        if (!audit.ok) return json({ ok: false, allowed: false, status: "admin_audit_unavailable" }, 503);
-        return json({ ok: false, allowed: false, status: "mfa_backend_required" }, 403);
       }
 
       const result = authorizeAdminAction(session.user, body.permission);
