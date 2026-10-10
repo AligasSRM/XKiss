@@ -205,3 +205,34 @@ test("super-admin authorization fails closed without server-verified MFA", () =>
   assert.equal(result.allowed, false);
   assert.equal(result.status, "mfa_required");
 });
+
+test("wallet ledger self-test rejects unauthenticated requests before touching storage", async () => {
+  const response = await worker.fetch(
+    request({}, null, "/api/wallet/ledger/self-test", "GET"),
+    makeEnv("admin")
+  );
+  assert.equal(response.status, 401);
+  assert.equal((await response.json()).status, "unauthorized");
+});
+
+test("wallet ledger self-test denies members without operational storage permission", async () => {
+  const response = await worker.fetch(
+    request({}, "valid-session-token", "/api/wallet/ledger/self-test", "GET"),
+    makeEnv("member")
+  );
+  assert.equal(response.status, 403);
+  assert.equal((await response.json()).status, "forbidden");
+});
+
+test("wallet ledger self-test is non-mutating and never claims a real write/read passed", async () => {
+  const response = await worker.fetch(
+    request({}, "valid-session-token", "/api/wallet/ledger/self-test", "GET"),
+    makeEnv("admin")
+  );
+  assert.equal(response.status, 200);
+  const body = await response.json();
+  assert.equal(body.test, "non-mutating-preflight");
+  assert.equal(body.mutationPerformed, false);
+  assert.equal(body.verified, false);
+  assert.equal(body.status, "isolated_write_read_test_required");
+});
